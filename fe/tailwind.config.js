@@ -16,6 +16,15 @@ module.exports = {
       fontFamily: {
         sans: ["Inter", ...defaultTheme.fontFamily.sans],
       },
+      animation: {
+        "slow-spin": "spin 3s linear infinite", // Change 3s to whatever duration you prefer
+      },
+      keyframes: {
+        spin: {
+          from: { transform: "rotate(0deg)" },
+          to: { transform: "rotate(360deg)" },
+        },
+      },
     },
   },
 };

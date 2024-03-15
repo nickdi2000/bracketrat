@@ -4,10 +4,8 @@ const superController = require("../../controllers/super.controller");
 
 const controllers = {
 	users: require("../../controllers/user.controller"),
-	campaigns: require("../../controllers/campaign.controller"),
-	tracks: require("../../controllers/track.controller"),
 	message: require("../../controllers/message.controller"),
-	vote: require("../../controllers/vote.controller"),
+	brackets: require("../../controllers/bracket.controller"),
 	// ... other model controllers
 };
 
@@ -68,7 +66,7 @@ router.get("/:model", (req, res) => {
 	if (controllers[model]) {
 		controllers[model].list(req, res);
 	} else {
-		res.status(404).send("Model not found (GET /");
+		res.status(404).send("Model not found (GET / (none)");
 	}
 });
 

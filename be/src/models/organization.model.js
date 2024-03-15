@@ -26,16 +26,16 @@ const organizationSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "User",
 	},
-	members: [
+	users: [
 		{
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User",
 		},
 	],
-	campaigns: [
+	brackets: [
 		{
 			type: mongoose.Schema.Types.ObjectId,
-			ref: "Campaign",
+			ref: "Bracket",
 		},
 	],
 	// Additional fields like website, social media links, etc.

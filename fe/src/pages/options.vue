@@ -1,13 +1,15 @@
 <template>
-  <div class="pt-3 text-white min-h-screen">
+  <div class="pt-0 text-white min-h-screen">
     <Tabs v-model="activeTab" class="p-5">
       <Tab name="info" title="Info">
-        <Input v-model="form.title" label="Title" />
-        <Textarea v-model="form.title" label="Description" />
-        <Alert type="info" class="fadein"
-          >The above information will be available to the players when they
-          arrive on the registration screen.</Alert
-        >
+        <div class="space-y-8">
+          <Input v-model="form.title" label="Bracket Title" class="mb-4" />
+          <Textarea v-model="form.title" label="Description" />
+          <Alert type="info" class="fadein"
+            >The above information will be available to the players when they
+            arrive on the registration screen.</Alert
+          >
+        </div>
       </Tab>
       <Tab name="options" title="Settings">
         <h4 class="font-bold text-lg mb-2">Bracket Options</h4>

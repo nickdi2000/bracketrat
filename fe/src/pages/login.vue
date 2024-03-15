@@ -1,37 +1,59 @@
 <template>
-  <section class="bg-gray-50 dark:bg-gray-900">
+  <section class="bg-image h-full lg:pt-0 md:pt-0 sm:pt-10">
     <div
       class="flex flex-col items-center justify-center px-6 pb-1 mx-auto md:h-screen lg:py-0"
     >
-      <div
-        class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
+      <span
+        @click="test()"
+        class="flex items-center lg:mt-0 sm:mt-5 fade fadeinUp text-2xl font-semibold text-gray-900 dark:text-white"
       >
+        <img
+          src="/images/logo-light.png"
+          class="logo-image"
+          :class="[animate ? 'altered' : '', bounce ? 'animate-bounce' : '']"
+        />
+      </span>
+      <div class="text-2xl my-2 fadein font-bold">{{ $appName }}</div>
+
+      <div
+        class="w-full rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:border-gray-700 backdrop-blur-md"
+      >
+        <div v-if="error" class="pb-2 m-3">
+          <Alert type="danger" class="w-full">{{ error }}</Alert>
+        </div>
         <div class="p-6 space-y-4 md:space-y-1 sm:p-8">
           <h1
-            class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
+            class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white mb-4"
           >
-            Sign in
+            {{ registering ? "Register" : "Sign In" }}
           </h1>
-          <fwb-alert type="info">
-            NOTE: You may login with your standard
-            <a
-              class="text-blue-300 underline font-bold"
-              href="https://triviarat.com?utm_source=map-signup"
-              >TriviaRat.com</a
-            >
-            credentials.
-          </fwb-alert>
 
-          <form class="space-y-4 md:space-y-6" action="#">
+          <div class="space-y-4 md:space-y-6" action="#">
+            <div v-if="registering">
+              <label
+                for="name"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Name</label
+              >
+              <input
+                type="text"
+                name="name"
+                v-model="form.name"
+                id="name"
+                class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="John Doe"
+              />
+            </div>
             <div>
               <label
                 for="email"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Your email</label
+                >Your email *</label
               >
               <input
                 type="email"
                 name="email"
+                v-model="form.email"
                 id="email"
                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="name@company.com"
@@ -42,12 +64,13 @@
               <label
                 for="password"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Password</label
+                >Password *</label
               >
               <input
                 type="password"
                 name="password"
                 id="password"
+                v-model="form.password"
                 placeholder="••••••••"
                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 required=""
@@ -76,29 +99,163 @@
                 >Forgot password?</a
               >
             </div>
+
             <button
               type="submit"
-              class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+              @click="submit()"
+              :disabled="loading"
+              :class="loading ? 'bg-gray-500 ' : 'bg-blue-700'"
+              class="w-full text-white hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
             >
-              Sign in
-            </button>
-            <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-              Don’t have an account yet?
-              <a
-                href="#"
-                class="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                >Sign up</a
+              <span>{{ registering ? "Register" : "Login" }}</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-6 h-6 inline ml-2"
               >
-            </p>
-          </form>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"
+                />
+              </svg>
+            </button>
+            <div
+              class="flex flex-column align-items-center justify-center"
+              v-if="loading"
+            >
+              <Spinner size="10" />
+            </div>
+          </div>
+
+          <p
+            class="text-sm font-light text-gray-500 dark:text-gray-400"
+            v-if="!registering"
+          >
+            Don’t have an account yet?
+            <button
+              @click="$router.push('/register')"
+              class="font-medium text-primary-600 hover:underline dark:text-primary-500"
+            >
+              Sign Up!
+            </button>
+          </p>
+
+          <p v-else>
+            <span class="text-gray">Already have an account? &nbsp;</span>
+            <button
+              @click="$router.push('/login')"
+              class="font-medium text-primary-600 hover:underline dark:text-primary-500"
+            >
+              Login
+            </button>
+          </p>
         </div>
       </div>
-      <a
-        href="#"
-        class="flex items-center mt-5 fade fadeinUp text-2xl font-semibold text-gray-900 dark:text-white"
-      >
-        <img src="/images/logo.png" class="logo-image" />
-      </a>
     </div>
   </section>
 </template>
+
+<script>
+export default {
+  name: "Login",
+  data() {
+    return {
+      registering: this.$route.name == "register",
+      animate: false,
+      loading: false,
+      bounce: false,
+      error: "",
+      form: {
+        email: "admin@example.com",
+        password: "password123",
+      },
+    };
+  },
+  mounted() {
+    setTimeout(() => {
+      this.animate = true;
+    }, 300);
+  },
+  methods: {
+    async test() {
+      try {
+        const rec = await this.$api.test();
+        console.log("Success", rec);
+        this.bounce = true;
+        setTimeout(() => {
+          this.bounce = false;
+        }, 5000);
+      } catch (error) {
+        console.log("ERROR", error);
+        this.$toast.error("Error Testing System");
+      }
+    },
+    submit() {
+      this.loading = true;
+      if (this.registering) {
+        this.register();
+      } else {
+        this.login();
+      }
+    },
+    async register() {
+      try {
+        const rec = await this.$api.register(this.form);
+        this.$store.setUser(rec);
+        this.$router.push("/dashboard");
+      } catch (error) {
+        console.log("ERROR", error);
+        this.$toast.error("Error registering");
+      }
+      this.loading = false;
+    },
+    async login() {
+      try {
+        const rec = await this.$api.login(this.form);
+        this.$store.setUser(rec);
+        console.log("REC login", rec);
+        this.$router.push("/dashboard");
+      } catch (error) {
+        console.log("ERROR", error);
+        this.$toast.error("Error registering");
+        if (error.message) {
+          this.error = error.message;
+        }
+      }
+      this.loading = false;
+    },
+  },
+};
+</script>
+
+<style scoped>
+.logo-image {
+  width: 150px;
+  height: auto;
+  opacity: 0.6;
+  transition: all 0.6s ease;
+}
+
+.logo-image:hover {
+  opacity: 1;
+}
+
+.bg-image- {
+  background-image: url("https://p2.piqsels.com/preview/130/86/477/earth-planet-space-cosmos.jpg");
+  background-size: cover;
+  background-position: center;
+  background-blend-mode: multiply;
+  min-height: 100vh;
+
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.altered {
+  filter: brightness(50%) sepia(100%) saturate(400%);
+  transform: scale(1.1) rotate(5deg);
+}
+</style>

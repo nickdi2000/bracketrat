@@ -47,12 +47,22 @@
 
     <div class="mt-5">
       <Alert type="info" class="fadeinUp"
-        >No {{ $teamPlayer }}'s exist yet. Invite them with your unique bracket
-        link or add them manually.</Alert
+        >No {{ $store.teamPlayer }}'s exist yet. Invite them with your unique
+        bracket link or add them manually.</Alert
       >
     </div>
 
-    <fwb-modal v-if="isShowModal" @close="closeModal">
+    <div v-if="!$store.selected_brackett" class="mt-4">
+      <Alert type="warning"
+        >No Bracket Selected. Please
+        <router-link :to="'/brackets'" class="underline font-bold"
+          >Create a Bracket</router-link
+        >
+        first</Alert
+      >
+    </div>
+
+    <fwb-modal v-show="isShowModal" @close="closeModal">
       <template #header>
         <div class="flex items-center text-lg">
           Add a {{ $teamPlayer }} manually
@@ -63,9 +73,24 @@
           Remember you may also invite players to join via your unique link or
           QR code.
         </div>
-        <div class="mt-5 shadow-lg flex flex-col space-y-4">
-          <Input label="Name" />
-          <Input label="Email" />
+        <div class="mt-1 shadow-lg flex flex-col space-y-4">
+          <!-- <Input
+            label="Name"
+            v-model="name"
+            v-on:keydown.enter="save()"
+            ref="inputField"
+          /> -->
+          <input
+            type="text"
+            ref="inputField"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Player Name"
+            v-model="name"
+            v-on:keydown.enter="save()"
+            required
+          />
+
+          <!-- <Input label="Email" /> -->
         </div>
       </template>
       <template #footer>
@@ -73,7 +98,9 @@
           <fwb-button @click="closeModal" color="alternative">
             Cancel
           </fwb-button>
-          <fwb-button @click="closeModal" color="green"> Save </fwb-button>
+          <fwb-button @click="closeModal" color="green" :loading="loading">
+            Save
+          </fwb-button>
         </div>
       </template>
     </fwb-modal>
@@ -88,6 +115,10 @@ export default {
   data() {
     return {
       isShowModal: false,
+      form: {
+        name: "",
+        bracket: this.$store.getBracket._id,
+      },
     };
   },
   components: {
@@ -98,9 +129,29 @@ export default {
   methods: {
     showModal() {
       this.isShowModal = true;
+      setTimeout(() => {
+        this.$refs.inputField.focus();
+      }, 500);
     },
     closeModal() {
       this.isShowModal = false;
+      this.form.name = "";
+    },
+    async save() {
+      console.log(this.form);
+      this.loading = true;
+      try {
+        const rec = await this.$api.post("players", this.form);
+        console.log("rec", rec);
+        this.loading = false;
+        this.form.name = "";
+        this.$toast.success("Player added successfully");
+        this.closeModal();
+      } catch (error) {
+        this.loading = false;
+        this.$toast.error("Error adding player");
+        this.closeModal();
+      }
     },
   },
 };

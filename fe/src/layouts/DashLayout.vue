@@ -1,45 +1,25 @@
 <template>
-  <div class="h-full">
-    <fwb-navbar solid>
-      <template #logo>
-        <fwb-navbar-logo
-          @click="$router.push('/')"
-          alt="Ratbracket logo"
-          image-url="/images/logo.png"
-          class="fadeinUp"
-        >
-          {{ $route.name }}
-        </fwb-navbar-logo>
-      </template>
-      <template #default="{ isShowMenu }">
-        <fwb-navbar-collapse :is-show-menu="isShowMenu">
-          <fwb-navbar-link
-            :is-active="$route.path === icon.route"
-            :link="icon.route"
-            v-for="icon in icons"
-          >
-            <component :is="icon.icon" class="h-3 w-3 inline" />
-            {{ icon.name }}
-          </fwb-navbar-link>
-        </fwb-navbar-collapse>
-      </template>
-    </fwb-navbar>
-
+  <div class="">
+    <NavBar />
+    <div class="h-16 mb-0"></div>
     <!-- Main Content  bg-gradient-to-bl from-gray-600 to-gray-900 -->
-    <div class="pt-8 px-4 w-full bg-gradient-to-bl from-gray-600 to-gray-900">
-      <transition name="fade">
-        <router-view :key="$route.fullPath"></router-view>
-      </transition>
-    </div>
+    <main class="pt-4 px-4 w-full bg-gradient-to-bl from-gray-600 to-gray-900">
+      <router-view v-slot="{ Component }" :key="$route.fullPath">
+        <transition><component :is="Component" /> </transition>
+      </router-view>
+    </main>
     <!-- This is where child routes/components will be rendered -->
   </div>
 </template>
 
 <script>
+import NavBar from "./NavBar.vue";
+
 import axios from "axios";
 import {
   Cog6ToothIcon,
   UsersIcon,
+  UserIcon,
   PlayCircleIcon,
 } from "@heroicons/vue/24/solid";
 import {
@@ -53,11 +33,13 @@ export default {
   name: "AuthLayout",
   mounted() {},
   components: {
+    UserIcon,
     Cog6ToothIcon,
     FwbNavbar,
     FwbNavbarCollapse,
     FwbNavbarLink,
     FwbNavbarLogo,
+    NavBar,
   },
   data() {
     return {
@@ -67,10 +49,10 @@ export default {
         { name: "Bracket", route: "/", icon: PlayCircleIcon },
         { name: this.$teamPlayer + "s", route: "/players", icon: UsersIcon },
         { name: "Options", route: "/options", icon: Cog6ToothIcon },
+        { name: "Logout", route: "/login", icon: UserIcon },
       ],
     };
   },
-  methods: {},
 };
 </script>
 

@@ -1,12 +1,5 @@
-/*
-My mongoose/node/express app has a Family and User model.
-the User documents have a 'family' field that is a reference to the Family model.
-(one to many for Family to User)
-How can i get one family by id, and all its users?
-*/
-
 const httpStatus = require("http-status");
-const { User, Family } = require("../models");
+const { User, Document, Organization } = require("../models");
 const ApiError = require("../utils/ApiError");
 
 /**
@@ -15,12 +8,60 @@ const ApiError = require("../utils/ApiError");
  * @returns {Promise<User>}
  */
 const createUser = async (userBody) => {
-	// if (await User.isEmailTaken(userBody.email)) {
-	// 	throw new ApiError(httpStatus.BAD_REQUEST, "Email already taken");
-	// }
+	if (await User.isEmailTaken(userBody.email)) {
+		throw new ApiError(httpStatus.BAD_REQUEST, "Email already taken");
+	}
 	return User.create(userBody);
 };
 
+const createOrganization = async (user) => {
+	let name;
+	if (!user.name) {
+		name = getRandomName();
+	} else {
+		name = user.name;
+	}
+	name += "'s Organization";
+
+	const org = await Organization.create({
+		name: name,
+		owner: user._id,
+	});
+	return org;
+};
+
+const getRandomName = () => {
+	let names = [
+		"Tiger Woods",
+		"Phil Mickelson",
+		"Jack Nicklaus",
+		"Steve Nash",
+		"Kobe Bryant",
+		"Lebron James",
+		"Michael Jordan",
+		"Larry Bird",
+		"Wayne Gretzky",
+		"Joe Montana",
+		"Jerry Rice",
+		"Barry Bonds",
+		"Roger Federer",
+		"Rafael Nadal",
+		"Novak Djokovic",
+		"Pete Sampras",
+		"Andre Agassi",
+		"John McEnroe",
+		"Jimmy Connors",
+		"Chris Evert",
+		"Martina Navratilova",
+		"Serena Williams",
+		"Venus Williams",
+		"Maria Sharapova",
+		"Anna Kournikova",
+		"Billie Jean King",
+		"Monica Seles",
+	];
+	return names[Math.floor(Math.random() * names.length)];
+};
 /**
  * Query for users
  * @param {Object} filter - Mongo filter
@@ -86,56 +127,51 @@ const deleteUserById = async (userId) => {
 	return user;
 };
 
-/* FAMILY STUFF */
+/* SUPER */
+const getUsers = async () => {
+	try {
+		// const usersWithDocuments = await User.aggregate([
+		//   {
+		//     $lookup: {
+		//       from: Document.collection.name, // The collection name of 'Document'
+		//       localField: '_id', // Field from the 'User' collection
+		//       foreignField: 'user_id', // Field from the 'Document' collection that references 'User'
+		//       as: 'documents', // The field that will contain the array of matching 'Document' records
+		//     },
+		//   },
+		// ]);
 
-const createFamily = async (familyBody) => {
-	return Family.create(familyBody);
-};
+		//and to have it exlcude where status = 'archived' we do this:
+		const usersWithDocuments = await User.aggregate([
+			{
+				$lookup: {
+					from: Document.collection.name, // The collection name of 'Document'
+					localField: "_id", // Field from the 'User' collection
+					foreignField: "user_id", // Field from the 'Document' collection that references 'User'
+					as: "documents", // The field that will contain the array of matching 'Document' records
+				},
+			},
+			{
+				$match: {
+					status: { $ne: "archived" },
+				},
+			},
+		]);
 
-const getFamilyById = async (familyId) => {
-	const fam = await Family.findById(familyId);
-
-	if (!fam) {
-		throw new ApiError(httpStatus.NOT_FOUND, "Family not found");
+		return usersWithDocuments;
+	} catch (error) {
+		console.error("Error fetching users with documents:", error);
+		throw error;
 	}
-	return fam;
-};
-
-const getFamilyAndUsers = async (familyId) => {
-	const family = await Family.findById(familyId);
-
-	if (!family) {
-		throw new ApiError(
-			httpStatus.NOT_FOUND,
-			"Family not found (getFamilyAndUsers)"
-		);
-	}
-
-	const users = await User.find({ family: familyId });
-	return { family, users };
-};
-
-const updateFamily = async (body) => {
-	const familyId = body.id;
-	const fam = await getFamilyById(familyId);
-	if (!fam) {
-		throw new ApiError(httpStatus.NOT_FOUND, "Family not found on update");
-	}
-	Object.assign(fam, body);
-	await fam.save();
-	//await transactionService.updateRemainingIncome(familyId);
-	return fam;
 };
 
 module.exports = {
 	createUser,
-	updateFamily,
 	queryUsers,
 	getUserById,
 	getUserByEmail,
 	updateUserById,
 	deleteUserById,
-	getFamilyById,
-	createFamily,
-	getFamilyAndUsers,
+	getUsers,
+	createOrganization,
 };

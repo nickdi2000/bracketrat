@@ -11,9 +11,6 @@ router.post(
 	validate(authValidation.register),
 	authController.register
 );
-
-router.post("/guest-register", authController.guestRegister);
-
 router.post("/login", validate(authValidation.login), authController.login);
 router.post("/logout", validate(authValidation.logout), authController.logout);
 router.post(
@@ -42,7 +39,6 @@ router.post(
 	authController.verifyEmail
 );
 
-router.post("/login-google", authController.googleLogin);
 module.exports = router;
 
 /**

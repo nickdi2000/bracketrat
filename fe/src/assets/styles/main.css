@@ -19,6 +19,15 @@ body {
   opacity: 0.6;
 }
 
+.subheader {
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: rgb(212, 212, 212);
+  opacity: 0.8;
+}
+
 @keyframes fadeIn {
   0% {
     opacity: 0;

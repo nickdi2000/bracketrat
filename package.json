@@ -1,0 +1,25 @@
+{
+	"name": "rat_bracket",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"start:be": "cd be && npm run dev",
+		"start:fe": "cd fe && npm run dev",
+		"both": "concurrently \"npm run start:be\" \"npm run start:fe\""
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://nickdi2000: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@github.com/nickdi2000/law_fox.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/nickdi2000/law_fox/issues"
+	},
+	"homepage": "https://github.com/nickdi2000/law_fox#readme",
+	"dependencies": {
+		"concurrently": "^8.2.1"
+	}
+}
+

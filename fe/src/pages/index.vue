@@ -1,6 +1,6 @@
 <template>
   <div class="bracket-container">
-    <bracket :rounds="rounds">
+    <bracket :rounds="rounds" class="bracket z-40">
       <template #player="{ player }">
         <div class="player-box text-lg">{{ player.name }}</div>
       </template>
@@ -75,12 +75,6 @@ export default {
 </script>
 
 <style lang="scss">
-.bracket-container- {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .bracket-container {
   display: flex;
   justify-content: center;
@@ -90,8 +84,7 @@ export default {
 
 .vtb-wrapper {
   background: inherit;
-  padding: 12px;
-  min-width: 100%;
+  padding: 0px;
 }
 
 .player-box {
@@ -225,10 +218,32 @@ p {
 
 @media only screen and (max-width: 800px) {
   .bracket-container {
-    display: flex;
+    position: fixed;
+    width: 100vw;
+    height: 100dvh;
+    top: 90px;
+    left: 0;
+    padding-top: 90px;
+    padding-left: 20px;
+    padding-right: 0px;
+    padding-bottom: 0px;
+    overflow: scroll;
     justify-content: start;
-    align-items: start;
-    padding: 10px;
+  }
+
+  .bracket {
+    padding-bottom: 100px;
+    padding-top: 100px;
+    min-height: 100vh;
+    z-index: 0;
+  }
+
+  .vtp-wrapper {
+    padding-bottom: 0px;
+  }
+
+  .vtb-item-players:last-of-type {
+    padding-right: 10px;
   }
 }
 </style>

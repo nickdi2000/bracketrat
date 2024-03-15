@@ -45,9 +45,9 @@ class BaseController {
 
 	async list(req, res) {
 		try {
-			// const user_id = req.user.id;
-			// const items = await this.model.find({ user: user_id });
-			const items = await this.model.find();
+			const org_id = req.user.organization;
+			const items = await this.model.find({ organization: org_id });
+
 			res.send(items);
 		} catch (error) {
 			res.status(400).send("BaseController error" + JSON.stringify(error));

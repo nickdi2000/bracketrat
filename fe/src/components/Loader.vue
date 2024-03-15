@@ -3,7 +3,7 @@
     <div class="loaderDiv">
       <div class="loader" :class="enlarged ? 'enlarge' : ''"></div>
     </div>
-    <h3 class="loading-text fade fadein">Loading...</h3>
+    <div class="loading-text fade fadein">Loading...</div>
   </div>
 </template>
 
@@ -31,8 +31,8 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 1.4rem;
-  margin-left: 16px;
+  font-size: 1.1rem;
+  margin-left: 12px;
   margin-top: 12px;
   text-transform: uppercase;
   font-weight: 700;
