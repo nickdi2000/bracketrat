@@ -10,16 +10,15 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://nickdi2000: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@github.com/nickdi2000/law_fox.git"
+		"url": "git+https://@github.com/nickdi2000/bracketrat.git"
 	},
 	"author": "",
 	"license": "ISC",
 	"bugs": {
-		"url": "https://github.com/nickdi2000/law_fox/issues"
+		"url": "https://github.com/nickdi2000/bracketrat/issues"
 	},
-	"homepage": "https://github.com/nickdi2000/law_fox#readme",
+	"homepage": "https://github.com/nickdi2000/bracketrat#readme",
 	"dependencies": {
 		"concurrently": "^8.2.1"
 	}
 }
-
