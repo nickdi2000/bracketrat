@@ -9,14 +9,11 @@
 		"both": "concurrently \"npm run start:be\" \"npm run start:fe\""
 	},
 	"repository": {
-		"type": "git",
-		"url": "git+https://@github.com/nickdi2000/bracketrat.git"
+		"type": "git"
 	},
 	"author": "",
 	"license": "ISC",
-	"bugs": {
-		"url": "https://github.com/nickdi2000/bracketrat/issues"
-	},
+	"bugs": {},
 	"homepage": "https://github.com/nickdi2000/bracketrat#readme",
 	"dependencies": {
 		"concurrently": "^8.2.1"
