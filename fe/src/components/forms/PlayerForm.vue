@@ -45,20 +45,29 @@
       &nbsp; Invite
     </button>
 
-    <div class="mt-5">
-      <Alert type="info" class="fadeinUp"
-        >No {{ $store.teamPlayer }}'s exist yet. Invite them with your unique
-        bracket link or add them manually.</Alert
-      >
-    </div>
-
-    <div v-if="!$store.selected_brackett" class="mt-4">
+    <div v-if="!selectedBracket.name" class="mt-4">
       <Alert type="warning"
         >No Bracket Selected. Please
         <router-link :to="'/brackets'" class="underline font-bold"
           >Create a Bracket</router-link
         >
         first</Alert
+      >
+    </div>
+
+    <div v-else class="mt-3">
+      <span
+        class="text-gray-500 mx-2 mt-9 text-sm cursor-pointer hover:text-gray-400"
+        @click="$router.push('/brackets')"
+      >
+        Selected Bracket: {{ selectedBracket.name }}</span
+      >
+    </div>
+
+    <div class="mt-5">
+      <Alert type="info" class="fadeinUp"
+        >No {{ $store.teamPlayer }}'s exist yet. Invite them with your unique
+        bracket link or add them manually.</Alert
       >
     </div>
 
@@ -117,7 +126,7 @@ export default {
       isShowModal: false,
       form: {
         name: "",
-        bracket: this.$store.getBracket._id,
+        bracket: null,
       },
     };
   },
@@ -125,6 +134,12 @@ export default {
     FwbButton,
     FwbModal,
     PlusIcon,
+  },
+  computed: {
+    // Create a computed property that depends on the Vuex getter
+    selectedBracket() {
+      return this.$store.getBracket;
+    },
   },
   methods: {
     showModal() {
@@ -152,6 +167,16 @@ export default {
         this.$toast.error("Error adding player");
         this.closeModal();
       }
+    },
+  },
+  watch: {
+    // Watch the computed property for changes
+    selectedBracket: {
+      immediate: true,
+      handler(newVal, oldVal) {
+        // Whenever the selectedBracket updates, update the form's bracket value
+        this.form.bracket = newVal._id;
+      },
     },
   },
 };

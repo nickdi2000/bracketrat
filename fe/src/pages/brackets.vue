@@ -104,8 +104,10 @@ export default {
   },
   methods: {
     async getRecords() {
+      this.loading = true;
       const response = await this.$api.get("/brackets");
       this.items = response.data;
+      this.loading = false;
     },
     selectBracket(item) {
       //this.$router.push(route);
@@ -121,6 +123,7 @@ export default {
   data() {
     return {
       items: [],
+      loading: false,
       dummy_items: [
         {
           title: "The Phazzball Open",

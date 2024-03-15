@@ -45,3 +45,58 @@ export const BracketNames = Object.freeze([
   "The Volleyball Diaries",
   "Sprint in the City",
 ]);
+
+export const teamSports = Object.freeze([
+  {
+    value: "soccer",
+    name: "Soccer",
+  },
+  {
+    value: "basketball",
+    name: "Basketball",
+  },
+  {
+    value: "volleyball",
+    name: "Volleyball",
+  },
+  {
+    value: "hockey",
+    name: "Hockey",
+  },
+  {
+    value: "rugby",
+    name: "Rugby",
+  },
+  {
+    value: "cricket",
+    name: "Cricket",
+  },
+  {
+    value: "baseball",
+    name: "Baseball",
+  },
+  {
+    value: "softball",
+    name: "Softball",
+  },
+  {
+    value: "handball",
+    name: "Handball",
+  },
+  {
+    value: "lacrosse",
+    name: "Lacrosse",
+  },
+  {
+    value: "water-polo",
+    name: "Water Polo",
+  },
+  {
+    value: "field-hockey",
+    name: "Field Hockey",
+  },
+  {
+    value: "other",
+    name: "Other",
+  },
+]);

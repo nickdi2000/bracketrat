@@ -1,14 +1,26 @@
 <template>
-  <div class="pt-0 text-white min-h-screen">
+  <div class="pt-0 text-white min-h-screen max-w-4xl">
     <Tabs v-model="activeTab" class="p-5">
       <Tab name="info" title="Info">
-        <div class="space-y-8">
-          <Input v-model="form.title" label="Bracket Title" class="mb-4" />
-          <Textarea v-model="form.title" label="Description" />
-          <Alert type="info" class="fadein"
+        <div class="">
+          <BracketForm
+            :selectedBracket="selectedBracket"
+            v-if="selectedBracket"
+          />
+          <div v-else>
+            <Alert type="warning"
+              >No bracket selected. Please
+              <router-link :to="'/brackets'" class="underline font-bold"
+                >Select a Bracket</router-link
+              >
+              first
+            </Alert>
+          </div>
+
+          <!-- <Alert type="info" class="fadein"
             >The above information will be available to the players when they
             arrive on the registration screen.</Alert
-          >
+          > -->
         </div>
       </Tab>
       <Tab name="options" title="Settings">
@@ -20,15 +32,24 @@
       </Tab>
     </Tabs>
 
-    <div class="footer fadeinUp">
+    <!-- <div class="footer fadeinUp">
       <FButton size="xl" class="font-bold" gradient="green">Save</FButton>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
+import BracketForm from "@/components/forms/BracketForm.vue";
+
 export default {
-  components: {},
+  components: {
+    BracketForm,
+  },
+  computed: {
+    selectedBracket() {
+      return this.$store.getBracket ?? null;
+    },
+  },
   data() {
     return {
       activeTab: "info",

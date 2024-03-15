@@ -158,12 +158,13 @@
 
 <script>
 import FormWrapper from "./FormWrapper.vue";
-import { BracketNames } from "@/constants/enums";
+import { BracketNames, teamSports } from "@/constants/enums";
 
 export default {
   data() {
     return {
       BracketNames,
+      teamSports,
       newUser: false,
       model: {
         name: "Bracket",
@@ -227,60 +228,7 @@ export default {
             "You probably just clicked this option to see what terrible joke I would make.  I'm not disappointed in you.  I'm disappointed in myself.",
         },
       ],
-      teamSports: [
-        {
-          value: "soccer",
-          name: "Soccer",
-        },
-        {
-          value: "basketball",
-          name: "Basketball",
-        },
-        {
-          value: "volleyball",
-          name: "Volleyball",
-        },
-        {
-          value: "hockey",
-          name: "Hockey",
-        },
-        {
-          value: "rugby",
-          name: "Rugby",
-        },
-        {
-          value: "cricket",
-          name: "Cricket",
-        },
-        {
-          value: "baseball",
-          name: "Baseball",
-        },
-        {
-          value: "softball",
-          name: "Softball",
-        },
-        {
-          value: "handball",
-          name: "Handball",
-        },
-        {
-          value: "lacrosse",
-          name: "Lacrosse",
-        },
-        {
-          value: "water-polo",
-          name: "Water Polo",
-        },
-        {
-          value: "field-hockey",
-          name: "Field Hockey",
-        },
-        {
-          value: "other",
-          name: "Other",
-        },
-      ],
+
       soloSports: [
         {
           value: "squash",
@@ -333,6 +281,12 @@ export default {
       ],
     };
   },
+  props: {
+    selectedBracket: {
+      type: Object,
+      default: null,
+    },
+  },
   computed: {
     selectedTypeObject() {
       return this.types.find((type) => type.value === this.form.type);
@@ -345,6 +299,15 @@ export default {
     FormWrapper,
   },
   mounted() {
+    console.log("post mount");
+    //check if we get it as prop first
+    if (this.selectedBracket) {
+      console.log("is provided", this.selectedBracket);
+      this.form = this.selectedBracket;
+      return;
+    }
+
+    //else from the route :id
     if (this.$route.params.id) {
       this.getRecord(this.$route.params.id);
     }

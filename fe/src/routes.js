@@ -7,9 +7,7 @@ import NotFound from "@/pages/not-found.vue";
 import Profile from "@/pages/profile.vue";
 import Brackets from "@/pages/brackets.vue";
 import DashLayout from "./layouts/DashLayout.vue";
-
-//form
-import BracketForm from "@/components/forms/BracketForm.vue";
+import BracketEdit from "@/pages/bracket.vue";
 
 export const routes = [
   {
@@ -29,12 +27,12 @@ export const routes = [
       {
         path: "/brackets/create",
         name: "Create Bracket",
-        component: BracketForm,
+        component: BracketEdit,
       },
       {
         path: "/brackets/edit/:id?",
         name: "Edit Bracket",
-        component: BracketForm,
+        component: BracketEdit,
       },
     ],
   },

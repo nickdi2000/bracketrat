@@ -104,7 +104,10 @@ export const authStore = defineStore({
       return bracket.unit == "team" ? "Team" : "Player";
     },
     getBracket() {
-      return JSON.parse(this.selected_bracket);
+      return (
+        JSON.parse(localStorage.getItem("selected_bracket")) ||
+        this.selected_bracket
+      );
     },
     check() {
       return this.user !== null || localStorage.getItem("user") !== null;

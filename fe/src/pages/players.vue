@@ -1,6 +1,6 @@
 <template>
   <div class="text-white min-h-screen">
-    <PlayerForm />
+    <PlayerForm v-if="$store.getBracket" />
   </div>
 </template>
 

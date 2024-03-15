@@ -1,10 +1,8 @@
 <template>
-  <div class="flex flex-col items-center py-12 min-h-screen">
-    <div
-      class="w-full max-w-xl p-4 backdrop-brightness-90 shadow-2xl rounded-md mb-4"
-    >
+  <div class="flex flex-col items-center">
+    <div class="w-full p-4 backdrop-brightness-90 shadow-2xl rounded-md mb-4">
       <h3 class="text-lg text-white font-bold mb-4">
-        {{ formData.id ? "Update" : "Create New" }} {{ model.name }}
+        {{ formData._id ? "Update" : "Create New" }} {{ model.name }}
       </h3>
       <slot></slot>
     </div>
