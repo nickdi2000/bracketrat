@@ -26,6 +26,10 @@ const defaultRoutes = [
 		path: "/users",
 		route: userRoute,
 	},
+	{
+		path: "/players",
+		route: playerRoute,
+	},
 
 	{
 		path: "/ai",

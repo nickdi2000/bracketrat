@@ -8,8 +8,28 @@
       <div
         class="bg-gray-900 rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full p-4 border border-gray-500"
       >
-        <div class="text-center p-4">
-          <p class="text-lg text-gray-200">{{ message }}</p>
+        <div class="text-left pt-4 pt-3">
+          <p class="text-xl font-bold text-gray-200">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="lightblue"
+              class="w-6 h-6 inline"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
+              />
+            </svg>
+
+            {{ message }}
+          </p>
+          <p v-if="details" class="text-gray-300 pt-0 mt-0 text-sm">
+            {{ details }}
+          </p>
         </div>
         <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
           <button
@@ -37,6 +57,7 @@ import { ref } from "vue";
 
 const props = defineProps({
   message: String,
+  details: String,
 });
 
 const isVisible = ref(false);

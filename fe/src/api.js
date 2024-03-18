@@ -56,6 +56,10 @@ const backendAPI = {
     const response = await axios.get(resource);
     return response.data;
   },
+  getPlayers: async function (bracketId) {
+    const response = await axios.get("bracket/" + bracketId + "/players");
+    return response.data;
+  },
   show: async function (resource, id) {
     if (!id) {
       return {};
@@ -83,8 +87,8 @@ const backendAPI = {
     const response = await axios.put(resource, data);
     return response.data;
   },
-  delete: async function (resource, id) {
-    const response = await axios.delete(resource + "/" + id);
+  delete: async function (resource) {
+    const response = await axios.delete(resource);
     return response.data;
   },
   patch: async function (resource, data) {

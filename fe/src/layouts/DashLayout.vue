@@ -1,14 +1,12 @@
 <template>
-  <div class="">
+  <div class="bg-gradient-to-bl from-gray-600 to-gray-900">
     <NavBar />
-    <div class="h-16 mb-0"></div>
-    <!-- Main Content  bg-gradient-to-bl from-gray-600 to-gray-900 -->
-    <main class="pt-4 px-4 w-full bg-gradient-to-bl from-gray-600 to-gray-900">
+    <!-- <div class="h-16 mb-0"></div> -->
+    <main class="pt-24 px-4 w-full">
       <router-view v-slot="{ Component }" :key="$route.fullPath">
         <transition><component :is="Component" /> </transition>
       </router-view>
     </main>
-    <!-- This is where child routes/components will be rendered -->
   </div>
 </template>
 

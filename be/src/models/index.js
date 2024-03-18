@@ -4,5 +4,5 @@ module.exports.User = require("./user.model");
 module.exports.Organization = require("./organization.model");
 module.exports.Message = require("./message.model");
 module.exports.Bracket = require("./bracket.model");
+module.exports.Round = require("./round.model");
 module.exports.Player = require("./player.model");
-module.exports.Match = require("./match.model");

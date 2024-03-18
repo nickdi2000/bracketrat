@@ -28,6 +28,23 @@ body {
   opacity: 0.8;
 }
 
+.btn {
+  @apply inline-block p-3 text-sm font-medium leading-5 text-center text-white uppercase transition-colors duration-150 ease-in-out rounded-lg;
+}
+
+.btn-primary {
+  @apply bg-blue-600 hover:bg-blue-500 focus:outline-none;
+}
+
+.btn-secondary {
+  @apply bg-gray-600 hover:bg-gray-500 focus:outline-none;
+}
+
+/* Tailwind CSS classes */
+.badge {
+  @apply bg-blue-100 text-blue-800 text-sm uppercase font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300 inline-block;
+}
+
 @keyframes fadeIn {
   0% {
     opacity: 0;

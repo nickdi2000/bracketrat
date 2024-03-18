@@ -1,80 +1,206 @@
 <template>
-  <div class="bracket-container">
-    <bracket :rounds="rounds" class="bracket z-40">
-      <template #player="{ player }">
-        <div class="player-box text-lg">{{ player.name }}</div>
-      </template>
-      <template #player-extension-bottom="{ match }">
-        <div class="text-muted uppercase font-bold text-xs text-gray-500">
-          {{ match.title }}
+  <span class="dark:text-white">
+    <Loader v-if="loading" />
+    <div class="bracket-container fadein" v-if="rounds.length">
+      <bracket :rounds="rounds" class="bracket z-40">
+        <template #player="{ player }">
+          <div
+            class="player-box text-lg"
+            :class="!player.name ? 'un-played' : ''"
+          >
+            {{ player.name }}
+          </div>
+        </template>
+        <template #player-extension-bottom="{ match }">
+          <div class="text-muted uppercase font-bold text-xs text-gray-500">
+            {{ match.title }}
+          </div>
+        </template>
+      </bracket>
+
+      <!-- <pre class="text-xs z-50" style="">{{ formattedJSON }}</pre> -->
+    </div>
+
+    <div
+      v-else
+      class="min-h-96 mt-20 flex flex-col items-center justify-center"
+    >
+      <div
+        class="fadein max-w-sm p-5 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+      >
+        <div class="flex flex-col align-center">
+          <a href="#">
+            <h5
+              class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+            >
+              {{ currentBracket?.name }}
+            </h5>
+          </a>
+
+          <div v-if="players.length > 2" class="flex flex-col items-center">
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+              You have {{ players.length }} players in this bracket. Click below
+              to generate the bracket with these players.
+            </p>
+
+            <button
+              @click="generateBracket"
+              class="inline-flex self-center align-self-center bg-blue-500 px-3 py-2 text-lg font-medium text-center text-white rounded-lg hover:bg-teal-800 focus:ring-4 hover:scale-105 duration-100 focus:outline-none focus:ring-blue-300 dark:hover:bg-teal-700 dark:focus:ring-blue-800"
+            >
+              Generate Bracket
+              <PlayCircleIcon class="h-6 w-6 inline ml-1 animate-pulse" />
+            </button>
+          </div>
+
+          <div v-else>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+              <span v-if="players.length === 0">
+                You have no {{ $teamPlayer }}'s' in this bracket. Add players to
+                generate a bracket.
+              </span>
+              <span v-else-if="players.length == 1">
+                You have only one player in this bracket. You can't even play a
+                game, let-alone generate a tournament bracket.
+              </span>
+              <span v-else>
+                You have only two {{ $teamPlayer }}'s' in this bracket. I don't
+                think you need a bracket for that. Just play a game and see who
+                wins. Add more {{ $teamPlayer }}'s' to generate a bracket.
+              </span>
+              <br /><br />
+              <span
+                >Please
+                <router-link
+                  class="text-teal-500 underline font-bold"
+                  :to="'/players'"
+                  >add more {{ $teamPlayer }}'s</router-link
+                ></span
+              >
+            </p>
+          </div>
         </div>
-      </template>
-    </bracket>
-  </div>
+      </div>
+
+      <div
+        v-if="players.length >= 3"
+        class="text-white py-5 text-center max-w-96 flex flex-wrap justify-center gap-4"
+      >
+        <span
+          v-for="(p, index) in players"
+          :key="p._id"
+          :style="{ '--delay': index * 0.1 + 's' }"
+          class="badge badge-primary opacity-0 fade-in"
+        >
+          {{ p.name }}
+        </span>
+      </div>
+
+      <div class="py-5 fixed bottom-10" v-if="!showingDummy">
+        <button
+          class="p-2 bg-teal-900 text-white rounded-md"
+          @click="viewDummyData"
+        >
+          Load Sample Data <users-icon class="inline h-6 w-6" />
+        </button>
+      </div>
+    </div>
+    <div class="fixed bottom-0 right-0 m-8 z-50" v-if="showingDummy">
+      <button class="btn btn-secondary" @click="showingDummy = !showingDummy">
+        <TrashIcon class="h-6 w-6 inline" />
+        Clear Dummy Data
+      </button>
+    </div>
+  </span>
 </template>
 
 <script>
 import Bracket from "vue-tournament-bracket";
-
-const rounds = [
-  {
-    games: [
-      {
-        player1: { id: "1", name: "John Smith", winner: true },
-        player2: { id: "11", name: "Dale Jones", winner: false },
-      },
-      {
-        player1: { id: "5", name: "Jane Garamond", winner: true },
-        player2: { id: "12", name: "Amy Royal", winner: false },
-      },
-      {
-        player1: { id: "1", name: "John Smith", winner: true },
-        player2: { id: "13", name: "Stephen Jones", winner: false },
-      },
-      {
-        player1: { id: "5", name: "Jane Garamond", winner: true },
-        player2: { id: "14", name: "Garriete Royal", winner: false },
-      },
-    ],
-  },
-  //Semi finals
-  {
-    games: [
-      {
-        player1: { id: "1", name: "John Smith", winner: false },
-        player2: { id: "4", name: "Gary Jones", winner: true },
-      },
-      {
-        player1: { id: "5", name: "Jane Garamond", winner: false },
-        player2: { id: "8", name: "Danny Royal", winner: true },
-      },
-    ],
-  },
-  //Final
-  {
-    games: [
-      {
-        player1: { id: "4", name: "Gary Jones", winner: false },
-        player2: { id: "8", name: "Danny Royal", winner: true },
-      },
-    ],
-  },
-];
+import { TrashIcon, UsersIcon } from "@heroicons/vue/24/solid";
+import { dummyRounds } from "@/constants/dummyData";
+import { bracketMixin } from "@/mixins/bracketMixin";
 
 export default {
   components: {
     Bracket,
+    UsersIcon,
   },
+  mixins: [bracketMixin],
   data() {
     return {
-      rounds2: rounds,
-      rounds: rounds,
+      dummyRounds: dummyRounds,
+      showingDummy: false,
+      bracket: {
+        rounds: {},
+      },
+      loading: false,
     };
+  },
+  created() {
+    if (!this.players.length && this.$store.getBracket._id) {
+      this.$store.fetchBracket(this.$store.getBracket._id);
+    }
+  },
+  methods: {
+    viewDummyData() {
+      this.showingDummy = !this.showingDummy;
+    },
+    async generateBracket() {
+      // this.loading = true;
+      try {
+        const rec = await this.$api.post(
+          `brackets/${this.currentBracket._id}/generate`,
+          {}
+        );
+        //console.log("recbracket", rec.data.bracket);
+        //const transformedBracket = this._transformBracketData(rec.data.bracket);
+        this.bracket = rec.data.bracket;
+
+        this.loading = false;
+      } catch (error) {
+        this.loading = false;
+        console.log("error", error);
+        this.$toast.error("Failed to generate bracket. Contact Support");
+      }
+    },
+  },
+  computed: {
+    players() {
+      return this.$store.players;
+    },
+    currentBracket() {
+      return this.$store.getBracket;
+    },
+    rounds() {
+      if (this.showingDummy) {
+        return this.dummyRounds;
+      }
+      return this.bracket?.rounds || this.dummyRounds;
+    },
+    formattedJSON() {
+      if (!this.bracket?.rounds) return {};
+      return JSON.stringify(this.rounds, null, 2);
+    },
   },
 };
 </script>
 
 <style lang="scss">
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    //transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    //transform: translateY(0);
+  }
+}
+
 .bracket-container {
   display: flex;
   justify-content: center;
@@ -134,6 +260,7 @@ p {
   margin-bottom: 12px;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
+  background-color: rgb(72, 72, 72);
 }
 
 .vtb-player:hover {
@@ -159,6 +286,10 @@ p {
 
 .vtb-item-players .defeated.highlight {
   background-color: rgb(119, 71, 71);
+}
+
+.vtb-item-players {
+  background-color: rgb(160, 103, 4);
 }
 
 .vtb-item-parent:after {
@@ -212,6 +343,22 @@ p {
 
 .vtb-item-child:only-child:after {
   display: none;
+}
+
+.un-played {
+  background-color: rgb(113, 113, 113) !important;
+  height: 60px;
+  border-radius: 10px;
+  background-color: #e5e5f7;
+  opacity: 0.8;
+  background-size: 10px 10px;
+  background-image: repeating-linear-gradient(
+    45deg,
+    #99a7df 0,
+    #2f51ab 1px,
+    #32324b 0,
+    #9999ae 50%
+  );
 }
 
 /* smaller screens @ media */

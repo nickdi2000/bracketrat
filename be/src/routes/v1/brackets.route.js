@@ -14,4 +14,13 @@ router.get("/", (req, res, next) => {
 router.get("/:id", (req, res, next) => {
 	bracketController.show(req, res, next);
 });
+
+router.post("/:bracketId/generate", (req, res, next) => {
+	bracketController.generate(req, res, next);
+});
+
+router.post("/:id/delete-all-players", (req, res, next) => {
+	bracketController.removeAllPlayers(req, res, next);
+});
+
 module.exports = router;

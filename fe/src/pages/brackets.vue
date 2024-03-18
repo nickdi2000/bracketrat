@@ -19,7 +19,8 @@
 
     <div class="pt-4 text-white">
       <Alert type="info"
-        >Select a bracket below (or click "Edit" to adjust the details)</Alert
+        >Switch to a bracket below (or click "Edit" to adjust the
+        details)</Alert
       >
     </div>
 
@@ -38,7 +39,17 @@
               :key="item.id"
               class="hover:bg-blue-900 hover:text-white cursor-pointer"
             >
-              <fwb-table-cell>{{ item.name }}</fwb-table-cell>
+              <fwb-table-cell>
+                <span
+                  :class="
+                    selectedBracket._id == item._id ? 'text-green-300' : ''
+                  "
+                  >{{ item.name }}
+                </span>
+                <div class="badge mx-2" v-if="item.players?.length">
+                  {{ item.players?.length }} {{ $teamPlayer }}s
+                </div>
+              </fwb-table-cell>
               <fwb-table-cell>
                 <div class="text-left uppercase">
                   {{ item.status }}
@@ -102,6 +113,11 @@ export default {
   mounted() {
     this.getRecords();
   },
+  computed: {
+    selectedBracket() {
+      return this.$store.getBracket ?? {};
+    },
+  },
   methods: {
     async getRecords() {
       this.loading = true;
@@ -109,15 +125,15 @@ export default {
       this.items = response.data;
       this.loading = false;
     },
-    selectBracket(item) {
+    async selectBracket(item) {
       //this.$router.push(route);
+      await this.$store.fetchBracket(item._id);
       this.$store.setSelectedBracket(item);
       this.$router.push(`/dashboard`);
     },
     async deleteBracket(id) {
-      openDialog("Are you shure?");
-      return;
-      const rec = await this.$api.delete(`brackets`, id);
+      openDialog("Delete Bracket?");
+      const rec = await this.$api.delete(`brackets/${id}`);
     },
   },
   data() {

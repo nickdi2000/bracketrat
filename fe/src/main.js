@@ -29,16 +29,19 @@ const router = createRouter({
 import Loader from "@/components/Loader.vue";
 import ProgressBar from "@/components/ProgressBar.vue";
 
-import { TrashIcon } from "@heroicons/vue/24/solid";
+import { TrashIcon, PlayCircleIcon } from "@heroicons/vue/24/solid";
 
 import piniaPlugin from "./plugins/pinia";
 import { authStore } from "./store/auth";
+
+import openDialog from "@/services/dialog.service";
 
 const app = createApp(App);
 app.use(piniaPlugin);
 app.config.globalProperties.$appName = "Bracket Rat";
 app.config.globalProperties.$api = api;
 app.config.globalProperties.$store = authStore();
+app.config.globalProperties.$openDialog = openDialog;
 
 app.config.globalProperties.$teamPlayer =
   authStore().teamPlayer ?? "Team/Player";
@@ -60,8 +63,10 @@ app.component("ProgressBar", ProgressBar);
 
 //icons
 app.component("TrashIcon", TrashIcon);
+app.component("PlayCircleIcon", PlayCircleIcon);
 
 app.use(router);
+
 app.use(ToastPlugin, {
   // One of the options
   position: "top",

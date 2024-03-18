@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-0 text-white min-h-screen max-w-4xl">
+  <div class="pt-0 text-white min-h-screen- max-w-4xl">
     <Tabs v-model="activeTab" class="p-5">
       <Tab name="info" title="Info">
         <div class="">

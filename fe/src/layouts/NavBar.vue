@@ -62,15 +62,19 @@
             class="flex flex-1 items-center justify-center sm:justify-between"
           >
             <div class="flex flex-shrink-0 items-center">
-              <div class="flex flex-row cursor-pointer">
+              <div
+                class="flex flex-row cursor-pointer"
+                @click="$router.push('/brackets')"
+              >
                 <img
                   src="/images/logo-light.png"
                   class="w-14 h-auto logo-image"
                 />
+
                 <span
-                  class="text-white text-2xl font-bold ml-2 mt-2 hover:text-blue-200"
+                  class="text-white text-xl font-bold ml-2 mt-2 hover:text-blue-200 truncate sm:max-w-40 md:max-w-80"
                 >
-                  {{ $store.selected_bracket?.name ?? $route.name }}
+                  {{ getName }}
                 </span>
               </div>
             </div>
@@ -172,6 +176,18 @@ export default {
   computed: {
     teamPlayer() {
       return this.$store.selected_bracket?.unit == "team" ? "Team" : "Player";
+    },
+    selectedBracket() {
+      return this.$store.getBracket ?? null;
+    },
+    getName() {
+      if (!this.selectedBracket?.name) {
+        return this.$route.name;
+      } else {
+        return this.selectedBracket.name.length > 40
+          ? this.selectedBracket.name.substring(0, 40) + "..."
+          : this.selectedBracket.name;
+      }
     },
     items() {
       return [

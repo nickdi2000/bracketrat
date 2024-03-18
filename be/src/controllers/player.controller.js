@@ -1,67 +1,86 @@
 // controllers/MessageController.js
-const BaseController = require("./baseController");
 const { Player, Bracket } = require("../models");
+const catchAsync = require("../utils/catchAsync");
 
-class MessageController extends BaseController {
-	constructor() {
-		super(Player);
+const insertPlayer = async (req, res) => {
+	const { name, bracketId } = req.body;
+
+	try {
+		// First, find the bracket to ensure it exists and to check if the player name already exists within it
+		const bracket = await Bracket.findById(bracketId).populate("players");
+		if (!bracket) {
+			return res.status(404).json({ message: "Bracket not found" });
+		}
+
+		// Check if a player with the given name already exists in the bracket
+		const playerExists = bracket.players.some((player) => player.name === name);
+		if (playerExists) {
+			return res.status(400).json({
+				message: "Player with this name already exists in the bracket",
+			});
+		}
+
+		// If the player doesn't exist, create and insert the new player
+		const newPlayer = new Player({ name });
+		await newPlayer.save();
+
+		// Update the bracket with the new player
+		bracket.players.push(newPlayer);
+		await bracket.save();
+
+		res
+			.status(201)
+			.json({ message: "Player added successfully", player: newPlayer });
+	} catch (error) {
+		console.error("Error adding player to bracket:", error);
+		res.status(500).json({ message: "Error adding player to bracket" });
 	}
+};
 
-	insert = async (req, res) => {
-		async function insertPlayerIntoBracket(req, res) {
-			const { name, bracketId } = req.body;
+const getByBracketId = catchAsync(async (req, res) => {
+	const { bracketId } = req.params;
 
-			try {
-				// Check if the player already exists
-				let player = await Player.findOne({ name: name });
+	try {
+		// Find the bracket and populate the player references
+		const bracket = await Bracket.findById(bracketId).populate(
+			"players.playerRef"
+		);
 
-				// If the player doesn't exist, create a new one
-				if (!player) {
-					player = new Player({ name: name });
-					await player.save();
-				}
+		// Respond with the bracket details
+		res.status(200).json(bracket);
+	} catch (error) {
+		console.error("Error getting bracket by ID:", error);
+		res.status(500).send("Error getting bracket by ID");
+	}
+});
 
-				// Insert player into the bracket with initial details
-				const updatedBracket = await Bracket.findByIdAndUpdate(
-					bracketId,
-					{
-						$push: {
-							players: {
-								playerRef: player._id,
-								status: "active", // Example status, adjust as needed
-								score: 0, // Initial score, adjust as needed
-								// Add other bracket-specific player details here
-							},
-						},
-					},
-					{ new: true } // Return the updated document
-				).populate("players.playerRef"); // Optionally populate player references
+const destroy = catchAsync(async (req, res) => {
+	const { bracketId, playerId } = req.query;
 
-				// Respond with the updated bracket details
-				res.status(200).json(updatedBracket);
-			} catch (error) {
-				console.error("Error inserting player into bracket:", error);
-				res.status(500).send("Error inserting player into bracket");
-			}
+	try {
+		// Find the bracket by ID and update it by pulling the player from the 'players' array
+		const updatedBracket = await Bracket.findByIdAndUpdate(
+			bracketId,
+			{ $pull: { players: { _id: playerId } } },
+			{ new: true }
+		);
+
+		if (!updatedBracket) {
+			return res.status(404).send({ message: "Bracket not found." });
 		}
-	};
 
-	getByBracketId = async (req, res) => {
-		const { bracketId } = req.params;
+		res.status(200).send({
+			message: "Player removed successfully.",
+			bracket: updatedBracket,
+		});
+	} catch (error) {
+		console.error("Error removing player from bracket:", error);
+		res.status(500).send({ message: "Error removing player from bracket." });
+	}
+});
 
-		try {
-			// Find the bracket and populate the player references
-			const bracket = await Bracket.findById(bracketId).populate(
-				"players.playerRef"
-			);
-
-			// Respond with the bracket details
-			res.status(200).json(bracket);
-		} catch (error) {
-			console.error("Error getting bracket by ID:", error);
-			res.status(500).send("Error getting bracket by ID");
-		}
-	};
-}
-
-module.exports = new MessageController();
+module.exports = {
+	insertPlayer,
+	getByBracketId,
+	destroy,
+};
