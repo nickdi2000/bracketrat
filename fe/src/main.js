@@ -35,6 +35,7 @@ import piniaPlugin from "./plugins/pinia";
 import { authStore } from "./store/auth";
 
 import openDialog from "@/services/dialog.service";
+import bottomAlert from "./services/bottom.alert.service";
 
 const app = createApp(App);
 app.use(piniaPlugin);
@@ -42,6 +43,7 @@ app.config.globalProperties.$appName = "Bracket Rat";
 app.config.globalProperties.$api = api;
 app.config.globalProperties.$store = authStore();
 app.config.globalProperties.$openDialog = openDialog;
+app.config.globalProperties.$bottomAlert = bottomAlert;
 
 app.config.globalProperties.$teamPlayer =
   authStore().teamPlayer ?? "Team/Player";

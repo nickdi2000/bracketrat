@@ -52,6 +52,18 @@ export const authStore = defineStore({
       });
     },
 
+    async clearBracket(bracketId) {
+      return new Promise((resolve, reject) => {
+        try {
+          const rec = api.post(`brackets/${bracketId}/clear`);
+          console.log("rec cleared");
+          this.setRounds([]);
+          resolve(rec);
+        } catch (err) {
+          reject(err);
+        }
+      });
+    },
     setUser(userData) {
       if (!userData.data.user) {
         return;
@@ -99,53 +111,6 @@ export const authStore = defineStore({
         localStorage.removeItem("token");
         resolve(true);
       });
-    },
-    setToken(token) {
-      this.tokens = token;
-    },
-    setFadedAt(progress) {
-      this.faded_at = progress;
-    },
-    setAdvancedMode(mode) {
-      this.advanced_mode = mode;
-      localStorage.setItem("advanced_mode", mode);
-    },
-    toggleAdvancedMode() {
-      this.advanced_mode = !this.advanced_mode;
-      localStorage.setItem("advanced_mode", this.advanced_mode);
-    },
-    generateSteps(steps, formData) {
-      const navSteps = [];
-      for (const [index, step] of steps.entries()) {
-        if (step.depends_on_value) {
-          if (
-            !step.depends_on_value.values.includes(
-              formData[step.depends_on_value.field]
-            )
-          ) {
-            continue;
-          }
-        }
-
-        let isComplete = index <= this.user?.current_step || 0;
-
-        if (step.fields !== null && typeof step.fields === "object") {
-          for (const field of step.fields) {
-            if (!formData[field.name] && field.required) {
-              isComplete = false;
-              break;
-            }
-          }
-        }
-        if (step.last === true) {
-          continue;
-        }
-        navSteps.push({
-          title: step.title,
-          isComplete: isComplete,
-        });
-      }
-      this.steps = navSteps;
     },
   },
   getters: {

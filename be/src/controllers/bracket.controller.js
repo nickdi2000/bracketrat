@@ -1,6 +1,8 @@
 // controllers/BracketController.js
 const BaseController = require("./baseController");
 const { Bracket, Player } = require("../models");
+const { bracketService } = require("../services");
+const mongoose = require("mongoose");
 class BracketController extends BaseController {
 	constructor() {
 		super(Bracket);
@@ -8,13 +10,12 @@ class BracketController extends BaseController {
 
 	async show(req, res) {
 		try {
-			const bracket = await this.model.findById(req.params.id);
+			const bracket = await Bracket.findById(req.params.id);
 			if (!bracket) {
 				return res.status(404).send("Bracket not found");
 			}
-			const augmentedBracket = this.augmentPlayerData(bracket);
+			const augmentedBracket = bracketService.augmentPlayerData(bracket);
 			res.send(augmentedBracket);
-			//res.send(bracket);
 		} catch (error) {
 			console.log("error", error);
 			res.status(400).send("BracketController error" + JSON.stringify(error));
@@ -79,49 +80,12 @@ class BracketController extends BaseController {
 		const { bracketId } = req.params;
 
 		try {
-			let bracket = await Bracket.findById(bracketId);
+			let bracket = await bracketService.generateBracket(bracketId);
 			if (!bracket) {
 				return res.status(404).json({ message: "Bracket not found." });
 			}
 
-			// Assuming bracket.players is an array of player IDs or objects
-			const totalPlayers = bracket.players.length;
-			// Calculate the total number of rounds needed for a single-elimination tournament
-			const totalRoundsNeeded = Math.ceil(Math.log2(totalPlayers));
-
-			// Clear existing rounds if regenerating the bracket
-			bracket.rounds = [];
-
-			// Generate the initial matchups (first round)
-			const initialGames = [];
-			for (let i = 0; i < totalPlayers; i += 2) {
-				initialGames.push({
-					status: "pending",
-					player1: bracket.players[i] ? bracket.players[i].id : null, // Adjust based on your data structure
-					player2: bracket.players[i + 1] ? bracket.players[i + 1].id : null, // Handle potential byes
-				});
-			}
-			bracket.rounds.push({ games: initialGames, roundNumber: 1 });
-
-			// Add blank rounds for future matches
-			for (
-				let roundNumber = 2;
-				roundNumber <= totalRoundsNeeded;
-				roundNumber++
-			) {
-				const gamesInThisRound = Math.pow(2, totalRoundsNeeded - roundNumber);
-				const blankGames = Array.from({ length: gamesInThisRound }).map(() => ({
-					status: "pending",
-					player1: null,
-					player2: null,
-				}));
-				bracket.rounds.push({ games: blankGames, roundNumber });
-			}
-
-			// Optionally, save the bracket if your changes need to be persisted
-			await bracket.save();
-
-			const augmentedBracket = this.augmentPlayerData(bracket);
+			const augmentedBracket = bracketService.augmentPlayerData(bracket);
 			res.json({
 				message: "Bracket generated successfully with blank rounds.",
 				bracket: augmentedBracket,
@@ -131,6 +95,20 @@ class BracketController extends BaseController {
 			res.status(500).json({ message: "Failed to generate bracket." });
 		}
 	}
+
+	async clearBracket(req, res) {
+		const { bracketId } = req.params;
+
+		try {
+			let bracket = await bracketService.clearRounds(bracketId);
+
+			res.json({ message: "Bracket rounds cleared successfully.", bracket });
+		} catch (error) {
+			console.error("Error clearing bracket:", error);
+			res.status(500).json({ message: "Failed to clear bracket." });
+		}
+	}
+
 	async updateGameWinner(req, res) {
 		const { bracketId } = req.params;
 		const { gameId, winnerId } = req.body;
@@ -144,39 +122,50 @@ class BracketController extends BaseController {
 			let gameUpdated = false;
 
 			// Find the game and update the winner
-			bracket.rounds.some((round, roundIndex) => {
+			bracket.rounds.forEach((round, roundIndex) => {
 				const gameIndex = round.games.findIndex(
 					(game) => game._id.toString() === gameId
 				);
 
 				if (gameIndex !== -1) {
 					let game = round.games[gameIndex];
-					game.winner = winnerId; // Update the winner ID
-					gameUpdated = true;
-
-					// Determine the next round and game index
-					let nextRoundIndex = roundIndex + 1;
-					let nextGameIndex = Math.floor(gameIndex / 2);
-
-					// Check if the next round exists
-					if (nextRoundIndex < bracket.rounds.length) {
-						let nextGame = bracket.rounds[nextRoundIndex].games[nextGameIndex];
-
-						// If the winner should be placed in player1 or player2
-						if (!nextGame.player1 || nextGame.player1 === winnerId) {
-							bracket.rounds[nextRoundIndex].games[nextGameIndex].player1 =
-								winnerId;
-						} else {
-							bracket.rounds[nextRoundIndex].games[nextGameIndex].player2 =
-								winnerId;
-						}
-
-						// Mark the rounds array as modified
-						bracket.markModified("rounds");
+					console.log("game", game);
+					// Update the winner status for player1 and player2 within the game
+					if (game.player1 && game.player1._id.toString() === winnerId) {
+						game.player1.winner = true;
+						game.player2.winner = false; // Assuming a 2-player game, the other player did not win
+					} else if (game.player2 && game.player2._id.toString() === winnerId) {
+						game.player2.winner = true;
+						game.player1.winner = false;
 					}
-					return true; // Stop the iteration since the game is found and updated
+
+					gameUpdated = true;
+					// Mark the game as completed
+					game.status = "completed";
+					// Set the game winner at the game level
+					game.winner = winnerId;
+					// Mark the rounds array as modified
+					bracket.markModified("rounds");
+
+					if (roundIndex + 1 < bracket.rounds.length) {
+						const nextRound = bracket.rounds[roundIndex + 1];
+						const nextGameIndex = Math.floor(gameIndex / 2);
+						const nextGame = nextRound.games[nextGameIndex];
+
+						const playerObj = {
+							_id: winnerId, // Assuming the winnerId is the ObjectId of the player
+							score: 1, // Example default score
+							winner: null, // Default winner status for the next round
+							// Include other necessary properties according to your schema
+						};
+
+						if (gameIndex % 2 === 0) {
+							nextGame.player1 = playerObj;
+						} else {
+							nextGame.player2 = playerObj;
+						}
+					}
 				}
-				return false;
 			});
 
 			if (!gameUpdated) {
@@ -192,73 +181,6 @@ class BracketController extends BaseController {
 			console.error("Error updating game winner:", error);
 			res.status(500).json({ message: "Failed to update game winner." });
 		}
-	}
-
-	// Helper method to replace player IDs with player objects ( so we can easily display player names in the UI)
-	augmentPlayerData(bracketOriginal) {
-		const bracket = JSON.parse(JSON.stringify(bracketOriginal)); // Deep clone
-		const playerObjectsById = bracket.players.reduce((acc, player) => {
-			//acc[player._id] = player;
-			acc[player._id] = {
-				id: player._id,
-				name: player.name,
-			};
-
-			return acc;
-		}, {});
-
-		//it seems that adding the .winner to the player that won the game is adding it to the player in each round, but i dont want it to add to the last round because it hasn't been played yet, they areboth in limbo
-
-		bracket.rounds.forEach((round, roundIndex) => {
-			round.games.forEach((game) => {
-				//console.log("game", game);
-				// Replace player IDs with player objects
-				if (game.player1) {
-					game.player1 = playerObjectsById[game.player1] || {
-						id: game.player1,
-						name: "Unknown",
-					};
-				} else {
-					game.player1 = {
-						id: null,
-						name: "",
-					};
-				}
-
-				if (game.player2) {
-					game.player2 = playerObjectsById[game.player2] || {
-						id: game.player2,
-						name: "Unknown",
-					};
-				} else {
-					game.player2 = {
-						id: null,
-						name: "",
-					};
-				}
-
-				// Add winner flag to the player that won the game (we need to deep clone the object to avoid modifying the original player object in the players array and other games)
-				if (game.player1.id === game.winner) {
-					const newPlayer = JSON.parse(JSON.stringify(game.player1));
-					newPlayer.winner = true;
-					game.player1 = newPlayer;
-				}
-
-				if (game.player2.id === game.winner) {
-					const newPlayer = JSON.parse(JSON.stringify(game.player2));
-					newPlayer.winner = true;
-					game.player2 = newPlayer;
-				}
-
-				//add winners:
-				// if (roundIndex + 1 < bracket.rounds.length) {
-				// 	game.player1.winner = game.player1.id === game.winner ? true : false;
-				// 	game.player2.winner = game.player2.id === game.winner ? true : false;
-				// }
-			});
-		});
-
-		return bracket;
 	}
 }
 

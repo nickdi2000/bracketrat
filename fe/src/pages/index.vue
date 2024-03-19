@@ -19,6 +19,12 @@
         </template>
       </bracket>
 
+      <div class="optionDiv fixed bottom-0 left-0 p-8">
+        <button class="btn btn-secondary" @click="_clearBracket()">
+          Clear Bracket
+        </button>
+      </div>
+
       <pre v-if="dev" class="text-xs z-50" style="">{{ rounds }}</pre>
     </div>
 
@@ -122,7 +128,7 @@
 
 <script>
 import Bracket from "vue-tournament-bracket";
-import { TrashIcon, UsersIcon } from "@heroicons/vue/24/solid";
+import { UsersIcon } from "@heroicons/vue/24/solid";
 import { dummyRounds } from "@/constants/dummyData";
 import { bracketMixin } from "@/mixins/bracketMixin";
 import PlayerCard from "@/components/PlayerCard.vue";
@@ -157,6 +163,15 @@ export default {
     }
   },
   methods: {
+    async _clearBracket() {
+      try {
+        const bracketId = this.$store.getBracket?._id;
+        const rec = await this.$store.clearBracket(bracketId);
+      } catch (error) {
+        console.log("error", error);
+        this.$toast.error("Failed to clear bracket. Contact Support");
+      }
+    },
     viewDummyData() {
       this.showingDummy = !this.showingDummy;
     },
@@ -181,8 +196,8 @@ export default {
     selectPlayer(player) {
       //console.log("selected player", player);
       this.selectedPlayer = player;
-      const game = this._findGameByPlayer(player.id);
-      console.log("GAME", game);
+      console.log("player", player._id);
+      const game = this._findGameByPlayer(player._id);
       this.selectedGame = game;
 
       const params = {

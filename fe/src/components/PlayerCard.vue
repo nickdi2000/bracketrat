@@ -65,9 +65,10 @@ export default {
       }
 
       const params = {
-        winnerId: this.player.id,
+        winnerId: this.player._id,
         gameId: this.game._id,
       };
+      console.log("params", params);
       try {
         const rec = await this.$api.post(
           `/brackets/${bracketId}/set-winner`,

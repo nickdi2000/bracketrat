@@ -7,8 +7,8 @@ const playerSchema = new mongoose.Schema(
 		date: { type: Date, default: Date.now },
 		status: {
 			type: String,
-			enum: ["active", "cancelled", "pending", "paused"],
-			default: "pending",
+			enum: ["limbo", "active", "cancelled", "pending", "paused"],
+			default: "limbo",
 		},
 	},
 	{

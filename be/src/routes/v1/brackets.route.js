@@ -27,4 +27,9 @@ router.post("/:id/delete-all-players", (req, res, next) => {
 	bracketController.removeAllPlayers(req, res, next);
 });
 
+//clear
+router.post("/:bracketId/clear", (req, res, next) => {
+	bracketController.clearBracket(req, res, next);
+});
+
 module.exports = router;

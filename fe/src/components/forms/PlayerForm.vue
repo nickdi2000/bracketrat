@@ -104,9 +104,10 @@ export default {
     async save() {
       console.log("saving");
       this.loading = true;
+      this.form.bracketId = this.selectedBracket._id;
       try {
         const rec = await this.$api.post("players", this.form);
-        this.$store.setPlayers(rec.data.bracket.players);
+        this.$store.setPlayers(rec.data.players);
         this.loading = false;
         this.form.name = "";
         this.$toast.success("Player added successfully");
@@ -114,6 +115,7 @@ export default {
         this.$emit("update");
       } catch (error) {
         this.loading = false;
+        console.log("error", error);
         this.$toast.error("Error adding player");
         this.closeModal();
       }

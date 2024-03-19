@@ -1,9 +1,26 @@
 const mongoose = require("mongoose");
 const { toJSON, paginate } = require("./plugins");
 
+const playerGameDetailsSchema = new mongoose.Schema(
+	{
+		player: { type: mongoose.Schema.Types.ObjectId, ref: "Player" },
+		score: { type: Number, default: 0 },
+		winner: { type: Boolean, default: null },
+	},
+	{
+		timestamps: true,
+		toJSON: { virtuals: true }, // Ensure virtuals are included when the document is converted to JSON
+		toObject: { virtuals: true },
+	}
+);
+
+playerGameDetailsSchema.virtual("id").get(function () {
+	return this._id.toHexString();
+});
+
 const gameSchema = new mongoose.Schema({
-	player1: { type: mongoose.Schema.Types.ObjectId, ref: "Player" },
-	player2: { type: mongoose.Schema.Types.ObjectId, ref: "Player" },
+	player1: playerGameDetailsSchema,
+	player2: playerGameDetailsSchema,
 	winner: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Player",

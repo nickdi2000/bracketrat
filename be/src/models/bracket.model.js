@@ -8,8 +8,8 @@ const playerSchema = new mongoose.Schema(
 		user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 		status: {
 			type: String,
-			enum: ["active", "cancelled", "pending", "paused"],
-			default: "pending",
+			enum: ["limbo", "active", "cancelled", "pending", "paused"],
+			default: "limbo",
 		},
 		score: { type: Number, default: 0 },
 		wins: { type: Number, default: 0 },

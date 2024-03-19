@@ -4,7 +4,7 @@ const catchAsync = require("../utils/catchAsync");
 
 const insertPlayer = async (req, res) => {
 	const { name, bracketId } = req.body;
-
+	console.log("bracketId", bracketId);
 	try {
 		// First, find the bracket to ensure it exists and to check if the player name already exists within it
 		const bracket = await Bracket.findById(bracketId).populate("players");
@@ -28,9 +28,11 @@ const insertPlayer = async (req, res) => {
 		bracket.players.push(newPlayer);
 		await bracket.save();
 
-		res
-			.status(201)
-			.json({ message: "Player added successfully", player: newPlayer });
+		res.status(201).json({
+			message: "Player added successfully",
+			newPlayer,
+			players: bracket.players,
+		});
 	} catch (error) {
 		console.error("Error adding player to bracket:", error);
 		res.status(500).json({ message: "Error adding player to bracket" });
