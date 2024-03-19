@@ -5,6 +5,7 @@
       <bracket :rounds="rounds" class="bracket z-40">
         <template #player="{ player }">
           <div
+            @click="selectPlayer(player)"
             class="player-box text-lg"
             :class="!player.name ? 'un-played' : ''"
           >
@@ -12,13 +13,13 @@
           </div>
         </template>
         <template #player-extension-bottom="{ match }">
-          <div class="text-muted uppercase font-bold text-xs text-gray-500">
-            {{ match.title }}
-          </div>
+          <!-- <div class="text-muted uppercase font-bold text-xs text-gray-500">
+            {{ match._id }}
+          </div> -->
         </template>
       </bracket>
 
-      <!-- <pre class="text-xs z-50" style="">{{ formattedJSON }}</pre> -->
+      <pre v-if="dev" class="text-xs z-50" style="">{{ rounds }}</pre>
     </div>
 
     <div
@@ -110,6 +111,12 @@
         Clear Dummy Data
       </button>
     </div>
+
+    <PlayerCard
+      :player="selectedPlayer"
+      :game="selectedGame"
+      @update="selectedPlayer = {}"
+    />
   </span>
 </template>
 
@@ -118,17 +125,22 @@ import Bracket from "vue-tournament-bracket";
 import { TrashIcon, UsersIcon } from "@heroicons/vue/24/solid";
 import { dummyRounds } from "@/constants/dummyData";
 import { bracketMixin } from "@/mixins/bracketMixin";
+import PlayerCard from "@/components/PlayerCard.vue";
 
 export default {
   components: {
     Bracket,
     UsersIcon,
+    PlayerCard,
   },
   mixins: [bracketMixin],
   data() {
     return {
       dummyRounds: dummyRounds,
       showingDummy: false,
+      selectedPlayer: {},
+      dev: false,
+      selectedGame: {},
       bracket: {
         rounds: {},
       },
@@ -136,7 +148,11 @@ export default {
     };
   },
   created() {
-    if (!this.players.length && this.$store.getBracket._id) {
+    if (
+      !this.players.length &&
+      !this.rounds.length &&
+      this.$store.getBracket._id
+    ) {
       this.$store.fetchBracket(this.$store.getBracket._id);
     }
   },
@@ -162,6 +178,19 @@ export default {
         this.$toast.error("Failed to generate bracket. Contact Support");
       }
     },
+    selectPlayer(player) {
+      //console.log("selected player", player);
+      this.selectedPlayer = player;
+      const game = this._findGameByPlayer(player.id);
+      console.log("GAME", game);
+      this.selectedGame = game;
+
+      const params = {
+        gameId: game?._id,
+        bracketId: this.currentBracket._id,
+        playerId: player.id,
+      };
+    },
   },
   computed: {
     players() {
@@ -174,7 +203,11 @@ export default {
       if (this.showingDummy) {
         return this.dummyRounds;
       }
-      return this.bracket?.rounds || this.dummyRounds;
+      if (this.$store?.rounds?.length) {
+        return this.$store.rounds;
+      }
+
+      return this.bracket?.rounds || {};
     },
     formattedJSON() {
       if (!this.bracket?.rounds) return {};
@@ -260,7 +293,7 @@ p {
   margin-bottom: 12px;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
-  background-color: rgb(72, 72, 72);
+  background-color: rgb(44, 60, 91);
 }
 
 .vtb-player:hover {
@@ -354,10 +387,10 @@ p {
   background-size: 10px 10px;
   background-image: repeating-linear-gradient(
     45deg,
-    #99a7df 0,
+    #36488e 0,
     #2f51ab 1px,
     #32324b 0,
-    #9999ae 50%
+    #4f598d 50%
   );
 }
 
@@ -368,7 +401,7 @@ p {
     position: fixed;
     width: 100vw;
     height: 100dvh;
-    top: 90px;
+    top: 10px;
     left: 0;
     padding-top: 90px;
     padding-left: 20px;

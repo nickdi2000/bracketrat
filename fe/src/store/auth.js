@@ -13,6 +13,7 @@ export const authStore = defineStore({
       : null,
     utm_source: null,
     players: [],
+    rounds: [],
     selected_bracket: localStorage.getItem("selected_bracket") || null,
   }),
   actions: {
@@ -26,7 +27,10 @@ export const authStore = defineStore({
         return;
       }
       const rec = await api.get(`/brackets/${bracket_id}`);
+      //console.log("rounds are", rec);
+
       this.setPlayers(rec.data.players);
+      this.setRounds(rec.data.rounds);
     },
     //to make th fetchBracket a promisebased on we could do it like this:
     async fetchBracket(bracket_id) {
@@ -39,6 +43,7 @@ export const authStore = defineStore({
           .get(`/brackets/${bracket_id}`)
           .then((rec) => {
             this.setPlayers(rec.data.players);
+            this.setRounds(rec.data.rounds);
             resolve(rec);
           })
           .catch((err) => {
@@ -58,6 +63,9 @@ export const authStore = defineStore({
     },
     setPlayers(players) {
       this.players = players;
+    },
+    setRounds(rounds) {
+      this.rounds = rounds;
     },
     patchUser(partialData) {
       Object.assign(this.user, partialData);
