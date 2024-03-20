@@ -9,7 +9,8 @@
         class="backdrop-blur-2xl bg-gray-800 border border-blue-900 p-5 rounded-lg shadow-lg max-w-md mx-auto my-6 sm:max-w-xl md:min-w-2xl md:max-w-2xl lg:w-1/2"
       >
         <!-- Modal content here -->
-        <div class="text-center">
+
+        <div class="text-center" v-if="player.name">
           <h2 class="text-2xl font-semibold uppercase mb-4">
             {{ player.name }}
           </h2>
@@ -30,6 +31,15 @@
           </div>
           <button @click="$emit('update', false)" class="btn btn-secondary">
             Cancel
+          </button>
+        </div>
+
+        <div v-else class="text-center">
+          <p class="p-3">
+            Nothing to see here, pal. Waiting on previous round...
+          </p>
+          <button @click="$emit('update', false)" class="btn btn-secondary">
+            Okay..?
           </button>
         </div>
       </div>
@@ -74,7 +84,7 @@ export default {
           `/brackets/${bracketId}/set-winner`,
           params
         );
-        console.log(rec);
+        this.$store.setRounds(rec.data.bracket.rounds);
         this.$toast.success("Player marked as winner");
         this.$emit("update", false);
         this.closeModal();

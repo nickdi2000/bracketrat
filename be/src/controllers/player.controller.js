@@ -1,5 +1,6 @@
 // controllers/MessageController.js
-const { Player, Bracket } = require("../models");
+const { Bracket } = require("../models");
+const { Player } = require("../models/player.model");
 const catchAsync = require("../utils/catchAsync");
 
 const insertPlayer = async (req, res) => {

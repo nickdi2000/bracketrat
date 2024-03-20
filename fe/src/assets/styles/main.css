@@ -50,7 +50,19 @@ body {
 
 /* Tailwind CSS classes */
 .badge {
-  @apply bg-blue-100 text-blue-800 text-sm uppercase font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300 inline-block;
+  @apply text-sm uppercase font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300 inline-block;
+}
+
+.badge-primary {
+  @apply bg-blue-900 text-blue-200 border-2 border-blue-800;
+}
+
+.badge-In-Bracket {
+  @apply bg-blue-800 text-blue-200 border-2 border-blue-700;
+}
+
+.badge-limbo {
+  @apply bg-yellow-900 text-orange-200 border-2 border-orange-700;
 }
 
 @keyframes fadeIn {

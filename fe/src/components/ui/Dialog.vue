@@ -6,6 +6,7 @@
   >
     <div class="flex items-center justify-center min-h-screen backdrop-blur-sm">
       <div
+        style="z-index: 1000"
         class="bg-gray-900 rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full p-4 border border-gray-500"
       >
         <div class="text-left pt-4 pt-3">

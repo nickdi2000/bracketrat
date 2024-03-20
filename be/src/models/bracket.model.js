@@ -1,23 +1,7 @@
 const mongoose = require("mongoose");
 
 const { roundSchema } = require("./round.model");
-
-const playerSchema = new mongoose.Schema(
-	{
-		name: String,
-		user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-		status: {
-			type: String,
-			enum: ["limbo", "active", "cancelled", "pending", "paused"],
-			default: "limbo",
-		},
-		score: { type: Number, default: 0 },
-		wins: { type: Number, default: 0 },
-	},
-	{
-		timestamps: true,
-	}
-);
+const { playerSchema } = require("./player.model");
 
 const bracketSchema = new mongoose.Schema({
 	name: {

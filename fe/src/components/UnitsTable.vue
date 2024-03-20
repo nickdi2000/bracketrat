@@ -29,7 +29,8 @@
           <td class="px-6 py-4">
             <span
               @click="showTip(record)"
-              class="bg-gray-400 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded uppercase"
+              :class="'badge badge-' + record.status"
+              class_="bg-gray-400 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded uppercase"
             >
               {{ record.status }}</span
             >
@@ -92,9 +93,9 @@ export default {
       if (record.status == "limbo") {
         tip =
           "This player is in limbo. Because they are not active in any brackets. Don't worry.. nothing wrong with limbo.";
-      } else if (record.status == "active") {
+      } else if (record.status == "In-Bracket") {
         tip =
-          "This player is active in this bracket. They are ready to play their next game!";
+          "This player is active in this bracket. They are ready to play their next game! (Or maybe they are PLAYing their game. I wouldn't know.)";
       } else if (record.status == "eliminated") {
         tip =
           "This player has been eliminated from this bracket. They will not be able to play any more games in this bracket.";

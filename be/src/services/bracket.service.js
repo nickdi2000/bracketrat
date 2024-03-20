@@ -1,5 +1,8 @@
-const { Bracket, Player } = require("../models");
+const { Bracket } = require("../models");
+const { Player } = require("../models/player.model");
 const { schema } = require("../models/token.model");
+
+//what about this large function where it adds many players to the bracket, should i insert the function into the loop?
 
 const generateBracket = async (bracketId) => {
 	let bracket = await Bracket.findById(bracketId);
@@ -38,6 +41,7 @@ const generateBracket = async (bracketId) => {
 	}
 
 	await bracket.save();
+
 	return bracket;
 };
 
@@ -67,37 +71,55 @@ augmentPlayerData = (bracketOriginal) => {
 		return acc;
 	}, {});
 
-	console.log("playerObjectsById", playerObjectsById);
-
 	bracket.rounds.forEach((round, roundIndex) => {
 		round.games.forEach((game) => {
-			console.log("game.player1", game.player1._id);
 			if (game.player1) {
 				const player1 = playerObjectsById[game.player1._id] || {
 					id: game.player1._id,
-					name: game.player1.name || "-",
+					name: game.player1.name || "--",
 				};
 				game.player1 = { ...game.player1, ...player1 };
 			} else {
 				game.player1 = {
 					id: 1,
-					name: "--",
+					name: "NA",
 				};
 			}
 
 			if (game.player2) {
 				const player2 = playerObjectsById[game.player2._id] || {
 					id: game.player2._id,
-					name: game.player2.name || "-",
+					name: game.player2.name || "--",
 				};
 				game.player2 = { ...game.player2, ...player2 };
 			} else {
 				game.player2 = {
 					id: 2,
-					name: "--",
+					name: "NA",
 				};
 			}
 		});
+	});
+
+	if (!bracket.rounds?.length || !bracket.rounds[0]?.games?.length) {
+		return bracket;
+	}
+
+	// we also want to get all the players included in the first round's games (player1 and player2), and then add them to the players in the bracket.players array by setting an inBracket to true
+	const playerIdsInFirstRound = bracket.rounds[0].games.reduce((acc, game) => {
+		if (game.player1) {
+			acc.push(game.player1._id);
+		}
+		if (game.player2) {
+			acc.push(game.player2._id);
+		}
+		return acc;
+	}, []);
+
+	bracket.players.map((player) => {
+		if (playerIdsInFirstRound.includes(player._id)) {
+			player.status = "In-Bracket";
+		}
 	});
 
 	return bracket;

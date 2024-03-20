@@ -2,7 +2,11 @@
   <span class="dark:text-white">
     <Loader v-if="loading" />
     <div class="bracket-container fadein" v-if="rounds.length">
-      <bracket :rounds="rounds" class="bracket z-40">
+      <bracket
+        :rounds="rounds"
+        class="bracket z-40"
+        :key="'bracket-' + compKey"
+      >
         <template #player="{ player }">
           <div
             @click="selectPlayer(player)"
@@ -10,20 +14,20 @@
             :class="!player.name ? 'un-played' : ''"
           >
             {{ player.name }}
+            <!-- <div class="text-xs">{{ player.id }}</div> -->
           </div>
         </template>
         <template #player-extension-bottom="{ match }">
-          <!-- <div class="text-muted uppercase font-bold text-xs text-gray-500">
+          <div class="text-muted uppercase font-bold text-xs text-gray-500">
             {{ match._id }}
-          </div> -->
+          </div>
         </template>
       </bracket>
 
-      <div class="optionDiv fixed bottom-0 left-0 p-8">
-        <button class="btn btn-secondary" @click="_clearBracket()">
-          Clear Bracket
-        </button>
-      </div>
+      <BracketBottomMenu
+        :bracket="currentBracket"
+        @generate="generateBracket"
+      />
 
       <pre v-if="dev" class="text-xs z-50" style="">{{ rounds }}</pre>
     </div>
@@ -38,9 +42,9 @@
         <div class="flex flex-col align-center">
           <a href="#">
             <h5
-              class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+              class="mb-2 ml-5 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
             >
-              {{ currentBracket?.name }}
+              {{ !players.length ? "No Participants" : currentBracket?.name }}
             </h5>
           </a>
 
@@ -62,17 +66,18 @@
           <div v-else>
             <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
               <span v-if="players.length === 0">
-                You have no {{ $teamPlayer }}'s' in this bracket. Add players to
-                generate a bracket.
+                You have no
+                <span class="lowercase">{{ $teamPlayer }}'s</span> in this
+                bracket. Add players to generate a bracket.
               </span>
               <span v-else-if="players.length == 1">
                 You have only one player in this bracket. You can't even play a
                 game, let-alone generate a tournament bracket.
               </span>
               <span v-else>
-                You have only two {{ $teamPlayer }}'s' in this bracket. I don't
-                think you need a bracket for that. Just play a game and see who
-                wins. Add more {{ $teamPlayer }}'s' to generate a bracket.
+                You have only two {{ $teamPlayer }}'s in this bracket. I don't
+                think you need a tournament bracket for that. Just play a game
+                and see who wins.
               </span>
               <br /><br />
               <span
@@ -95,6 +100,11 @@
         <span
           v-for="(p, index) in players"
           :key="p._id"
+          @click="
+            $bottomAlert(
+              `This ${$teamPlayer} will be included in the bracket. `
+            )
+          "
           :style="{ '--delay': index * 0.1 + 's' }"
           class="badge badge-primary opacity-0 fade-in"
         >
@@ -121,7 +131,7 @@
     <PlayerCard
       :player="selectedPlayer"
       :game="selectedGame"
-      @update="selectedPlayer = {}"
+      @update="refresh"
     />
   </span>
 </template>
@@ -132,12 +142,14 @@ import { UsersIcon } from "@heroicons/vue/24/solid";
 import { dummyRounds } from "@/constants/dummyData";
 import { bracketMixin } from "@/mixins/bracketMixin";
 import PlayerCard from "@/components/PlayerCard.vue";
+import BracketBottomMenu from "@/components/BracketBottomMenu.vue";
 
 export default {
   components: {
     Bracket,
     UsersIcon,
     PlayerCard,
+    BracketBottomMenu,
   },
   mixins: [bracketMixin],
   data() {
@@ -147,6 +159,7 @@ export default {
       selectedPlayer: {},
       dev: false,
       selectedGame: {},
+      compKey: 0,
       bracket: {
         rounds: {},
       },
@@ -163,27 +176,16 @@ export default {
     }
   },
   methods: {
-    async _clearBracket() {
-      try {
-        const bracketId = this.$store.getBracket?._id;
-        const rec = await this.$store.clearBracket(bracketId);
-      } catch (error) {
-        console.log("error", error);
-        this.$toast.error("Failed to clear bracket. Contact Support");
-      }
-    },
     viewDummyData() {
       this.showingDummy = !this.showingDummy;
     },
     async generateBracket() {
-      // this.loading = true;
+      this.loading = true;
       try {
         const rec = await this.$api.post(
           `brackets/${this.currentBracket._id}/generate`,
           {}
         );
-        //console.log("recbracket", rec.data.bracket);
-        //const transformedBracket = this._transformBracketData(rec.data.bracket);
         this.bracket = rec.data.bracket;
 
         this.loading = false;
@@ -199,12 +201,10 @@ export default {
       console.log("player", player._id);
       const game = this._findGameByPlayer(player._id);
       this.selectedGame = game;
-
-      const params = {
-        gameId: game?._id,
-        bracketId: this.currentBracket._id,
-        playerId: player.id,
-      };
+    },
+    refresh() {
+      this.selectedPlayer = {};
+      this.compKey++;
     },
   },
   computed: {

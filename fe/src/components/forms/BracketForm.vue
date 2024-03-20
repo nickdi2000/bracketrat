@@ -49,29 +49,35 @@
             </div>
           </div>
 
-          <div>
-            <label class="block text-sm font-medium text-white"
-              >Bracket Type</label
-            >
-            <button
-              class="w-full p-2 text-white font-bold rounded-md hover:bg-blue-500 m-2"
-              :class="form.unit === type.value ? 'bg-blue-500 	' : 'bg-blue-900'"
-              v-for="type in units"
-              :key="type.value"
-              @click="form.unit = type.value"
-            >
-              {{ type.name }}
-            </button>
-          </div>
+          <div class="grid grid-cols-2">
+            <div>
+              <label class="block text-sm font-medium text-white"
+                >Bracket Type</label
+              >
+              <button
+                class="p-2 text-white font-bold rounded-md hover:bg-blue-500 m-2"
+                :class="
+                  form.unit === type.value ? 'bg-blue-500 	' : 'bg-blue-900'
+                "
+                v-for="type in units"
+                :key="type.value"
+                @click="form.unit = type.value"
+              >
+                {{ type.name }}
+              </button>
+            </div>
 
-          <Select
-            v-if="form.unit"
-            class="fadein"
-            label="Sport"
-            :options="sports"
-            v-model="form.sport"
-            placeholder="Select Sport (Optional)"
-          />
+            <div>
+              <Select
+                v-if="form.unit"
+                class="fadein"
+                label="Sport"
+                :options="sports"
+                v-model="form.sport"
+                placeholder="Select Sport (Optional)"
+              />
+            </div>
+          </div>
         </div>
       </div>
       <div v-else>
