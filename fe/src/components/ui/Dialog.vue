@@ -4,9 +4,11 @@
     class="fixed inset-0 bg-gray-800 text-white bg-opacity-75 transition-opacity"
     @click.self="close"
   >
-    <div class="flex items-center justify-center min-h-screen backdrop-blur-sm">
+    <div
+      class="flex items-center justify-center min-h-screen backdrop-blur-sm"
+      style="z-index: 22000"
+    >
       <div
-        style="z-index: 1000"
         class="bg-gray-900 rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full p-4 border border-gray-500"
       >
         <div class="text-left pt-4 pt-3">

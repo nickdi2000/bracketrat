@@ -5,22 +5,44 @@ export const bracketMixin = {
       let foundGame = null;
 
       // Iterate through each round
-      this.rounds.some((round) => {
+      this.rounds.forEach((round) => {
         // Within each round, iterate through each game
-        return round.games.some((game) => {
+        round.games.forEach((game) => {
           // Check both player1 and player2 for a match with the playerId
           if (
             (game.player1 && game.player1.id === playerId) ||
             (game.player2 && game.player2.id === playerId)
           ) {
-            foundGame = game; // If found, store the game object
-            return true; // Stop searching
+            foundGame = game; // Update foundGame each time the player is found
           }
-          return false; // Continue searching
         });
       });
 
-      return foundGame; // Returns the found game or null if not found
+      return foundGame; // Returns the last found game involving the player or null if not found
+    },
+    _findGameByGameId(gameId) {
+      let foundGame = null;
+
+      // Iterate through each round
+      this.rounds.forEach((round) => {
+        // Within each round, iterate through each game
+        round.games.forEach((game) => {
+          // Check both player1 and player2 for a match with the playerId
+          if (game._id === gameId) {
+            foundGame = game; // Update foundGame each time the player is found
+          }
+        });
+      });
+
+      return foundGame; // Returns the last found game involving the player or null if not found
+    },
+    _findRoundIndexByGame(gameId) {
+      console.log("gameId", gameId);
+      return this.rounds.findIndex((round) => {
+        return round.games.some((game) => {
+          return game._id === gameId;
+        });
+      });
     },
   },
 };

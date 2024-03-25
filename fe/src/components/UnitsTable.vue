@@ -1,5 +1,20 @@
 <template>
   <div class="relative overflow-x-auto">
+    <div class="flex justify-end mb-2 fadein" v-if="pendingSave">
+      <div>
+        <div class="text-orange-400 font-bold italic animate-pulse">
+          Save changes when finished.
+        </div>
+        <div class="flex justify-end">
+          <button class="btn btn-success btn-sm" @click="saveChanges()">
+            Save Changes
+          </button>
+          <button class="btn btn-secondary btn-sm mx-2" @click="cancel()">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
     <table
       class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
     >
@@ -9,46 +24,75 @@
         <tr>
           <th scope="col" class="px-6 py-3">Name</th>
           <th scope="col" class="px-6 py-3">Status</th>
-          <th scope="col" class="px-6 py-3">Strength</th>
           <th scope="col" class="px-6 py-3">Score</th>
+          <th scope="col" class="px-6 py-3">Strength</th>
           <th scope="col" class="px-6 py-3">Actions</th>
         </tr>
       </thead>
-      <tbody>
-        <tr
-          v-for="record in records"
-          :key="record.name + '-name'"
-          class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-        >
-          <th
-            scope="row"
-            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+      <draggable
+        v-model="rows"
+        :list="rows"
+        tag="tbody"
+        class="w-full"
+        @start="drag = true"
+        @end="handleEnd"
+        item-key="name"
+      >
+        <template #item="{ element }">
+          <tr
+            :key="element.name + '-name'"
+            class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 w-full"
           >
-            {{ record.name }}
-          </th>
-          <td class="px-6 py-4">
-            <span
-              @click="showTip(record)"
-              :class="'badge badge-' + record.status"
-              class_="bg-gray-400 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded uppercase"
+            <th
+              scope="row"
+              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
             >
-              {{ record.status }}</span
-            >
-          </td>
-          <td class="px-6 py-4">-</td>
-          <td class="px-6 py-4">-</td>
-          <td class="px-6 py-4">
-            <button
-              type="button"
-              @click="destroy(record)"
-              class="text-red-400 rounded-md bg-gray-900 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium text-sm px-2 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:border-gray-700 me-2"
-            >
-              <TrashIcon class="w-6 h-6" />
-            </button>
-          </td>
-        </tr>
-      </tbody>
+              {{ element.name }}
+            </th>
+            <td class="px-6 py-4">
+              <span
+                @click="showTip(element)"
+                :class="'badge badge-' + element.status"
+                class_="bg-gray-400 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded uppercase"
+              >
+                {{ element.status }}</span
+              >
+            </td>
+            <td class="px-6 py-4">-</td>
+            <td class="px-6 py-4">
+              <span
+                v-if="element.strength"
+                :class="
+                  pendingSave
+                    ? 'animate-pulse font-bold italic text-lg text-orange-400'
+                    : ''
+                "
+                >{{ element.strength }}</span
+              >
+              <span
+                v-else
+                class="text-lg font-bold hover:text-blue-800 cursor-pointer"
+                @click="
+                  $bottomAlert(
+                    `All ${$teamPlayer}'s are weighted the same. Drag to manually re-order the ${$teamPlayer}'s strength`
+                  )
+                "
+                >∞</span
+              >
+            </td>
+            <td class="px-6 py-4">
+              <button
+                type="button"
+                @click="destroy(element)"
+                class="text-red-400 rounded-md bg-gray-900 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium text-sm px-2 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:border-gray-700 me-2"
+              >
+                <TrashIcon class="w-6 h-6" />
+              </button>
+            </td></tr
+        ></template>
+      </draggable>
     </table>
+
     <div class="py-3 flex flex-col items-center">
       <button
         @click="removeAll()"
@@ -61,17 +105,43 @@
 </template>
 
 <script>
-import bottomAlert from "@/services/bottom.alert.service";
+import draggable from "vuedraggable";
 
 export default {
-  components: {},
+  components: { draggable },
   props: {
     records: {
       type: Array,
       required: true,
     },
   },
+  data() {
+    return {
+      drag: false,
+      pendingSave: false,
+      rows: this.records,
+    };
+  },
   methods: {
+    saveChanges() {
+      this.pendingSave = false;
+      //this.$store.setPlayers(this.rows);
+    },
+    cancel() {
+      this.pendingSave = false;
+      //this.rows = this.records;
+    },
+    async handleEnd() {
+      if (this.drag) {
+        this.drag = false;
+        //assign stengths based on reverse order(index) (last player is strongest)
+        this.rows.forEach((player, index) => {
+          player.strength = this.rows.length - index;
+        });
+        this.pendingSave = true;
+        return;
+      }
+    },
     async destroy(record) {
       const ask = await this.$openDialog("Delete Player?");
 

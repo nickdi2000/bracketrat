@@ -44,10 +44,17 @@ body {
   @apply bg-green-600 hover:bg-green-500 focus:outline-green-200;
 }
 
+.btn-warning {
+  @apply bg-yellow-600 hover:bg-yellow-500 focus:outline-none;
+}
+
 .btn-lg {
   @apply px-4 py-2 text-2xl;
 }
 
+.btn-block {
+  @apply w-full text-2xl py-3 font-bold;
+}
 /* Tailwind CSS classes */
 .badge {
   @apply text-sm uppercase font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300 inline-block;
@@ -63,6 +70,30 @@ body {
 
 .badge-limbo {
   @apply bg-yellow-900 text-orange-200 border-2 border-orange-700;
+}
+
+.badge-lg {
+  @apply text-lg bg-blue-900 text-blue-200 border-2 border-blue-800 p-4 uppercase font-bold;
+}
+
+.badge-success {
+  @apply bg-green-900 text-green-200 border-2 border-green-800;
+}
+
+.badge-danger {
+  @apply bg-red-900 text-red-200 border-2 border-red-800;
+}
+
+.alert {
+  @apply px-4 py-3 rounded-lg;
+}
+
+.alert-success {
+  @apply bg-gray-700 text-green-300 uppercase border border-2 border-green-700;
+}
+
+.subtitle {
+  @apply text-xs uppercase opacity-70;
 }
 
 @keyframes fadeIn {

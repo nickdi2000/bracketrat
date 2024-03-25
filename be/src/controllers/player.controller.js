@@ -1,8 +1,10 @@
 // controllers/MessageController.js
 const { Bracket } = require("../models");
 const { Player } = require("../models/player.model");
+const { bracketService } = require("../services");
 const catchAsync = require("../utils/catchAsync");
 
+//insert into player list (not directly into bracket)
 const insertPlayer = async (req, res) => {
 	const { name, bracketId } = req.body;
 	console.log("bracketId", bracketId);
@@ -17,7 +19,8 @@ const insertPlayer = async (req, res) => {
 		const playerExists = bracket.players.some((player) => player.name === name);
 		if (playerExists) {
 			return res.status(400).json({
-				message: "Player with this name already exists in the bracket",
+				message:
+					"Player with this name already exists in the bracket. Please choose a different name or add an initial/last-name",
 			});
 		}
 
@@ -29,10 +32,12 @@ const insertPlayer = async (req, res) => {
 		bracket.players.push(newPlayer);
 		await bracket.save();
 
+		let augmentedBracket = bracketService.augmentPlayerData(bracket);
+
 		res.status(201).json({
 			message: "Player added successfully",
 			newPlayer,
-			players: bracket.players,
+			players: augmentedBracket.players,
 		});
 	} catch (error) {
 		console.error("Error adding player to bracket:", error);

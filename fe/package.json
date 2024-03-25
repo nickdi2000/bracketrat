@@ -3,12 +3,14 @@
   "version": "0.0.0",
   "scripts": {
     "build": "vite build",
-    "dev": "vite --host",
+    "dev": "vite --force --host",
     "lint": "pnpm run lint:js && pnpm run lint:style",
     "lint:fix": "pnpm run lint:js -- --fix && pnpm run lint:style -- --fix",
     "lint:js": "eslint --ext .js,.vue --ignore-path .gitignore src",
     "lint:style": "stylelint **/*.{vue,css} --ignore-path .gitignore",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "postinstall": "patch-package",
+    "prepare": "patch-package"
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.19",
@@ -18,6 +20,7 @@
     "brackets-manager": "^1.6.4",
     "flowbite": "^2.3.0",
     "flowbite-vue": "^0.1.3",
+    "patch-package": "^8.0.0",
     "pinia": "^2.1.7",
     "pinia-plugin-persist": "^1.0.0",
     "qrcode-vue3": "^1.6.8",
@@ -29,6 +32,7 @@
     "vue-tournament": "^1.1.1",
     "vue-tournament-bracket": "^3.0.0",
     "vue3-google-map": "^0.19.0",
+    "vuedraggable": "^4.1.0",
     "vuex": "^4.1.0"
   },
   "devDependencies": {

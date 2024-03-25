@@ -1,0 +1,122 @@
+diff --git a/node_modules/vue-tournament-bracket/dist/vue-tournament-bracket.common.js b/node_modules/vue-tournament-bracket/dist/vue-tournament-bracket.common.js
+index 1d93a59..bbaa65e 100644
+--- a/node_modules/vue-tournament-bracket/dist/vue-tournament-bracket.common.js
++++ b/node_modules/vue-tournament-bracket/dist/vue-tournament-bracket.common.js
+@@ -5,10 +5,6 @@
+ /***/ (function(module, exports) {
+ 
+ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// addapted from the document.currentScript polyfill by Adam Miller
+-// MIT license
+-// source: https://github.com/amiller-gh/currentScript-polyfill
+-
+-// added support for Firefox https://bugzilla.mozilla.org/show_bug.cgi?id=1620505
+ 
+ (function (root, factory) {
+   if (true) {
+@@ -5670,6 +5666,7 @@ var _hoisted_1 = {
+ };
+ function render(_ctx, _cache, $props, $setup, $data, $options) {
+   var _component_bracket_node = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.resolveComponent)("bracket-node");
++
+   return $options.recursiveBracket ? ((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", _hoisted_1, [(0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createVNode)(_component_bracket_node, {
+     "bracket-node": $options.recursiveBracket,
+     onOnSelectedPlayer: $options.highlightPlayer,
+@@ -5678,8 +5675,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
+   }, {
+     player: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.withCtx)(function (_ref) {
+       var player = _ref.player;
++      //const matchData = findMatchForPlayer(player); 
++
+       return [(0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.renderSlot)(_ctx.$slots, "player", {
+-        player: player
++        player: player,
++       // matchData: matchData, 
++       // matchData: matchData
+       })];
+     }),
+     "player-extension-bottom": (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.withCtx)(function (_ref2) {
+@@ -5697,6 +5698,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
+ 
+ 
+ 
++
+ var BracketNodevue_type_template_id_3c68116a_hoisted_1 = {
+   key: 0,
+   class: "vtb-item"
+@@ -5727,7 +5729,7 @@ function BracketNodevue_type_template_id_3c68116a_render(_ctx, _cache, $props, $
+     player: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.withCtx)(function (_ref) {
+       var player = _ref.player;
+       return [(0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.renderSlot)(_ctx.$slots, "player", {
+-        player: player
++        player:  {"ref-match": _ref.match , ...player},
+       })];
+     }),
+     "player-extension-bottom": (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.withCtx)(function (_ref2) {
+@@ -5745,8 +5747,9 @@ function BracketNodevue_type_template_id_3c68116a_render(_ctx, _cache, $props, $
+   }, {
+     player: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.withCtx)(function (_ref3) {
+       var player = _ref3.player;
++      var match = _ref3.match;
+       return [(0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.renderSlot)(_ctx.$slots, "player", {
+-        player: player
++        player: { "matcherr" :match, ...player }
+       })];
+     }),
+     "player-extension-bottom": (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.withCtx)(function (_ref4) {
+@@ -5765,7 +5768,7 @@ function BracketNodevue_type_template_id_3c68116a_render(_ctx, _cache, $props, $
+     player: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.withCtx)(function (_ref5) {
+       var player = _ref5.player;
+       return [(0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.renderSlot)(_ctx.$slots, "player", {
+-        player: player
++        player:  {"matchesx": $options.recursiveBracket, ...player},
+       })];
+     }),
+     "player-extension-bottom": (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.withCtx)(function (_ref6) {
+diff --git a/node_modules/vue-tournament-bracket/src/components/BracketNode.vue b/node_modules/vue-tournament-bracket/src/components/BracketNode.vue
+index b7401be..8ffb0d1 100755
+--- a/node_modules/vue-tournament-bracket/src/components/BracketNode.vue
++++ b/node_modules/vue-tournament-bracket/src/components/BracketNode.vue
+@@ -1,5 +1,6 @@
+ <template>
+     <div class="vtb-item" v-if="playersArePresent">
++        <h1>TESTER</h1>
+         <div :class="getBracketNodeClass(bracketNode)">
+             <game-players
+                 :bracket-node="bracketNode"
+@@ -17,6 +18,7 @@
+         </div>
+ 
+         <div v-if="bracketNode.games[0] || bracketNode.games[1]" class="vtb-item-children">
++            <h1>TESTER</h1>
+             <div class="vtb-item-child" v-if="bracketNode.games[0]">
+                 <bracket-node
+                     :bracket-node="bracketNode.games[0]"
+@@ -33,6 +35,7 @@
+                 </bracket-node>
+             </div>
+             <div class="vtb-item-child" v-if="bracketNode.games[1]">
++                <h1>TESTER</h1>
+                 <bracket-node
+                     :bracket-node="bracketNode.games[1]"
+                     :highlighted-player-id="highlightedPlayerId"
+diff --git a/node_modules/vue-tournament-bracket/src/components/GamePlayers.vue b/node_modules/vue-tournament-bracket/src/components/GamePlayers.vue
+index b2fda24..3f3cd35 100755
+--- a/node_modules/vue-tournament-bracket/src/components/GamePlayers.vue
++++ b/node_modules/vue-tournament-bracket/src/components/GamePlayers.vue
+@@ -1,6 +1,7 @@
+ <template>
+     <div class="vtb-item-players">
+         <div>
++            <h1>TESTER</h1>
+             <div
+                 :class="['vtb-player', 'vtb-player1', getPlayerClass(bracketNode.player1)]"
+                 @mouseover="highlightPlayer(bracketNode.player1.id)"
+@@ -13,7 +14,7 @@
+                 :class="['vtb-player', 'vtb-player2', getPlayerClass(bracketNode.player2)]"
+                 @mouseover="highlightPlayer(bracketNode.player2.id)"
+                 @mouseleave="unhighlightPlayer"
+-            >
++            >  <h1>TESTER</h1>
+                 <slot :player="bracketNode.player2" name="player" />
+             </div>
+         </div>

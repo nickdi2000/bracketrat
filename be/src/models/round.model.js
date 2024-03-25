@@ -6,6 +6,7 @@ const playerGameDetailsSchema = new mongoose.Schema(
 		player: { type: mongoose.Schema.Types.ObjectId, ref: "Player" },
 		score: { type: Number, default: 0 },
 		winner: { type: Boolean, default: null },
+		filled: { type: Boolean, default: false },
 	},
 	{
 		timestamps: true,
@@ -32,6 +33,7 @@ const gameSchema = new mongoose.Schema({
 		default: "pending",
 	},
 	scheduledDate: { type: Date, required: false },
+	nextGameId: { type: mongoose.Schema.Types.ObjectId, ref: "Game" },
 	// Additional fields to represent game details (scores, status, etc.)
 });
 

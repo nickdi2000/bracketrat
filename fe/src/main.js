@@ -29,7 +29,18 @@ const router = createRouter({
 import Loader from "@/components/Loader.vue";
 import ProgressBar from "@/components/ProgressBar.vue";
 
-import { TrashIcon, PlayCircleIcon } from "@heroicons/vue/24/solid";
+import {
+  TrashIcon,
+  PlayCircleIcon,
+  CheckCircleIcon,
+  ArrowLeftStartOnRectangleIcon,
+  HandThumbDownIcon,
+  ArrowRightCircleIcon,
+  ArrowLeftCircleIcon,
+  ArrowLongRightIcon,
+  ArrowLongLeftIcon,
+  ArrowUturnDownIcon,
+} from "@heroicons/vue/24/solid";
 
 import piniaPlugin from "./plugins/pinia";
 import { authStore } from "./store/auth";
@@ -66,6 +77,14 @@ app.component("ProgressBar", ProgressBar);
 //icons
 app.component("TrashIcon", TrashIcon);
 app.component("PlayCircleIcon", PlayCircleIcon);
+app.component("CheckCircleIcon", CheckCircleIcon);
+app.component("BackwardsIcon", ArrowLeftStartOnRectangleIcon);
+app.component("HandThumbDownIcon", HandThumbDownIcon);
+app.component("ArrowRightCircleIcon", ArrowRightCircleIcon);
+app.component("ArrowLongRightIcon", ArrowLongRightIcon);
+app.component("ArrowLeftCircleIcon", ArrowLeftCircleIcon);
+app.component("ArrowLongLeftIcon", ArrowLongLeftIcon);
+app.component("ArrowUturnDownIcon", ArrowUturnDownIcon);
 
 app.use(router);
 

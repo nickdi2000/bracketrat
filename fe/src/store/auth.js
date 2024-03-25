@@ -130,6 +130,9 @@ export const authStore = defineStore({
     check() {
       return this.user !== null || localStorage.getItem("user") !== null;
     },
+    getRounds() {
+      return this.rounds ?? [];
+    },
     getToken() {
       return this.tokens?.access?.token || null;
     },

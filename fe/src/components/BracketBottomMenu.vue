@@ -24,6 +24,32 @@
     <div class="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
       <button
         type="button"
+        @click="toggleView()"
+        class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="w-6 h-6"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z"
+          />
+        </svg>
+
+        <span
+          class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
+          ><span class="hidden md:inline">Toggle</span> View</span
+        >
+      </button>
+
+      <button
+        type="button"
         @click="generate()"
         class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
       >
@@ -139,8 +165,15 @@ export default {
   },
   emits: ["generate"],
   methods: {
-    generate() {
+    async generate() {
+      const ask = await this.$openDialog(
+        "Re-Generate Bracket?",
+        "This will overwrite the existing bracket. Any existing info on matches won/lost will be lost."
+      );
       this.$emit("generate");
+    },
+    toggleView() {
+      this.$emit("toggleView");
     },
     toggle() {
       this.show = !this.show;
@@ -179,7 +212,7 @@ export default {
 }
 
 .fadeInUp {
-  animation: fadeInUp 0.5s ease-in-out;
+  animation: fadeInUp 0.3s ease-in-out;
 }
 
 @keyframes fadeInUp {

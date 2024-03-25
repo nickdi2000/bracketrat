@@ -32,4 +32,12 @@ router.post("/:bracketId/clear", (req, res, next) => {
 	bracketController.clearBracket(req, res, next);
 });
 
+router.post("/:bracketId/remove-player-from-game", (req, res, next) => {
+	bracketController.removePlayerFromGame(req, res, next);
+});
+
+router.post("/:bracketId/undo-outcomes", (req, res, next) => {
+	bracketController.undoOutcomes(req, res, next);
+});
+
 module.exports = router;

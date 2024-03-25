@@ -1,32 +1,43 @@
 <template>
   <span class="dark:text-white">
     <Loader v-if="loading" />
+    <div v-if="playersNotInBracket?.length">
+      <PlayerBadges :players="playersNotInBracket" />
+    </div>
     <div class="bracket-container fadein" v-if="rounds.length">
       <bracket
         :rounds="rounds"
-        class="bracket z-40"
+        class="bracket z-40-"
         :key="'bracket-' + compKey"
+        v-if="view == 'bracket'"
       >
         <template #player="{ player }">
           <div
             @click="selectPlayer(player)"
             class="player-box text-lg"
-            :class="!player.name ? 'un-played' : ''"
+            :class="!player?.name ? 'un-played' : 'swift-in-left'"
           >
             {{ player.name }}
-            <!-- <div class="text-xs">{{ player.id }}</div> -->
+            <div class="text-xs" v-if="dev">{{ player.id }}</div>
           </div>
         </template>
         <template #player-extension-bottom="{ match }">
-          <div class="text-muted uppercase font-bold text-xs text-gray-500">
-            {{ match._id }}
+          <div
+            class="text-muted uppercase font-bold text-xs text-gray-500"
+            v-if="dev"
+          >
+            {{ match?._id }}
           </div>
         </template>
       </bracket>
+      <div v-else>
+        <BracketList :rounds="rounds" />
+      </div>
 
       <BracketBottomMenu
         :bracket="currentBracket"
         @generate="generateBracket"
+        @toggleView="toggleView"
       />
 
       <pre v-if="dev" class="text-xs z-50" style="">{{ rounds }}</pre>
@@ -138,11 +149,14 @@
 
 <script>
 import Bracket from "vue-tournament-bracket";
+
 import { UsersIcon } from "@heroicons/vue/24/solid";
 import { dummyRounds } from "@/constants/dummyData";
 import { bracketMixin } from "@/mixins/bracketMixin";
 import PlayerCard from "@/components/PlayerCard.vue";
 import BracketBottomMenu from "@/components/BracketBottomMenu.vue";
+import BracketList from "@/components/BracketList.vue";
+import PlayerBadges from "@/components/PlayerBadges.vue";
 
 export default {
   components: {
@@ -150,6 +164,8 @@ export default {
     UsersIcon,
     PlayerCard,
     BracketBottomMenu,
+    BracketList,
+    PlayerBadges,
   },
   mixins: [bracketMixin],
   data() {
@@ -160,6 +176,7 @@ export default {
       dev: false,
       selectedGame: {},
       compKey: 0,
+      view: "bracket", // bracket, json
       bracket: {
         rounds: {},
       },
@@ -176,6 +193,9 @@ export default {
     }
   },
   methods: {
+    toggleView() {
+      this.view = this.view === "bracket" ? "list" : "bracket";
+    },
     viewDummyData() {
       this.showingDummy = !this.showingDummy;
     },
@@ -198,18 +218,29 @@ export default {
     selectPlayer(player) {
       //console.log("selected player", player);
       this.selectedPlayer = player;
-      console.log("player", player._id);
       const game = this._findGameByPlayer(player._id);
       this.selectedGame = game;
+      console.log("game", player.gameId, "r", player.roundIndex);
     },
     refresh() {
       this.selectedPlayer = {};
-      this.compKey++;
+      //this.compKey++;
     },
   },
   computed: {
     players() {
       return this.$store.players;
+    },
+    playersNotInBracket() {
+      const playersArray = JSON.parse(JSON.stringify(this.players));
+      return playersArray.filter(
+        (p) =>
+          !this.rounds.some((r) =>
+            r.games.some(
+              (g) => g.player1.id === p._id || g.player2.id === p._id
+            )
+          )
+      );
     },
     currentBracket() {
       return this.$store.getBracket;
@@ -265,6 +296,35 @@ export default {
   padding: 10px;
   font-weight: bolder;
   text-transform: uppercase;
+  font-size: 1.4rem;
+
+  animation: fadeInLeft 0.5s ease-out forwards;
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.swift-in-left {
+  animation: swiftInLeft 0.5s ease-out forwards;
+}
+
+@keyframes swiftInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .vtb-item {
@@ -297,17 +357,15 @@ p {
   background-color: transparent !important;
 }
 
-.vtb-item-players {
-  padding: 2px;
-}
-
 .vtb-player {
   padding: 20px;
   width: 200px;
+  border: 0.5px solid #262626;
+  box-shadow: 10px 5px 5px rgb(48, 50, 51);
   border-radius: 10px;
   margin-bottom: 12px;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, background-color 1.4s;
   background-color: rgb(44, 60, 91);
 }
 
@@ -316,20 +374,28 @@ p {
   box-shadow: 0 0 10px 0 rgba(255, 255, 255, 0.5);
 }
 
+.vtb-item-players {
+  padding: 2px;
+  transition: filter 2s ease-in-out !important;
+}
+
 .vtb-item-players .winner {
-  background-color: rgb(85, 95, 54);
+  // filter: hue-rotate(342deg);
+  background-color: rgb(46, 113, 78) !important;
 }
 
 .winner {
-  background-color: rgb(90, 116, 75) !important;
+  // background-color: rgb(90, 116, 75) !important;
+  // filter: hue-rotate(342deg) !important;
 }
 
 .vtb-item-players .defeated {
   background-color: rgb(99, 59, 59) !important;
+  text-decoration: line-through;
 }
 
 .vtb-item-players .winner.highlight {
-  background-color: darkseagreen;
+  background-color: rgb(58, 138, 54);
 }
 
 .vtb-item-players .defeated.highlight {
@@ -337,7 +403,7 @@ p {
 }
 
 .vtb-item-players {
-  background-color: rgb(160, 103, 4);
+  //background-color: rgb(160, 103, 4);
 }
 
 .vtb-item-parent:after {
@@ -407,6 +473,11 @@ p {
     #32324b 0,
     #4f598d 50%
   );
+}
+
+.bracket-winner {
+  background-color: rgb(9, 178, 91) !important;
+  transform: scale(1.3);
 }
 
 /* smaller screens @ media */
