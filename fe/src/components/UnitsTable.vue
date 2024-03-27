@@ -92,7 +92,11 @@
         ></template>
       </draggable>
     </table>
-
+    <div class="table-footer">
+      <div v-if="records.length > 4" class="subheader py-2 flex justify-start">
+        Total: {{ records.length }}
+      </div>
+    </div>
     <div class="py-3 flex flex-col items-center">
       <button
         @click="removeAll()"

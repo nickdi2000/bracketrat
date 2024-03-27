@@ -26,7 +26,7 @@
                 /><span v-else> of Bracket! </span>
               </button>
 
-              <div>
+              <div v-if="player.roundIndex">
                 <button
                   class="btn btn-secondary btn-block mt-3"
                   @click="removePlayerFromGame()"
@@ -91,7 +91,10 @@
         </div>
 
         <div v-else class="text-center">
-          <p class="p-3">Nothing to see here. Waiting on previous round...</p>
+          <p class="p-3" v-if="player.roundIndex">
+            Nothing to see here. Waiting on previous round...
+          </p>
+          <p class="p-3" v-else>Opponent gets a BYE for this round.</p>
           <button @click="$emit('update', false)" class="btn btn-secondary">
             Okay..
           </button>

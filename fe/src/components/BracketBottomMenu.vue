@@ -1,6 +1,6 @@
 <template>
   <div v-if="!show" class="botton-nav-btn p-3">
-    <button class="btn btn-secondary" @click="showNav">
+    <button class="btn btn-primary" @click="showNav">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"

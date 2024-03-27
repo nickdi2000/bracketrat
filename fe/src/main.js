@@ -40,6 +40,7 @@ import {
   ArrowLongRightIcon,
   ArrowLongLeftIcon,
   ArrowUturnDownIcon,
+  PencilSquareIcon,
 } from "@heroicons/vue/24/solid";
 
 import piniaPlugin from "./plugins/pinia";
@@ -85,6 +86,7 @@ app.component("ArrowLongRightIcon", ArrowLongRightIcon);
 app.component("ArrowLeftCircleIcon", ArrowLeftCircleIcon);
 app.component("ArrowLongLeftIcon", ArrowLongLeftIcon);
 app.component("ArrowUturnDownIcon", ArrowUturnDownIcon);
+app.component("PencilSquareIcon", PencilSquareIcon);
 
 app.use(router);
 

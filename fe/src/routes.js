@@ -8,6 +8,7 @@ import Profile from "@/pages/profile.vue";
 import Brackets from "@/pages/brackets.vue";
 import DashLayout from "./layouts/DashLayout.vue";
 import BracketEdit from "@/pages/bracket.vue";
+import Landing from "@/pages/landing.vue";
 
 export const routes = [
   {
@@ -40,6 +41,7 @@ export const routes = [
     path: "/auth",
     component: AuthLayout,
     children: [
+      { path: "/landing", name: "landing", component: Landing },
       { path: "/login", name: "login", component: Login },
 
       {

@@ -7,35 +7,73 @@ const generateBracket = async (bracketId) => {
 	}
 
 	const totalPlayers = bracket.players.length;
-	const totalRoundsNeeded = Math.ceil(Math.log2(totalPlayers));
+	const nextPowerOfTwo = Math.pow(2, Math.ceil(Math.log2(totalPlayers)));
+	const numberOfByes = nextPowerOfTwo - totalPlayers;
+	const totalRoundsNeeded = Math.log2(nextPowerOfTwo);
 
 	bracket.rounds = [];
 
+	// Prepare initial round with potential byes
 	const initialGames = [];
-	for (let i = 0; i < totalPlayers; i += 2) {
+	let autoAdvancePlayers = []; // Store players who auto-advance due to a bye
+	for (
+		let i = 0, playersAssigned = 0, byesAssigned = 0;
+		playersAssigned < totalPlayers;
+
+	) {
+		const player1 = bracket.players[playersAssigned++];
+		let player2 = null;
+		let gameStatus = "pending";
+
+		if (byesAssigned < numberOfByes) {
+			byesAssigned++;
+			gameStatus = "completed"; // Mark as completed due to bye
+			player1.filled = true;
+			autoAdvancePlayers.push(player1); // This player advances automatically
+		} else {
+			player2 = bracket.players[playersAssigned++]; // Assign the next player
+		}
+
 		initialGames.push({
-			status: "pending",
-			player1: bracket.players[i]
-				? { ...bracket.players[i], winner: false }
-				: null,
-			player2: bracket.players[i + 1]
-				? { ...bracket.players[i + 1], winner: false }
-				: null,
+			status: gameStatus,
+
+			player1: {
+				...player1,
+				winner: gameStatus === "completed",
+				bye: gameStatus === "completed",
+				filled: true,
+			},
+			player2: player2 ? { ...player2, winner: false, filled: true } : null,
 		});
 	}
 	bracket.rounds.push({ games: initialGames, roundNumber: 1 });
 
+	// Subsequent rounds, ensuring players who advanced are placed correctly
+	let nextRoundGames = autoAdvancePlayers; // Start with players who auto-advanced
+
 	for (let roundNumber = 2; roundNumber <= totalRoundsNeeded; roundNumber++) {
 		const gamesInThisRound = Math.pow(2, totalRoundsNeeded - roundNumber);
-		const blankGames = Array.from({ length: gamesInThisRound }).map(() => ({
-			status: "pending",
-			player1: { id: 0, winner: false },
-			player2: { id: 1, winner: false },
-		}));
-		bracket.rounds.push({ games: blankGames, roundNumber });
+		const games = Array.from({ length: gamesInThisRound }).map((_, index) => {
+			// Check if there are auto-advanced players to be placed in this game
+			let player1 =
+				nextRoundGames.length > index * 2 ? nextRoundGames[index * 2] : null;
+			let player2 =
+				nextRoundGames.length > index * 2 + 1
+					? nextRoundGames[index * 2 + 1]
+					: null;
+
+			return {
+				status: "pending",
+				player1: player1 ? { ...player1, winner: false, filled: true } : null,
+				player2: player2 ? { ...player2, winner: false, filled: true } : null,
+			};
+		});
+
+		nextRoundGames = []; // Reset for the next iteration (if any)
+		bracket.rounds.push({ games, roundNumber });
 	}
 
-	//insert the nextGameId into each rounds games
+	// Assign nextGameId here if necessary. Note: This part may need adjustment based on your schema and needs.
 	for (let i = 0; i < bracket.rounds.length; i++) {
 		for (let j = 0; j < bracket.rounds[i].games.length; j++) {
 			if (i < bracket.rounds.length - 1) {
@@ -45,8 +83,9 @@ const generateBracket = async (bracketId) => {
 		}
 	}
 
-	await bracket.save();
+	bracket.markModified("rounds");
 
+	await bracket.save();
 	return bracket;
 };
 
@@ -112,20 +151,24 @@ removePlayerFromGame = async (bracketId, gameId, playerId, roundIndex) => {
 
 				if (previousGame) {
 					console.log("previousGame id: ", previousGame._id);
-					previousGame.player1.winner = null;
-					previousGame.player2.winner = null;
-					// const isPlayer1 =
-					// 	previousGame.player1 &&
-					// 	previousGame.player1._id.toString() === playerId;
-					// const isPlayer2 =
-					// 	previousGame.player2 &&
-					// 	previousGame.player2._id.toString() === playerId;
+					//previousGame.player1.winner = null;
+					//previousGame.player2.winner = null;
+					const isPlayer1 =
+						previousGame.player1 &&
+						previousGame.player1._id.toString() === playerId;
+					const isPlayer2 =
+						previousGame.player2 &&
+						previousGame.player2._id.toString() === playerId;
 
-					// if (isPlayer1 || isPlayer2) {
-					// 	// If the playerId matches either player1 or player2, set both to null.
-					// 	previousGame.player1.winner = null;
-					// 	previousGame.player2.winner = null;
-					// }
+					if (isPlayer1 || isPlayer2) {
+						// If the playerId matches either player1 or player2, set both to null.
+						if (previousGame.player1) {
+							previousGame.player1.winner = null;
+						}
+						if (previousGame.player2) {
+							previousGame.player2.winner = null;
+						}
+					}
 				} else {
 					throw new Error("Previous game not found");
 				}
@@ -258,6 +301,9 @@ augmentPlayerData = (bracketOriginal) => {
 			game.player2.gameId = game._id;
 			game.player1.roundIndex = roundIndex;
 			game.player2.roundIndex = roundIndex;
+
+			game.player1.filled = game.player1.name ? true : false;
+			game.player2.filled = game.player2.name ? true : false;
 		});
 	});
 

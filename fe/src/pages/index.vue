@@ -2,7 +2,7 @@
   <span class="dark:text-white">
     <Loader v-if="loading" />
     <div v-if="playersNotInBracket?.length">
-      <PlayerBadges :players="playersNotInBracket" />
+      <PlayerBadges :players="playersNotInBracket" v-if="!showingDummy" />
     </div>
     <div class="bracket-container fadein" v-if="rounds.length">
       <bracket
@@ -18,7 +18,7 @@
             :class="!player?.name ? 'un-played' : 'swift-in-left'"
           >
             {{ player.name }}
-            <div class="text-xs" v-if="dev">{{ player.id }}</div>
+            <div class="text-xs" v-if="false">F:{{ player.filled }}</div>
           </div>
         </template>
         <template #player-extension-bottom="{ match }">
@@ -59,48 +59,11 @@
             </h5>
           </a>
 
-          <div v-if="players.length > 2" class="flex flex-col items-center">
-            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
-              You have {{ players.length }} players in this bracket. Click below
-              to generate the bracket with these players.
-            </p>
-
-            <button
-              @click="generateBracket"
-              class="inline-flex self-center align-self-center bg-blue-500 px-3 py-2 text-lg font-medium text-center text-white rounded-lg hover:bg-teal-800 focus:ring-4 hover:scale-105 duration-100 focus:outline-none focus:ring-blue-300 dark:hover:bg-teal-700 dark:focus:ring-blue-800"
-            >
-              Generate Bracket
-              <PlayCircleIcon class="h-6 w-6 inline ml-1 animate-pulse" />
-            </button>
-          </div>
-
-          <div v-else>
-            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
-              <span v-if="players.length === 0">
-                You have no
-                <span class="lowercase">{{ $teamPlayer }}'s</span> in this
-                bracket. Add players to generate a bracket.
-              </span>
-              <span v-else-if="players.length == 1">
-                You have only one player in this bracket. You can't even play a
-                game, let-alone generate a tournament bracket.
-              </span>
-              <span v-else>
-                You have only two {{ $teamPlayer }}'s in this bracket. I don't
-                think you need a tournament bracket for that. Just play a game
-                and see who wins.
-              </span>
-              <br /><br />
-              <span
-                >Please
-                <router-link
-                  class="text-teal-500 underline font-bold"
-                  :to="'/players'"
-                  >add more {{ $teamPlayer }}'s</router-link
-                ></span
-              >
-            </p>
-          </div>
+          <BracketGenerator
+            :players="players"
+            v-if="players.length > 2"
+            @generateBracket="generateBracket"
+          />
         </div>
       </div>
 
@@ -123,17 +86,17 @@
         </span>
       </div>
 
-      <div class="py-5 fixed bottom-10" v-if="!showingDummy">
+      <div class="m-8 fixed bottom-0 left-0" v-if="!showingDummy">
         <button
-          class="p-2 bg-teal-900 text-white rounded-md"
+          class="p-2 bg-teal-900 text-white rounded-md hover:bg-teal-600"
           @click="viewDummyData"
         >
           Load Sample Data <users-icon class="inline h-6 w-6" />
         </button>
       </div>
     </div>
-    <div class="fixed bottom-0 right-0 m-8 z-50" v-if="showingDummy">
-      <button class="btn btn-secondary" @click="showingDummy = !showingDummy">
+    <div class="fixed bottom-0 left-0 m-8 z-50" v-if="showingDummy">
+      <button class="btn btn-primary" @click="showingDummy = !showingDummy">
         <TrashIcon class="h-6 w-6 inline" />
         Clear Dummy Data
       </button>
@@ -157,6 +120,8 @@ import PlayerCard from "@/components/PlayerCard.vue";
 import BracketBottomMenu from "@/components/BracketBottomMenu.vue";
 import BracketList from "@/components/BracketList.vue";
 import PlayerBadges from "@/components/PlayerBadges.vue";
+import BracketWarnings from "@/components/BracketWarnings.vue";
+import BracketGenerator from "@/components/BracketGenerator.vue";
 
 export default {
   components: {
@@ -166,6 +131,8 @@ export default {
     BracketBottomMenu,
     BracketList,
     PlayerBadges,
+    BracketWarnings,
+    BracketGenerator,
   },
   mixins: [bracketMixin],
   data() {
@@ -207,6 +174,7 @@ export default {
           {}
         );
         this.bracket = rec.data.bracket;
+        this.$store.setRounds(rec.data.bracket.rounds);
 
         this.loading = false;
       } catch (error) {
@@ -220,7 +188,7 @@ export default {
       this.selectedPlayer = player;
       const game = this._findGameByPlayer(player._id);
       this.selectedGame = game;
-      console.log("game", player.gameId, "r", player.roundIndex);
+      console.log("game", player.gameId, "roundIndex", player.roundIndex);
     },
     refresh() {
       this.selectedPlayer = {};
@@ -232,6 +200,9 @@ export default {
       return this.$store.players;
     },
     playersNotInBracket() {
+      if (!this.rounds?.length) {
+        return [];
+      }
       const playersArray = JSON.parse(JSON.stringify(this.players));
       return playersArray.filter(
         (p) =>

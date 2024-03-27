@@ -7,6 +7,7 @@ const playerGameDetailsSchema = new mongoose.Schema(
 		score: { type: Number, default: 0 },
 		winner: { type: Boolean, default: null },
 		filled: { type: Boolean, default: false },
+		bye: { type: Boolean, default: false },
 	},
 	{
 		timestamps: true,
