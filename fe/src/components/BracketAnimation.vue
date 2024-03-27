@@ -1,117 +1,131 @@
 <template>
-  <div class="bracket">
-    <LineBracketNode :depth="0" :maxDepth="4" />
+  <div class="animation-container">
+    <!-- Base square for initial horizontal line -->
+    <div class="square base" :style="baseStyle"></div>
+
+    <!-- First split squares -->
+    <div class="square vertical-split" :style="firstSplitUpStyle"></div>
+    <div class="square vertical-split" :style="firstSplitDownStyle"></div>
+
+    <!-- Second split squares -->
+    <div class="square vertical-split" :style="secondSplitUpTopStyle"></div>
+    <div class="square vertical-split" :style="secondSplitUpBottomStyle"></div>
+    <div class="square vertical-split" :style="secondSplitDownTopStyle"></div>
+    <div
+      class="square vertical-split"
+      :style="secondSplitDownBottomStyle"
+    ></div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "TournamentBracket",
-  components: {
-    LineBracketNode: {
-      name: "LineBracketNode",
-      props: ["depth", "maxDepth"],
-      template: `
-          <div v-if="depth <= maxDepth" class="node" :style="nodeStyle">
-            <div class="line horizontal"></div>
-            <div v-if="depth < maxDepth" class="branches">
-              <div class="branch">
-                <div class="line vertical up"></div>
-                <LineBracketNode :depth="depth + 1" :maxDepth="maxDepth" />
-              </div>
-              <div class="branch">
-                <div class="line vertical down"></div>
-                <LineBracketNode :depth="depth + 1" :maxDepth="maxDepth" />
-              </div>
-            </div>
-          </div>
-        `,
-      computed: {
-        nodeStyle() {
-          return {
-            "--depth": this.depth,
-          };
-        },
-      },
+  name: "BracketAnimation",
+  data() {
+    return {
+      // Animation timings
+      animationDuration: 1, // in seconds
+    };
+  },
+  computed: {
+    baseStyle() {
+      return {
+        animation: `growHorizontal ${this.animationDuration}s ease forwards`,
+      };
+    },
+    firstSplitUpStyle() {
+      return {
+        animation: `growVertical ${this.animationDuration}s ease forwards ${this.animationDuration}s`,
+        top: "calc(50% - 25px)", // Adjust for half the height of the vertical split
+        left: "50px",
+      };
+    },
+    firstSplitDownStyle() {
+      return {
+        animation: `growVertical ${this.animationDuration}s ease forwards ${this.animationDuration}s`,
+        top: "calc(50% + 25px)",
+        left: "50px",
+      };
+    },
+    secondSplitUpTopStyle() {
+      return {
+        animation: `growVerticalSmall ${
+          this.animationDuration / 2
+        }s ease forwards ${this.animationDuration * 2}s`,
+        top: "calc(50% - 50px)", // Adjust according to the vertical split's new position
+        left: "100px",
+      };
+    },
+    secondSplitUpBottomStyle() {
+      return {
+        animation: `growVerticalSmall ${
+          this.animationDuration / 2
+        }s ease forwards ${this.animationDuration * 2}s`,
+        top: "calc(50% - 25px)",
+        left: "100px",
+      };
+    },
+    secondSplitDownTopStyle() {
+      return {
+        animation: `growVerticalSmall ${
+          this.animationDuration / 2
+        }s ease forwards ${this.animationDuration * 2}s`,
+        top: "50%", // Center point for the split
+        left: "100px",
+      };
+    },
+    secondSplitDownBottomStyle() {
+      return {
+        animation: `growVerticalSmall ${
+          this.animationDuration / 2
+        }s ease forwards ${this.animationDuration * 2}s`,
+        top: "calc(50% + 25px)",
+        left: "100px",
+      };
     },
   },
 };
 </script>
 
-<style scoped>
-.bracket {
+<style>
+.animation-container {
   position: relative;
-  width: 100vw;
-  height: 100vh;
-  background-color: #333;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
+  width: 200px;
+  height: 100px;
+  background-color: #000;
+  margin: 20px auto;
 }
 
-.node {
-  --line-length: 100px;
-  --vertical-spacing: 20px;
+.square {
+  position: absolute;
+  width: 0;
+  height: 2px; /* Represents the line thickness */
+  background-color: transparent;
+  border-top: 2px solid #fff; /* Only top border colored to simulate the line */
 }
 
-.line.horizontal {
-  width: var(--line-length);
-  height: 2px;
-  background-color: #fff;
-  animation: growRight 2s forwards;
+.vertical-split {
+  width: 2px; /* For vertical splits, width represents the line thickness */
+  height: 0;
+  background-color: transparent;
+  border-left: 2px solid #fff; /* Only left border colored to simulate the line */
 }
 
-.line.vertical {
-  width: 2px;
-  height: var(--vertical-spacing);
-  background-color: #fff;
-}
-
-.line.vertical.up {
-  animation: growUp 2s forwards;
-}
-
-.line.vertical.down {
-  animation: growDown 2s forwards;
-}
-
-.branches {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: calc(2 * var(--vertical-spacing));
-}
-
-.branch {
-  display: flex;
-  align-items: center;
-}
-
-@keyframes growRight {
-  from {
-    width: 0;
-  }
+@keyframes growHorizontal {
   to {
-    width: var(--line-length);
+    width: 50px; /* Adjust based on desired length */
   }
 }
 
-@keyframes growUp {
-  0% {
-    height: 0;
-  }
-  100% {
-    height: var(--vertical-spacing);
-    transform: translateY(-var(--vertical-spacing));
+@keyframes growVertical {
+  to {
+    height: 25px; /* Height for the first vertical split */
   }
 }
 
-@keyframes growDown {
-  0% {
-    height: 0;
-  }
-  100% {
-    height: var(--vertical-spacing);
+@keyframes growVerticalSmall {
+  to {
+    height: 12.5px; /* Height for the second level vertical splits */
   }
 }
 </style>

@@ -25,8 +25,6 @@
       </div>
     </nav>
 
-    <BracketAnimation />
-
     <!-- Hero Section -->
     <div
       class="flex-grow flex items-center justify-center text-center py-16 px-4 bg-gray-50 dark:bg-blue-900"
@@ -43,23 +41,23 @@
         <p class="text-lg mb-8 text-gray-600 dark:text-gray-300">
           Simplified Tournament Brackets.
         </p>
-        <a
-          href="#"
+        <router-link
+          :to="'/home'"
           class="fadein bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           Try it now
-        </a>
+        </router-link>
       </div>
     </div>
 
     <!-- Features Section -->
     <div class="bg-white dark:bg-gray-800 py-16">
       <div class="container mx-auto px-6">
-        <h2
+        <!-- <h2
           class="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-white"
         >
           Features..
-        </h2>
+        </h2> -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div class="text-center">
             <h3
@@ -112,12 +110,8 @@
 </template>
 
 <script>
-import BracketAnimation from "@/components/BracketAnimation.vue";
-
 export default {
-  components: {
-    BracketAnimation,
-  },
+  components: {},
   data() {
     return {};
   },

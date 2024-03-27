@@ -9,6 +9,8 @@ import Brackets from "@/pages/brackets.vue";
 import DashLayout from "./layouts/DashLayout.vue";
 import BracketEdit from "@/pages/bracket.vue";
 import Landing from "@/pages/landing.vue";
+import Home from "@/pages/home.vue";
+import Contact from "@/pages/contact.vue";
 
 export const routes = [
   {
@@ -41,6 +43,8 @@ export const routes = [
     path: "/auth",
     component: AuthLayout,
     children: [
+      { path: "/home", name: "home", component: Home },
+      { path: "/contact/:flag?", name: "contact", component: Contact },
       { path: "/landing", name: "landing", component: Landing },
       { path: "/login", name: "login", component: Login },
 
