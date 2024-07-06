@@ -20,7 +20,6 @@
     "@fortawesome/vue-fontawesome": "^3.0.6",
     "@headlessui/vue": "^1.7.19",
     "@heroicons/vue": "^2.1.1",
-    "@tsparticles/vue3": "^3.0.1",
     "axios": "^1.6.7",
     "brackets-json-db": "^1.0.2",
     "brackets-manager": "^1.6.4",
