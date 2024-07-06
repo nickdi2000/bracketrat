@@ -41,11 +41,12 @@ import {
   ArrowLongLeftIcon,
   ArrowUturnDownIcon,
   PencilSquareIcon,
+  ExclamationTriangleIcon,
 } from "@heroicons/vue/24/solid";
 
 import piniaPlugin from "./plugins/pinia";
 import { authStore } from "./store/auth";
-
+import Particles from "@tsparticles/vue3";
 import openDialog from "@/services/dialog.service";
 import bottomAlert from "./services/bottom.alert.service";
 
@@ -87,6 +88,7 @@ app.component("ArrowLeftCircleIcon", ArrowLeftCircleIcon);
 app.component("ArrowLongLeftIcon", ArrowLongLeftIcon);
 app.component("ArrowUturnDownIcon", ArrowUturnDownIcon);
 app.component("PencilSquareIcon", PencilSquareIcon);
+app.component("ExclamationTriangleIcon", ExclamationTriangleIcon);
 
 app.use(router);
 

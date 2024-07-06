@@ -8,6 +8,11 @@ const bracketSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	description: {
+		type: String,
+		required: false,
+	},
+
 	players: [playerSchema],
 	rounds: [roundSchema],
 	organization: {

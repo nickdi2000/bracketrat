@@ -35,7 +35,7 @@ axios.interceptors.response.use(
     if (error.response?.status === 404) {
       //router.push({ query: {} });
     }
-
+    throw error;
     return error.response;
   }
 );

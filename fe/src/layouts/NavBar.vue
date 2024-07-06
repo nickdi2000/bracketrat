@@ -1,7 +1,7 @@
 <template>
   <span>
     <nav
-      class="bg-gray-800 mainNav z-50"
+      class="bg-gray-800 mainNav z-50 no-print"
       :class="extended ? 'extended' : ''"
       style=""
     >
@@ -64,7 +64,7 @@
             <div class="flex flex-shrink-0 items-center">
               <div
                 class="flex flex-row cursor-pointer"
-                @click="$router.push('/brackets')"
+                @click="$router.push({ name: 'Brackets' })"
               >
                 <img
                   src="/images/logo-light.png"
@@ -165,7 +165,7 @@ export default {
   },
   methods: {
     handleClick(route) {
-      this.$router.push(route);
+      this.$router.push("/admin" + route);
       this.showMobile = false;
     },
     async logout() {
@@ -193,7 +193,7 @@ export default {
       return [
         { name: "Bracket", route: "/", icon: BracketIcon },
         { name: this.teamPlayer + "s", route: "/players", icon: UsersIcon },
-        { name: "Options", route: "/options", icon: Cog6ToothIcon },
+        { name: "Setup", route: "/options", icon: Cog6ToothIcon },
       ];
     },
   },

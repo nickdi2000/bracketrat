@@ -1,6 +1,6 @@
 const express = require("express");
-
 const slackService = require("../../services/slack.service.js");
+const messageController = require("../../controllers/message.controller");
 
 const router = express.Router();
 
@@ -11,5 +11,6 @@ const test = async (req, res) => {
 };
 
 router.route("/misc").get(test);
+router.route("/contact").post(messageController.contact);
 
 module.exports = router;

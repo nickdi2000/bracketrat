@@ -14,13 +14,23 @@ export const authStore = defineStore({
     utm_source: null,
     players: [],
     rounds: [],
-    selected_bracket: localStorage.getItem("selected_bracket") || null,
+    organization: null,
+    selected_bracket:
+      localStorage.getItem("selected_bracket") != "undefined"
+        ? JSON.parse(localStorage.getItem("selected_bracket"))
+        : null,
   }),
   actions: {
     setUTMSource(utm_source) {
       this.utm_source = utm_source;
     },
+    setOrganization(organization) {
+      this.organization = organization;
+    },
+
     //non promise based
+    //this function works except the this.setSelectedBracket(bracket); i'm not sure is working, because areas thruout my app uses $store.authStore.getBracket() and it returns null until i reffresh the page
+
     async _fetchBracket(bracket_id) {
       if (!bracket_id) {
         console.warn("No bracket bracket_id provided to authStore");
@@ -31,6 +41,12 @@ export const authStore = defineStore({
 
       this.setPlayers(rec.data.players);
       this.setRounds(rec.data.rounds);
+
+      const bracket = JSON.parse(JSON.stringify(rec.data));
+      delete bracket.players;
+      delete bracket.rounds;
+
+      this.setSelectedBracket(bracket);
     },
     //to make th fetchBracket a promisebased on we could do it like this:
     async fetchBracket(bracket_id) {
@@ -41,14 +57,32 @@ export const authStore = defineStore({
         }
         api
           .get(`/brackets/${bracket_id}`)
-          .then((rec) => {
-            this.setPlayers(rec.data.players);
-            this.setRounds(rec.data.rounds);
+          .then(async (rec) => {
+            // this.setPlayers(rec.data.players);
+            // this.setRounds(rec.data.rounds);
+
+            // const bracket = JSON.parse(JSON.stringify(rec.data));
+            // delete bracket.players;
+            // delete bracket.rounds;
+            this.setSelectedBracket(rec.data);
+
             resolve(rec);
           })
           .catch((err) => {
             reject(err);
           });
+      });
+    },
+
+    async getOrg() {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const rec = await api.get("/organizations/me");
+          //this.setOrganization(rec.data);
+          resolve(rec);
+        } catch (err) {
+          reject(err);
+        }
       });
     },
 
@@ -84,21 +118,25 @@ export const authStore = defineStore({
       localStorage.setItem("user", JSON.stringify(this.user));
     },
     setSelectedBracket(bracket) {
-      this.selected_bracket = {
-        name: bracket.name,
-        _id: bracket._id,
-        organization: bracket.organization,
-        sport: bracket.sport,
-        type: bracket.type,
-        unit: bracket.unit,
-      };
+      // this.selected_bracket = {
+      //   name: bracket.name,
+      //   _id: bracket._id,
+      //   organization: bracket.organization,
+      //   sport: bracket.sport,
+      //   type: bracket.type,
+      //   unit: bracket.unit,
+      //   code: bracket.code,
+      // };
+      this.selected_bracket = bracket;
+      this.players = bracket.players;
+      this.rounds = bracket.rounds;
 
       localStorage.setItem(
         "selected_bracket",
         JSON.stringify(this.selected_bracket)
       );
 
-      this.setPlayers(bracket.players);
+      //this.setPlayers(bracket.players);
     },
     updateUser(userData) {
       localStorage.setItem("user", JSON.stringify(userData));
@@ -109,6 +147,7 @@ export const authStore = defineStore({
         this.tokens = null;
         localStorage.removeItem("user");
         localStorage.removeItem("token");
+        localStorage.removeItem("selected_bracket");
         resolve(true);
       });
     },
@@ -122,10 +161,7 @@ export const authStore = defineStore({
       return bracket.unit == "team" ? "Team" : "Player";
     },
     getBracket() {
-      return (
-        JSON.parse(localStorage.getItem("selected_bracket")) ||
-        this.selected_bracket
-      );
+      return this.selected_bracket ?? [];
     },
     check() {
       return this.user !== null || localStorage.getItem("user") !== null;

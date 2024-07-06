@@ -6,8 +6,8 @@
       players to generate a bracket.
     </span>
     <span v-else-if="players.length == 1">
-      You have only one player in this bracket. You can't even play a game,
-      let-alone generate a tournament bracket.
+      You have only one {{ $teamPlayer }} in this bracket. You can't even play a
+      game, let-alone generate a tournament bracket.
     </span>
     <span v-else>
       You have only two {{ $teamPlayer }}'s in this bracket. I don't think you
@@ -16,7 +16,9 @@
     <br /><br />
     <span
       >Please
-      <router-link class="text-teal-500 underline font-bold" :to="'/players'"
+      <router-link
+        class="text-teal-500 underline font-bold"
+        :to="'/admin/players'"
         >add more {{ $teamPlayer }}'s</router-link
       ></span
     >

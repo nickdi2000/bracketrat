@@ -39,7 +39,7 @@ export default {
         this.$router.go(-1);
         return;
       }
-      this.$router.push("/" + this.model.path);
+      this.$router.push("/admin/" + this.model.path);
     },
     async save() {
       const rec = await this.$api.post(this.model.path, this.formData);

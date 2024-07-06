@@ -12,9 +12,37 @@
               Generate Name
             </button>
           </div>
+
+          <div class="pb-4">
+            <label class="text-white mb-2 font-bold text-sm"
+              >Description (optional)</label
+            >
+            <textarea
+              v-model="form.description"
+              rows="3"
+              class="mt-2 block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              :placeholder="`Welcome to ${
+                form.name || 'our annual tournament'
+              }! Get ready for...`"
+            ></textarea>
+          </div>
+
+          <div class="pb-4">
+            <Input
+              label="Player Link"
+              v-model="form.code"
+              class="uppercase font-bold text-3xl"
+              placeholder="MYCODE"
+            />
+            <div class="text-xs text-gray-300 m-2">
+              This is the link that players will use to join your tournament.
+              <span class="font-bold text-white">{{ link }}</span>
+            </div>
+          </div>
+
           <div class="pb-4">
             <label class="block text-sm font-medium text-white"
-              >Bracket Type</label
+              >Tournament Type</label
             >
             <button
               class="text-white p-2 rounded-md hover:bg-blue-500 m-2"
@@ -26,33 +54,21 @@
               {{ type.name }}
             </button>
             <div v-if="selectedTypeObject" class="fadein">
-              <Alert type="info">
-                <span
-                  v-if="
-                    selectionCount == 8 &&
-                    hasBeenSelected(selectedTypeObject?.value)
-                  "
-                >
-                  This still does the same thing it did the first time.
-                </span>
-                {{ selectedTypeObject?.description }}
-                <span
-                  v-if="
-                    selectionCount == 7 &&
-                    hasBeenSelected(selectedTypeObject?.value)
-                  "
-                >
-                  You've actually already seen this one. Is there anything I can
-                  do to help you decide?</span
-                >
-              </Alert>
+              <div
+                class="subtitle-2 text-gray-200 text-xs ml-3 fadein"
+                style="min-height: 40px"
+              >
+                <span v-show="showTip">{{
+                  selectedTypeObject?.description
+                }}</span>
+              </div>
             </div>
           </div>
 
           <div class="grid grid-cols-2">
             <div>
               <label class="block text-sm font-medium text-white"
-                >Bracket Type</label
+                >Sport Category</label
               >
               <button
                 class="p-2 text-white font-bold rounded-md hover:bg-blue-500 m-2"
@@ -83,11 +99,16 @@
       <div v-else>
         <div>
           <button
-            v-for="unit in units"
+            v-for="(unit, index) in units"
             :key="unit.value + 'unit'"
             @click="form.unit = unit.value"
-            :class="form.unit === unit.value ? 'bg-blue-600' : 'bg-slate-900'"
-            class="w-full py-3 px-10 rounded-md flex flex-row justify-between mb-3 shadow-2xl hover:bg-slate-800 transition-all duration-300 ease-in-out"
+            :style="`animation-duration: ${(index + 1) / 4 + 0.2}s`"
+            :class="
+              form.unit === unit.value
+                ? 'bg-sky-500 border border-4 border-white'
+                : 'bg-sky-800'
+            "
+            class="fadeinUp ease-in-out w-full py-3 px-10 rounded-md flex flex-row active:bg-sky-500 justify-between mb-3 shadow-2xl hover:bg-teal-700 transition-all duration-300 ease-in-out"
           >
             <div>
               <div class="text-white text-5xl font-bold mt-3">
@@ -171,16 +192,18 @@ export default {
     return {
       BracketNames,
       teamSports,
-      newUser: false,
       model: {
         name: "Bracket",
         path: "brackets",
       },
       selectionCount: 0,
       selections: [],
+      showTip: false,
+      timer: null,
       form: {
         name: "",
-        type: "",
+        code: "",
+        type: "single-elimination",
         sport: "",
         unit: "",
       },
@@ -205,13 +228,13 @@ export default {
           value: "double-elimination",
           name: "Double Elimination",
           description:
-            "You get a second chance if you lose.  Loser's grab a beer then play their little game.",
+            "You get a second chance if you lose.  Select this option for a come-back story.",
         },
         {
           value: "round-robin",
           name: "Round Robin",
           description:
-            "Everyone plays everyone else.  The person with the most wins is the winner. Although it's just one bracket, the winner will continue to talk about it for years to come.",
+            "Everyone plays everyone else.  The person with the most wins is the winner. The winner cashes in on their bragging rights.",
         },
         {
           value: "swiss",
@@ -224,14 +247,6 @@ export default {
           name: "Playoffs",
           description:
             "You play in a group stage and then the top teams advance to a single elimination bracket.  It's great for pretending you're in the big leagues.",
-        },
-        {
-          value: "other",
-          name: "Other",
-          description:
-            "This option is actually just the same as single-elimination, but it feels like you had a choice this way.",
-          description2:
-            "You probably just clicked this option to see what terrible joke I would make.  I'm not disappointed in you.  I'm disappointed in myself.",
         },
       ],
 
@@ -292,6 +307,10 @@ export default {
       type: Object,
       default: null,
     },
+    newUser: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     selectedTypeObject() {
@@ -299,6 +318,9 @@ export default {
     },
     sports() {
       return this.form.unit === "team" ? this.teamSports : this.soloSports;
+    },
+    link() {
+      return import.meta.env.VITE_BASE_FE_URL + "" + this.form.code;
     },
   },
   components: {
@@ -319,11 +341,19 @@ export default {
     }
   },
   methods: {
+    setShowTip() {
+      clearTimeout(this.timer);
+      this.showTip = true;
+      this.timer = setTimeout(() => {
+        this.showTip = false;
+      }, 5000);
+    },
     async getRecord(id) {
       const { data } = await this.$api.get(`/brackets/${id}`);
       this.form = data;
     },
     makeSelection(type) {
+      this.setShowTip();
       this.form.type = type;
       this.selectionCount++;
       this.selections.push(type);

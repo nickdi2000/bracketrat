@@ -10,15 +10,6 @@
       >
     </div>
 
-    <!-- <div v-else class="mt-3">
-      <span
-        class="text-gray-500 mx-2 mt-9 text-sm cursor-pointer hover:text-gray-400"
-        @click="$router.push('/brackets')"
-      >
-        Selected Bracket: {{ selectedBracket.name }}</span
-      >
-    </div> -->
-
     <fwb-modal v-show="isShowModal" @close="closeModal">
       <template #header>
         <div class="flex items-center text-lg">
@@ -127,6 +118,7 @@ export default {
       immediate: true,
       handler(newVal, oldVal) {
         // Whenever the selectedBracket updates, update the form's bracket value
+        if (!newVal || !newVal._id) return;
         this.form.bracket = newVal._id;
       },
     },

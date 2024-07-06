@@ -28,6 +28,11 @@ class BracketController extends BaseController {
 		let body = req.body;
 		body.organization = req.user.organization;
 
+		//if "nname" is blank, call it "My First Bracket", otherwise use the name provided
+		if (!body.name) {
+			body.name = "My First Bracket";
+		}
+
 		try {
 			let item;
 			if (req.body._id) {
@@ -188,6 +193,22 @@ class BracketController extends BaseController {
 		} catch (error) {
 			console.error("Error undoing outcomes:", error);
 			res.status(500).json({ message: "Failed to undo outcomes." });
+		}
+	}
+
+	async findByCode(req, res) {
+		const { code } = req.params;
+		try {
+			const bracket = await Bracket.findOne({ code: code }).populate(
+				"players.player"
+			);
+			if (!bracket) {
+				return res.status(404).send("Bracket not found");
+			}
+			res.send(bracket);
+		} catch (error) {
+			console.log("error", error);
+			res.status(400).send("BracketController error" + JSON.stringify(error));
 		}
 	}
 }

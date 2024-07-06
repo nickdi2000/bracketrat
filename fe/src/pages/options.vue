@@ -1,7 +1,7 @@
 <template>
   <div class="pt-0 text-white min-h-screen- max-w-4xl">
     <Tabs v-model="activeTab" class="p-5">
-      <Tab name="info" title="Info">
+      <Tab name="info" title="Setup">
         <div class="">
           <BracketForm
             :selectedBracket="selectedBracket"
@@ -16,25 +16,24 @@
               first
             </Alert>
           </div>
-
-          <!-- <Alert type="info" class="fadein"
-            >The above information will be available to the players when they
-            arrive on the registration screen.</Alert
-          > -->
         </div>
       </Tab>
-      <Tab name="options" title="Settings">
+      <Tab name="options" title="Advanced">
         <h4 class="font-bold text-lg mb-2">Bracket Options</h4>
-        <Toggle
-          v-model="form.options.auth"
-          label="Force users to register via Email"
-        />
+
+        <table class="w-full">
+          <tr v-for="(opt, optIndex) in options" class="p-3">
+            <td class="p-3 bg-gray-800">
+              <Toggle v-model="opt.value" :label="opt.label" />
+            </td>
+          </tr>
+        </table>
+
+        <div class="py-2">
+          <button class="btn btn-success">Save</button>
+        </div>
       </Tab>
     </Tabs>
-
-    <!-- <div class="footer fadeinUp">
-      <FButton size="xl" class="font-bold" gradient="green">Save</FButton>
-    </div> -->
   </div>
 </template>
 
@@ -60,6 +59,24 @@ export default {
           auth: false,
         },
       },
+      options: [
+        {
+          label: "Force users to register via Email",
+          key: "auth",
+          value: false,
+        },
+        {
+          label: "Require a password to join",
+          key: "password",
+          value: false,
+        },
+        {
+          label:
+            "Automatically throw user into Tournament bracket upon registration",
+          key: "auto",
+          value: true,
+        },
+      ],
     };
   },
 };

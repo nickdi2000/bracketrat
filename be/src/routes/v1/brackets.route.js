@@ -11,6 +11,10 @@ router.get("/", (req, res, next) => {
 	bracketController.list(req, res, next);
 });
 
+router.get("/code/:code", (req, res, next) => {
+	bracketController.findByCode(req, res, next);
+});
+
 router.get("/:id", (req, res, next) => {
 	bracketController.show(req, res, next);
 });

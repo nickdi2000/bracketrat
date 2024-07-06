@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <div class="py-8 lg:py-16 px-4 mx-auto max-w-screen-md" v-else>
+    <div class="py-8 mt-5 lg:py-16 px-4 mx-auto max-w-screen-md" v-else>
       <h2
         class="mb-4 text-4xl tracking-tight font-extrabold text-center text-gray-900 dark:text-white"
       >
@@ -48,7 +48,7 @@
       <div class="sm:col-span-2">
         <label
           for="message"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400 pt-4"
           >Your message</label
         >
         <textarea
@@ -59,12 +59,15 @@
           placeholder="Leave a comment..."
         ></textarea>
       </div>
-      <button @click="submit()" class="btn btn-success bg-green-700">
-        Send message
-      </button>
-      <button class="btn btn-secondary mx-3" @click.stop="$router.go(-1)">
-        Cancel
-      </button>
+
+      <div class="mt-4">
+        <button @click="submit()" class="btn btn-success bg-green-700">
+          Send message
+        </button>
+        <button class="btn btn-secondary mx-3" @click.stop="$router.go(-1)">
+          Cancel
+        </button>
+      </div>
     </div>
   </section>
 </template>
@@ -75,8 +78,8 @@ export default {
   data() {
     return {
       form: {
-        email: "charles",
-        message: "message",
+        email: "",
+        message: "",
       },
     };
   },
@@ -89,8 +92,9 @@ export default {
   methods: {
     async submit() {
       try {
-        const rec = await this.$api.post("/contact", this.form);
-        //this.$router.push("/contact/success");
+        const rec = await this.$api.post("/guest/contact", this.form);
+        this.$router.push("/admin/contact/success");
+        console.log("rec", rec);
       } catch (error) {
         console.error(error);
       }

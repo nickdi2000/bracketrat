@@ -4,7 +4,10 @@
     <div v-if="playersNotInBracket?.length">
       <PlayerBadges :players="playersNotInBracket" v-if="!showingDummy" />
     </div>
-    <div class="bracket-container fadein" v-if="rounds.length">
+    <div
+      class="bracket-container fadein"
+      v-if="rounds.length && players.length"
+    >
       <bracket
         :rounds="rounds"
         class="bracket z-40-"
@@ -48,20 +51,35 @@
       class="min-h-96 mt-20 flex flex-col items-center justify-center"
     >
       <div
-        class="fadein max-w-sm p-5 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+        class="fadein p-5 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
       >
-        <div class="flex flex-col align-center">
-          <a href="#">
-            <h5
-              class="mb-2 ml-5 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
-            >
-              {{ !players.length ? "No Participants" : currentBracket?.name }}
-            </h5>
-          </a>
+        <div
+          v-if="!players || !players.length"
+          class="flex flex-col justify-center content-center items-center"
+        >
+          <div class="text-2xl uppercase font-bold">No {{ $teamPlayer }}s</div>
+          <div class="subtitle">
+            Share your unique room link/QR code or add them manually.
+          </div>
+          <button
+            class="btn btn-secondary btn-sm mt-4 fadein animate-pulse"
+            @click="$router.push('/admin/players')"
+          >
+            Add {{ $teamPlayer }}'s
+          </button>
+        </div>
+
+        <div class="flex flex-col align-center min-w-min" v-else>
+          <h5
+            class="mb-2 ml-5 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+          >
+            {{ currentBracket?.name }}
+          </h5>
+          <div></div>
 
           <BracketGenerator
             :players="players"
-            v-if="players.length > 2"
+            v-if="players.length"
             @generateBracket="generateBracket"
           />
         </div>
@@ -91,7 +109,7 @@
           class="p-2 bg-teal-900 text-white rounded-md hover:bg-teal-600"
           @click="viewDummyData"
         >
-          Load Sample Data <users-icon class="inline h-6 w-6" />
+          Show Sample Data <users-icon class="inline h-6 w-6" />
         </button>
       </div>
     </div>
@@ -154,7 +172,7 @@ export default {
     if (
       !this.players.length &&
       !this.rounds.length &&
-      this.$store.getBracket._id
+      this.$store?.getBracket?._id
     ) {
       this.$store.fetchBracket(this.$store.getBracket._id);
     }

@@ -61,7 +61,8 @@
                     color="blue"
                     size="sm"
                     @click.stop="
-                      () => this.$router.push(`/brackets/edit/${item._id}`)
+                      () =>
+                        this.$router.push(`/admin/brackets/edit/${item._id}`)
                     "
                   >
                     Edit</FButton
@@ -128,8 +129,8 @@ export default {
     async selectBracket(item) {
       //this.$router.push(route);
       await this.$store.fetchBracket(item._id);
-      this.$store.setSelectedBracket(item);
-      this.$router.push(`/dashboard`);
+      //this.$store.setSelectedBracket(item);
+      this.$router.push(`/admin/dashboard`);
     },
     async deleteBracket(id) {
       openDialog("Delete Bracket?");

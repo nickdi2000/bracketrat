@@ -1,5 +1,6 @@
 const express = require("express");
 const baseRoute = require("./base.route");
+const companyRoute = require("./organization.route");
 const authRoute = require("./auth.route");
 const userRoute = require("./user.route");
 const playerRoute = require("./player.route");
@@ -52,6 +53,10 @@ const defaultRoutes = [
 	{
 		path: "/brackets",
 		route: bracketsRoute,
+	},
+	{
+		path: "/organizations",
+		route: companyRoute,
 	},
 	{
 		path: "/",
