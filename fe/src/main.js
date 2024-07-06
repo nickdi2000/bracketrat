@@ -46,7 +46,6 @@ import {
 
 import piniaPlugin from "./plugins/pinia";
 import { authStore } from "./store/auth";
-import Particles from "@tsparticles/vue3";
 import openDialog from "@/services/dialog.service";
 import bottomAlert from "./services/bottom.alert.service";
 
