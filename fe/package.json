@@ -30,7 +30,6 @@
     "pinia-plugin-persist": "^1.0.0",
     "qrcode-vue3": "^1.6.8",
     "sass": "^1.71.1",
-    "tsparticles-slim": "^2.12.0",
     "vue": "^3.2.47",
     "vue-google-autocomplete": "^1.1.4",
     "vue-router": "^4.1.6",

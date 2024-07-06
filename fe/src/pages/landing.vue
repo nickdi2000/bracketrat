@@ -126,7 +126,6 @@
 </template>
 
 <script>
-//import { loadSlim } from "tsparticles-slim";
 import landingWallpaper from "./landingWallpaper.vue";
 
 export default {
