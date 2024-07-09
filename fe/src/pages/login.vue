@@ -259,7 +259,7 @@ export default {
   background-blend-mode: multiply;
   min-height: 100vh;
 
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: rgba(0, 0, 0, 0.8);
 }
 
 .altered {

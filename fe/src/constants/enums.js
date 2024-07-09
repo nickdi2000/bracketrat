@@ -100,3 +100,21 @@ export const teamSports = Object.freeze([
     name: "Other",
   },
 ]);
+
+export const options = Object.freeze([
+  {
+    label: "Force users to register via Email",
+    key: "require_auth",
+    value: false,
+  },
+  {
+    label: "Require a password to join",
+    key: "require_password",
+    value: false,
+  },
+  {
+    label: "Automatically throw user into Tournament bracket upon registration",
+    key: "auto_bracket",
+    value: true,
+  },
+]);

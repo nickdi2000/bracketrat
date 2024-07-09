@@ -10,10 +10,10 @@
 
     <div>
       <router-link
-        :to="'/brackets/create'"
+        :to="'/admin/brackets/create'"
         class="bg-slate-700 p-2 text-white rounded-md font-bold hover:bg-blue-800"
       >
-        + Create New
+        + Create New Bracket
       </router-link>
     </div>
 

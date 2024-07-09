@@ -20,6 +20,7 @@ export const bracketMixin = {
 
       return foundGame; // Returns the last found game involving the player or null if not found
     },
+
     _findGameByGameId(gameId) {
       let foundGame = null;
 

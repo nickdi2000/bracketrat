@@ -4,44 +4,27 @@ const { Player } = require("../models/player.model");
 const { bracketService } = require("../services");
 const catchAsync = require("../utils/catchAsync");
 
-//insert into player list (not directly into bracket)
+//insert into player list
 const insertPlayer = async (req, res) => {
 	const { name, bracketId } = req.body;
 	console.log("bracketId", bracketId);
 	try {
-		// First, find the bracket to ensure it exists and to check if the player name already exists within it
-		const bracket = await Bracket.findById(bracketId).populate("players");
-		if (!bracket) {
-			return res.status(404).json({ message: "Bracket not found" });
-		}
+		const result = await bracketService.addPlayerToBracket({ name, bracketId });
+		const playerId = result.newPlayer._id;
 
-		// Check if a player with the given name already exists in the bracket
-		const playerExists = bracket.players.some((player) => player.name === name);
-		if (playerExists) {
-			return res.status(400).json({
-				message:
-					"Player with this name already exists in the bracket. Please choose a different name or add an initial/last-name",
-			});
-		}
+		res.status(201).json(result);
 
-		// If the player doesn't exist, create and insert the new player
-		const newPlayer = new Player({ name });
-		await newPlayer.save();
-
-		// Update the bracket with the new player
-		bracket.players.push(newPlayer);
-		await bracket.save();
-
-		let augmentedBracket = bracketService.augmentPlayerData(bracket);
-
-		res.status(201).json({
-			message: "Player added successfully",
-			newPlayer,
-			players: augmentedBracket.players,
-		});
+		// try {
+		// 	//await bracketService.addPlayerToFirstEmptySpot(bracketId, playerId);
+		// 	//const bracket = await bracketService.generateBracket(bracketId);
+		// 	res.status(201).json(result);
+		// } catch (error) {
+		// 	console.error("Failed to add player to bracket:", error);
+		// 	res.status(500).json({ message: "Failed to add player to bracket" });
+		// }
 	} catch (error) {
 		console.error("Error adding player to bracket:", error);
-		res.status(500).json({ message: "Error adding player to bracket" });
+		res.status(500).json({ message: error.message });
 	}
 };
 

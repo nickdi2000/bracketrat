@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div class="bracket-list-div">
     <div
       v-for="(round, index) in rounds"
       :key="index + '-round-list-item'"
-      class="p-6 min-w-96 mb-4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+      class="p-6 w-full mb-4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
     >
       <h4>ROUND {{ index + 1 }}</h4>
       <div>
@@ -13,7 +13,17 @@
               class="badge-lg m-4"
               v-if="game.player1.name && game.player2.name"
             >
-              {{ game.player1.name }} vs. {{ game.player2.name }}
+              <span
+                :class="
+                  !game.player1?.winner === true ? 'not-winner' : 'winner'
+                "
+              >
+                {{ game.player1.name }}</span
+              >
+              vs.
+              <span :class="!game.player2?.winner ? 'not-winner' : 'winner'">{{
+                game.player2.name
+              }}</span>
             </div>
           </div>
         </div>
@@ -49,3 +59,17 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.bracket-list-div {
+  margin-top: 100px;
+  max-width: 90vw;
+  padding-bottom: 100px;
+}
+
+.winner {
+  color: rgb(76, 182, 76);
+  font-weight: bolder;
+  font-size: 1.7rem;
+}
+</style>

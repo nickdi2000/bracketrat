@@ -58,12 +58,6 @@ export const authStore = defineStore({
         api
           .get(`/brackets/${bracket_id}`)
           .then(async (rec) => {
-            // this.setPlayers(rec.data.players);
-            // this.setRounds(rec.data.rounds);
-
-            // const bracket = JSON.parse(JSON.stringify(rec.data));
-            // delete bracket.players;
-            // delete bracket.rounds;
             this.setSelectedBracket(rec.data);
 
             resolve(rec);
@@ -74,6 +68,25 @@ export const authStore = defineStore({
       });
     },
 
+    //add existing player to bracket
+    async addPlayerToBracket(player) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const rec = await api.post(
+            `/brackets/${this.selected_bracket._id}/player/${player._id}`
+          );
+
+          //update rounds
+          this.setRounds(rec.data?.bracket?.rounds);
+          this.setPlayers(rec.data?.bracket?.players);
+
+          resolve(rec);
+        } catch (err) {
+          console.log("error", err);
+          reject(err);
+        }
+      });
+    },
     async getOrg() {
       return new Promise(async (resolve, reject) => {
         try {
@@ -118,15 +131,6 @@ export const authStore = defineStore({
       localStorage.setItem("user", JSON.stringify(this.user));
     },
     setSelectedBracket(bracket) {
-      // this.selected_bracket = {
-      //   name: bracket.name,
-      //   _id: bracket._id,
-      //   organization: bracket.organization,
-      //   sport: bracket.sport,
-      //   type: bracket.type,
-      //   unit: bracket.unit,
-      //   code: bracket.code,
-      // };
       this.selected_bracket = bracket;
       this.players = bracket.players;
       this.rounds = bracket.rounds;

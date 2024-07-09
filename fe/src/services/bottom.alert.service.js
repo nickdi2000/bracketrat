@@ -11,7 +11,7 @@ function bottomAlert(message, details = null) {
   setTimeout(() => {
     dialogApp.unmount();
     document.body.removeChild(div);
-  }, 5000);
+  }, 7000);
 
   // return instance.open().finally(() => {
   //   dialogApp.unmount();

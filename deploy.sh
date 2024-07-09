@@ -6,7 +6,7 @@ CURRENT_DIR=$(pwd)
 # Run npm run build in the fe folder
 echo "Building frontend..."
 cd "$CURRENT_DIR/fe"
-npm run build
+npm install && npm run build
 
 # Run npm run build in the be folder
 echo "Building backend..."

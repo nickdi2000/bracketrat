@@ -19,7 +19,11 @@
       <template #body>
         <div class="tiny">
           Remember you may also invite players to join via your unique link or
-          QR code.
+          <router-link
+            class="underline text-blue-300 font-bold"
+            :to="'/admin/players/invite'"
+            >QR code.</router-link
+          >
         </div>
         <div class="mt-1 shadow-lg flex flex-col space-y-4">
           <!-- <Input
@@ -31,7 +35,7 @@
           <input
             type="text"
             ref="inputField"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            class="big-input text-2xl uppercase font-bold bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Player Name"
             v-model="form.name"
             v-on:keydown.enter="save()"
@@ -46,7 +50,7 @@
           <fwb-button @click="closeModal" color="alternative">
             Cancel
           </fwb-button>
-          <fwb-button @click="closeModal" color="green" :loading="loading">
+          <fwb-button @click="save" color="green" :loading="loading">
             Save
           </fwb-button>
         </div>
@@ -63,6 +67,7 @@ export default {
   data() {
     return {
       isShowModal: false,
+      loading: false,
       form: {
         name: "",
         bracket: null,

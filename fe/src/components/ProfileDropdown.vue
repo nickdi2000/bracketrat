@@ -41,7 +41,7 @@
       >
         <li>
           <button
-            @click="navTo('brackets')"
+            @click="navTo('/admin/brackets')"
             class="block px-4 py-2 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
           >
             My Brackets
@@ -49,7 +49,7 @@
         </li>
         <li>
           <button
-            @click="navTo('profile')"
+            @click="navTo('/admin/profile')"
             class="block px-4 py-2 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
           >
             My Profile
@@ -57,7 +57,7 @@
         </li>
         <li>
           <button
-            @click="navTo('contact')"
+            @click="navTo('/admin/contact')"
             class="block px-4 py-2 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
           >
             Contact Support

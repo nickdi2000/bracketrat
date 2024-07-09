@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import Axios from "axios";
-import router from "./routes";
+import router from "./router";
 
 var baseURL = import.meta.env.VITE_API_URL; // || 'http://localhost:3000/v1/';
 console.log("BaseURL: ", baseURL);

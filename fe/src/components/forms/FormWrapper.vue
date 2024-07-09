@@ -42,7 +42,12 @@ export default {
       this.$router.push("/admin/" + this.model.path);
     },
     async save() {
-      const rec = await this.$api.post(this.model.path, this.formData);
+      console.log("saving data", this.model);
+      let data = JSON.parse(JSON.stringify(this.formData));
+      delete data.players;
+      delete data.rounds;
+
+      const rec = await this.$api.post(this.model.path, data);
       this.back();
     },
   },

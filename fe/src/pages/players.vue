@@ -12,7 +12,7 @@
       <button
         type="button"
         v-if="players.length"
-        @click="showShareLink = !showShareLink"
+        @click="toggleShareLink"
         :class="showShareLink ? 'bg-teal-800' : 'bg-gray-800'"
         class="no-print text-gray-800 hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 me-2"
       >
@@ -24,8 +24,8 @@
     </div>
     <PlayerForm
       v-if="$store.getBracket"
-      @update="playerKey++"
-      @invite="showShareLink = !showShareLink"
+      @update="handleUpdated"
+      @invite="toggleShareLink"
       ref="playerForm"
     />
 
@@ -58,6 +58,7 @@ import {
   LinkIcon,
   ArrowLongLeftIcon,
 } from "@heroicons/vue/24/solid";
+import { handler } from "flowbite/plugin";
 
 export default {
   components: {
@@ -90,6 +91,29 @@ export default {
       const bracket_id = this.$store.getBracket._id;
       const rec = await this.$api.get(`players/${bracket_id}`);
       this.records = rec.data.players;
+    },
+    handleUpdated() {
+      this.playerKey++;
+
+      //close sharelink after adding
+      this.$router.push({
+        name: "Players",
+        params: { page: "" },
+      });
+    },
+    toggleShareLink() {
+      this.$router.push({
+        name: "Players",
+        params: { page: this.showShareLink ? "" : "invite" },
+      });
+    },
+  },
+  watch: {
+    "$route.params.page": {
+      handler(v) {
+        this.showShareLink = v === "invite";
+      },
+      immediate: true,
     },
   },
 };

@@ -1,5 +1,8 @@
 <template>
-  <div v-if="!show" class="botton-nav-btn p-3">
+  <div v-if="!show" class="botton-nav-btn p-3 mb-2">
+    <button @click="newPlayer()" class="btn btn-secondary mr-2">
+      <PlusCircleIcon class="h-6 w-6 inline-block" />
+    </button>
     <button class="btn btn-primary" @click="showNav">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -7,7 +10,7 @@
         viewBox="0 0 24 24"
         stroke-width="1.5"
         stroke="currentColor"
-        class="w-6 h-6"
+        class="w-6 h-6 inline-block"
       >
         <path
           stroke-linecap="round"
@@ -21,7 +24,9 @@
     v-else
     class="fadeInUp fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600"
   >
-    <div class="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
+    <div
+      class="bottom-bar grid h-full max-w-lg grid-cols-4 mx-auto font-medium"
+    >
       <button
         type="button"
         @click="toggleView()"
@@ -70,7 +75,7 @@
 
         <span
           class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
-          >Re-Generate</span
+          >Generate</span
         >
       </button>
       <!-- <button
@@ -181,6 +186,9 @@ export default {
     showNav() {
       this.show = true;
     },
+    newPlayer() {
+      this.$emit("new-player");
+    },
     async clearBracket() {
       let message = "Clear Bracket?";
       let details = `This will clear all ${this.$teamPlayer}'s from the bracket. This will not delete the  ${this.$teamPlayer}'s themselves, just reset the bracket structure.`;
@@ -209,6 +217,7 @@ export default {
   bottom: 0;
   right: 0;
   z-index: 999;
+  margin-bottom: 24px;
 }
 
 .fadeInUp {
@@ -223,6 +232,13 @@ export default {
   100% {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+@media (max-width: 940px) {
+  .botton-bar {
+    height: 290px;
+    margin-bottom: 150px;
   }
 }
 </style>

@@ -40,6 +40,13 @@
         imgclass="img-qr"
       />
     </div>
+
+    <div class="py-4 text-sm max-w-screen-sm">
+      Provide this QRcode or link to your players to join the bracket. After
+      scanning this and entering their name, you should see them on the
+      {{ $teamPlayer }}
+      list.
+    </div>
     <!-- :downloadOptions="{ name: 'vqr', extension: 'png' }" -->
 
     <div class="py-5 no-print">

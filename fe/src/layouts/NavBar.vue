@@ -87,7 +87,7 @@
                   :key="item.name"
                   @click="handleClick(item.route)"
                   :class="
-                    $route.path === item.route ? 'bg-blue-900' : 'bg-gray-900'
+                    $route.name === item.route ? 'bg-blue-900' : 'bg-gray-900'
                   "
                   class="text-white hover:bg-blue-800 rounded-md px-3 py-2 text-sm font-medium"
                   aria-current="page"
@@ -165,7 +165,7 @@ export default {
   },
   methods: {
     handleClick(route) {
-      this.$router.push("/admin" + route);
+      this.$router.push({ name: route });
       this.showMobile = false;
     },
     async logout() {
@@ -191,9 +191,13 @@ export default {
     },
     items() {
       return [
-        { name: "Bracket", route: "/", icon: BracketIcon },
-        { name: this.teamPlayer + "s", route: "/players", icon: UsersIcon },
-        { name: "Setup", route: "/options", icon: Cog6ToothIcon },
+        { name: "Bracket", route: "Dashboard", icon: BracketIcon },
+        {
+          name: this.teamPlayer + "s",
+          route: "Players",
+          icon: UsersIcon,
+        },
+        { name: "Setup", route: "Settings", icon: Cog6ToothIcon },
       ];
     },
   },

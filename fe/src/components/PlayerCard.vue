@@ -37,6 +37,16 @@
                   <div class="subtitle">Undo as Winner in previous game</div>
                 </button>
               </div>
+
+              <div v-else-if="!player.roundIndex">
+                <button
+                  class="btn btn-secondary btn-sm mt-3"
+                  @click="removePlayerFromGame()"
+                >
+                  <TrashIcon class="w-6 h-6 mr-2 inline" />
+                  Remove from Bracket
+                </button>
+              </div>
             </div>
             <div
               v-else-if="player.winner == true"

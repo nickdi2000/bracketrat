@@ -1,9 +1,10 @@
 const { Bracket } = require("../models");
+const { Player } = require("../models/player.model");
 
 const generateBracket = async (bracketId) => {
-	let bracket = await Bracket.findById(bracketId);
+	let bracket = await Bracket.findById(bracketId).populate("players");
 	if (!bracket) {
-		return res.status(404).json({ message: "Bracket not found." });
+		throw new Error("Bracket not found.");
 	}
 
 	const totalPlayers = bracket.players.length;
@@ -13,9 +14,8 @@ const generateBracket = async (bracketId) => {
 
 	bracket.rounds = [];
 
-	// Prepare initial round with potential byes
 	const initialGames = [];
-	let autoAdvancePlayers = []; // Store players who auto-advance due to a bye
+	let autoAdvancePlayers = [];
 	for (
 		let i = 0, playersAssigned = 0, byesAssigned = 0;
 		playersAssigned < totalPlayers;
@@ -27,16 +27,15 @@ const generateBracket = async (bracketId) => {
 
 		if (byesAssigned < numberOfByes) {
 			byesAssigned++;
-			gameStatus = "completed"; // Mark as completed due to bye
+			gameStatus = "completed";
 			player1.filled = true;
-			autoAdvancePlayers.push(player1); // This player advances automatically
+			autoAdvancePlayers.push(player1);
 		} else {
-			player2 = bracket.players[playersAssigned++]; // Assign the next player
+			player2 = bracket.players[playersAssigned++];
 		}
 
 		initialGames.push({
 			status: gameStatus,
-
 			player1: {
 				...player1,
 				winner: gameStatus === "completed",
@@ -48,13 +47,11 @@ const generateBracket = async (bracketId) => {
 	}
 	bracket.rounds.push({ games: initialGames, roundNumber: 1 });
 
-	// Subsequent rounds, ensuring players who advanced are placed correctly
-	let nextRoundGames = autoAdvancePlayers; // Start with players who auto-advanced
+	let nextRoundGames = autoAdvancePlayers;
 
 	for (let roundNumber = 2; roundNumber <= totalRoundsNeeded; roundNumber++) {
 		const gamesInThisRound = Math.pow(2, totalRoundsNeeded - roundNumber);
 		const games = Array.from({ length: gamesInThisRound }).map((_, index) => {
-			// Check if there are auto-advanced players to be placed in this game
 			let player1 =
 				nextRoundGames.length > index * 2 ? nextRoundGames[index * 2] : null;
 			let player2 =
@@ -69,11 +66,10 @@ const generateBracket = async (bracketId) => {
 			};
 		});
 
-		nextRoundGames = []; // Reset for the next iteration (if any)
+		nextRoundGames = [];
 		bracket.rounds.push({ games, roundNumber });
 	}
 
-	// Assign nextGameId here if necessary. Note: This part may need adjustment based on your schema and needs.
 	for (let i = 0; i < bracket.rounds.length; i++) {
 		for (let j = 0; j < bracket.rounds[i].games.length; j++) {
 			if (i < bracket.rounds.length - 1) {
@@ -84,20 +80,85 @@ const generateBracket = async (bracketId) => {
 	}
 
 	bracket.markModified("rounds");
-
 	await bracket.save();
 	return bracket;
 };
 
-clearRounds = async (bracketId) => {
+//so this migh tbe the problem, if the game doesn't exist, it should create a new one and also a blank spot for the second player
+const addPlayerToFirstEmptySpot = async (bracketId, playerId) => {
 	let bracket = await Bracket.findById(bracketId);
 	if (!bracket) {
-		return res.status(404).json({ message: "Bracket not found." });
+		throw new Error("Failed to find bracket.");
 	}
 
-	bracket.rounds = [];
+	const round = bracket.rounds[0];
+	const game = round.games.find((game) => !game.player1 || !game.player2);
+
+	if (!game) {
+		console.log("No game, creating new one with blank opponent");
+		const newGame = {
+			player1: {
+				_id: playerId,
+				winner: null,
+				filled: true,
+			},
+			player2: null,
+			status: "pending",
+		};
+		round.games.push(newGame);
+	} else {
+		if (!game.player1) {
+			game.player1 = {
+				_id: playerId,
+			};
+		} else if (!game.player2) {
+			game.player2 = {
+				_id: playerId,
+			};
+		}
+	}
+
+	bracket.markModified("rounds");
 	await bracket.save();
-	return bracket;
+	return augmentPlayerData(bracket);
+};
+
+const addPlayerToBracket = async ({ name, bracketId }) => {
+	try {
+		const bracket = await Bracket.findById(bracketId).populate("players");
+		if (!bracket) {
+			throw new Error("Bracket not found");
+		}
+
+		const playerExists = bracket.players.some((player) => player.name === name);
+		if (playerExists) {
+			throw new Error(
+				"Player with this name already exists in the bracket. Please choose a different name or add an initial/last-name"
+			);
+		}
+
+		const newPlayer = await Player.create({ name });
+
+		const updatedBracket = await Bracket.findById(bracketId).populate(
+			"players"
+		);
+
+		updatedBracket.players.push(newPlayer);
+		await updatedBracket.save();
+
+		const regeneratedBracket = await generateBracket(bracketId);
+
+		//let augmentedBracket = augmentPlayerData(updatedBracket);
+
+		return {
+			message: "Player added successfully",
+			newPlayer,
+			players: regeneratedBracket.players,
+		};
+	} catch (error) {
+		console.error("Error adding player to bracket:", error);
+		throw new Error("Error adding player to bracket");
+	}
 };
 
 removePlayerFromGame = async (bracketId, gameId, playerId, roundIndex) => {
@@ -251,6 +312,17 @@ undoOutcomes = async (bracketId, roundIndex, gameId) => {
 		console.log("error", error);
 		throw new Error("Failed to undo outcomes.");
 	}
+};
+
+clearRounds = async (bracketId) => {
+	let bracket = await Bracket.findById(bracketId);
+	if (!bracket) {
+		return res.status(404).json({ message: "Bracket not found." });
+	}
+
+	bracket.rounds = [];
+	await bracket.save();
+	return bracket;
 };
 
 validateBracket = (bracketId) => {
@@ -416,4 +488,6 @@ module.exports = {
 	removePlayerFromGame,
 	updateGameWinner,
 	undoOutcomes,
+	addPlayerToFirstEmptySpot,
+	addPlayerToBracket,
 };

@@ -2,7 +2,11 @@
   <span class="dark:text-white">
     <Loader v-if="loading" />
     <div v-if="playersNotInBracket?.length">
-      <PlayerBadges :players="playersNotInBracket" v-if="!showingDummy" />
+      <PlayerBadges
+        :players="playersNotInBracket"
+        v-if="!showingDummy"
+        @update="update"
+      />
     </div>
     <div
       class="bracket-container fadein"
@@ -36,12 +40,6 @@
       <div v-else>
         <BracketList :rounds="rounds" />
       </div>
-
-      <BracketBottomMenu
-        :bracket="currentBracket"
-        @generate="generateBracket"
-        @toggleView="toggleView"
-      />
 
       <pre v-if="dev" class="text-xs z-50" style="">{{ rounds }}</pre>
     </div>
@@ -120,10 +118,24 @@
       </button>
     </div>
 
+    <PlayerForm
+      v-if="$store.getBracket"
+      @update="playerKey++"
+      @invite="showShareLink = !showShareLink"
+      ref="playerForm"
+    />
+
     <PlayerCard
       :player="selectedPlayer"
       :game="selectedGame"
       @update="refresh"
+    />
+
+    <BracketBottomMenu
+      :bracket="currentBracket"
+      @generate="generateBracket"
+      @toggleView="toggleView"
+      @new-player="$refs.playerForm.showModal()"
     />
   </span>
 </template>
@@ -140,6 +152,7 @@ import BracketList from "@/components/BracketList.vue";
 import PlayerBadges from "@/components/PlayerBadges.vue";
 import BracketWarnings from "@/components/BracketWarnings.vue";
 import BracketGenerator from "@/components/BracketGenerator.vue";
+import PlayerForm from "@/components/forms/PlayerForm.vue";
 
 export default {
   components: {
@@ -151,6 +164,7 @@ export default {
     PlayerBadges,
     BracketWarnings,
     BracketGenerator,
+    PlayerForm,
   },
   mixins: [bracketMixin],
   data() {
@@ -178,6 +192,9 @@ export default {
     }
   },
   methods: {
+    async update() {
+      this.compKey++;
+    },
     toggleView() {
       this.view = this.view === "bracket" ? "list" : "bracket";
     },
@@ -449,15 +466,15 @@ p {
 }
 
 .un-played {
-  background-color: rgb(113, 113, 113) !important;
+  background-color: rgba(113, 113, 113, 0.211) !important;
   height: 60px;
   border-radius: 10px;
   background-color: #e5e5f7;
-  opacity: 0.8;
+  opacity: 0.7 !important;
   background-size: 10px 10px;
   background-image: repeating-linear-gradient(
     45deg,
-    #36488e 0,
+    #36488e9e 0,
     #2f51ab 1px,
     #32324b 0,
     #4f598d 50%

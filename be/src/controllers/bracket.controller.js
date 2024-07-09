@@ -24,6 +24,25 @@ class BracketController extends BaseController {
 		}
 	}
 
+	async addPlayer(req, res) {
+		const { bracketId, playerId } = req.params;
+
+		try {
+			const bracket = await bracketService.addPlayerToFirstEmptySpot(
+				bracketId,
+				playerId
+			);
+
+			res.json({
+				message: "Player added to bracket successfully",
+				bracket,
+			});
+		} catch (error) {
+			console.error("Failed to add player to bracket:", error);
+			res.status(500).json({ message: "Failed to add player to bracket" });
+		}
+	}
+
 	async upsert(req, res) {
 		let body = req.body;
 		body.organization = req.user.organization;

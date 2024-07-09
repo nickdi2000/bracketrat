@@ -1,39 +1,21 @@
 <template>
   <div class="pt-0 text-white min-h-screen- max-w-4xl">
-    <Tabs v-model="activeTab" class="p-5">
-      <Tab name="info" title="Setup">
-        <div class="">
-          <BracketForm
-            :selectedBracket="selectedBracket"
-            v-if="selectedBracket"
-          />
-          <div v-else>
-            <Alert type="warning"
-              >No bracket selected. Please
-              <router-link :to="'/brackets'" class="underline font-bold"
-                >Select a Bracket</router-link
-              >
-              first
-            </Alert>
-          </div>
-        </div>
-      </Tab>
-      <Tab name="options" title="Advanced">
-        <h4 class="font-bold text-lg mb-2">Bracket Options</h4>
-
-        <table class="w-full">
-          <tr v-for="(opt, optIndex) in options" class="p-3">
-            <td class="p-3 bg-gray-800">
-              <Toggle v-model="opt.value" :label="opt.label" />
-            </td>
-          </tr>
-        </table>
-
-        <div class="py-2">
-          <button class="btn btn-success" @click="save()">Save</button>
-        </div>
-      </Tab>
-    </Tabs>
+    <div class="">
+      <BracketForm
+        @save="save"
+        :selectedBracket="selectedBracket"
+        v-if="selectedBracket"
+      />
+      <div v-else>
+        <Alert type="warning"
+          >No bracket selected. Please
+          <router-link :to="'/brackets'" class="underline font-bold"
+            >Select a Bracket</router-link
+          >
+          first
+        </Alert>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -50,8 +32,18 @@ export default {
     },
   },
   methods: {
-    save() {
-      console.log("saving options", this.form);
+    async save(e) {
+      console.log("saving data", "brackets");
+      let data = JSON.parse(JSON.stringify(e));
+      delete data.players;
+      delete data.rounds;
+
+      try {
+        const rec = await this.$api.post("brackets", data);
+        this.$store.fetchBracket(e._id);
+      } catch (e) {
+        console.log("error saving bracket", e);
+      }
     },
   },
   data() {

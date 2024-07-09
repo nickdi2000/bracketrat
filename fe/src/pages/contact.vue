@@ -86,8 +86,11 @@ export default {
   computed: {
     flag() {
       //route
-      return this.$route.params.flag;
+      return this.$route?.params?.flag || "form";
     },
+  },
+  created() {
+    this.form.email = this.$store.user.email;
   },
   methods: {
     async submit() {

@@ -3,6 +3,21 @@ const mongoose = require("mongoose");
 const { roundSchema } = require("./round.model");
 const { playerSchema } = require("./player.model");
 
+// const optionSchema = new mongoose.Schema({
+// 	require_auth: {
+// 		type: Boolean,
+// 		default: false,
+// 	},
+// 	require_password: {
+// 		type: Boolean,
+// 		default: false,
+// 	},
+// 	auto_bracket: {
+// 		type: Boolean,
+// 		default: false,
+// 	},
+// });
+
 const bracketSchema = new mongoose.Schema({
 	name: {
 		type: String,
@@ -35,7 +50,7 @@ const bracketSchema = new mongoose.Schema({
 	},
 	status: {
 		type: String,
-		enum: ["in-progress", "draft", "completed", "cancelled", "paused"],
+		enum: ["active", "draft", "completed", "cancelled", "paused"],
 		default: "draft",
 	},
 	code: {
@@ -54,6 +69,19 @@ const bracketSchema = new mongoose.Schema({
 			"other",
 		],
 		default: "single-elimination",
+	},
+	require_auth: {
+		type: Boolean,
+		default: false,
+	},
+	auth_type: {
+		type: String,
+		enum: ["just_name", "symbols", "password"],
+		default: "symbols",
+	},
+	auto_bracket: {
+		type: Boolean,
+		default: true,
 	},
 });
 

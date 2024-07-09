@@ -1,13 +1,11 @@
 import { createApp } from "vue";
-import { createRouter, createWebHistory } from "vue-router";
 import "@/assets/styles/fonts.css";
 import "@/assets/styles/main.css";
 import "@/assets/styles/tailwind.css";
 import App from "@/app.vue";
-import { routes } from "@/routes.js";
+//import { routes } from "@/router.js";
 import api from "./api";
 import ToastPlugin from "vue-toast-notification";
-import { createPinia } from "pinia";
 import { FwbAlert } from "flowbite-vue";
 import { FwbCard } from "flowbite-vue";
 import { FwbToggle } from "flowbite-vue";
@@ -21,10 +19,12 @@ import { FwbSelect } from "flowbite-vue";
 import "../node_modules/flowbite-vue/dist/index.css";
 import "vue-toast-notification/dist/theme-bootstrap.css";
 
-const router = createRouter({
-  history: createWebHistory(import.meta.env.VITE_BASE_PUBLIC_PATH),
-  routes,
-});
+import router from "./router";
+
+// const router = createRouter({
+//   history: createWebHistory(import.meta.env.VITE_BASE_PUBLIC_PATH),
+//   routes,
+// });
 
 import Loader from "@/components/Loader.vue";
 import ProgressBar from "@/components/ProgressBar.vue";
@@ -42,6 +42,8 @@ import {
   ArrowUturnDownIcon,
   PencilSquareIcon,
   ExclamationTriangleIcon,
+  QuestionMarkCircleIcon,
+  PlusCircleIcon,
 } from "@heroicons/vue/24/solid";
 
 import piniaPlugin from "./plugins/pinia";
@@ -70,7 +72,8 @@ app.component("Tabs", FwbTabs);
 app.component("FButton", FwbButton);
 app.component("Spinner", FwbSpinner);
 app.component("Select", FwbSelect);
-
+app.component("QuestionMarkCircleIcon", QuestionMarkCircleIcon);
+app.component("PlusCircleIcon", PlusCircleIcon);
 //custom
 app.component("Loader", Loader);
 app.component("ProgressBar", ProgressBar);
