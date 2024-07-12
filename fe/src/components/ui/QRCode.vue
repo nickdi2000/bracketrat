@@ -1,16 +1,15 @@
 <template>
   <div class="flex flex-col items-center p-3 print-padding">
     <div class="subheader">Bracket Player-Link</div>
-    <div
-      class="text-2xl font-bold py-4"
-      :class="!darkMode ? 'text-black' : 'text-white'"
-    >
-      {{ link }}
-    </div>
+    <Link :darkMode="darkMode" :code="bracket?.code" @update="handleUpdate" />
     <div
       v-for="instance in [0, 1]"
       :key="instance + '-qr-div' + darkMode"
-      :class="instance == 1 ? ' print-only  ' : ' no-print'"
+      class="trans"
+      :class="[
+        instance == 1 ? ' print-only  ' : ' no-print',
+        learnMore ? 'shrink' : '',
+      ]"
     >
       <QRCodeVue3
         :key="instance + '-qr' + darkMode"
@@ -41,11 +40,31 @@
       />
     </div>
 
-    <div class="py-4 text-sm max-w-screen-sm">
-      Provide this QRcode or link to your players to join the bracket. After
-      scanning this and entering their name, you should see them on the
-      {{ $teamPlayer }}
-      list.
+    <div class="py-4 text-sm px-2 trans">
+      <div class="bg-gray-800 p-3 mx-2 fadein learnMore" v-if="learnMore">
+        Provide this QRcode or link to your players to join the bracket. After
+        scanning this and entering their name, you should see them on the
+        {{ $teamPlayer }}
+        list. You may adjust how this works in the settings menu -- such as
+        whether or not they should be able to invite others, and if they should
+        be pushed directly into the bracket.
+        <div class="my-4">
+          <button
+            class="btn btn-secondary btn-sm"
+            @click="learnMore = !learnMore"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+      <div v-else>
+        <button
+          class="btn btn-secondary btn-sm"
+          @click="learnMore = !learnMore"
+        >
+          Learn More
+        </button>
+      </div>
     </div>
     <!-- :downloadOptions="{ name: 'vqr', extension: 'png' }" -->
 
@@ -81,12 +100,14 @@
 <script>
 import QRCodeVue3 from "qrcode-vue3";
 import { SunIcon } from "@heroicons/vue/24/solid";
+import Link from "@/components/ui/Link.vue";
 
 export default {
   name: "QRCodeVue3Example",
   components: {
     QRCodeVue3,
     SunIcon,
+    Link,
   },
   computed: {
     color() {
@@ -106,6 +127,7 @@ export default {
   },
   data() {
     return {
+      learnMore: false,
       darkMode: true,
       dark: ["#e4f1fe", "#8dc6ff", "#22313f", "#34495e"],
       light: ["#000000", "#000000", "#ffffff", "#000000"],
@@ -122,5 +144,10 @@ export default {
 .slow-animate {
   transition: all 1s ease;
   animation: fadeIn 2s;
+}
+
+.learnMore {
+  margin-top: -140px;
+  z-index: 99;
 }
 </style>

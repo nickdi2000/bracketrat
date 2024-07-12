@@ -13,12 +13,6 @@ const register = catchAsync(async (req, res) => {
 	try {
 		let user = await userService.createUser(userData);
 		const tokens = await tokenService.generateAuthTokens(user);
-		const org = await userService.createOrganization(user);
-
-		user = await userService.updateUserById(user._id, {
-			organization: org._id,
-		});
-
 		res.status(httpStatus.CREATED).send({ user, tokens });
 	} catch (err) {
 		console.log(err);
@@ -39,6 +33,13 @@ const login = catchAsync(async (req, res) => {
 		console.log("saving sesssion..");
 		res.send({ user, tokens });
 	});
+});
+
+const ssoLoginRegister = catchAsync(async (req, res) => {
+	const ssoInfo = req.body;
+	const user = await authService.ssoLoginRegister(ssoInfo);
+	const tokens = await tokenService.generateAuthTokens(user);
+	res.send({ user, tokens });
 });
 
 const logout = catchAsync(async (req, res) => {
@@ -93,4 +94,5 @@ module.exports = {
 	resetPassword,
 	sendVerificationEmail,
 	verifyEmail,
+	ssoLoginRegister,
 };

@@ -9,6 +9,7 @@ const register = {
 		familyUsername: Joi.string(),
 		utm_source: Joi.string().optional(),
 		sso_info: Joi.object().unknown(),
+		location: Joi.object().unknown(),
 		isGuest: Joi.boolean().default(false),
 	}),
 };

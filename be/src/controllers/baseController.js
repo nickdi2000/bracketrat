@@ -46,6 +46,8 @@ class BaseController {
 	async list(req, res) {
 		try {
 			const org_id = req.user.organization;
+			console.log("finding org_id", org_id);
+
 			const items = await this.model.find({ organization: org_id });
 
 			res.send(items);

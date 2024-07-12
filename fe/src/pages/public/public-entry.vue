@@ -23,12 +23,7 @@
             placeholder="Enter Name.."
             v-model="name"
             style="font-size: 2rem"
-            :class="
-              foundMatch
-                ? 'text-green-300 dark:bg-gray-800'
-                : 'text-gray-900 dark:text-gray-100'
-            "
-            class="block w-full p-4 uppercase text-3xl font-bold border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            class="block w-full p-4 uppercase text-gray-900 text-3xl font-bold border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           />
 
           <button
@@ -105,29 +100,6 @@ export default {
   methods: {
     async joinBracket() {
       this.loading = true;
-      if (this.foundMatch) {
-        this.login();
-      } else {
-        this.register();
-      }
-    },
-    async login() {
-      const store = playerAuthStore();
-      try {
-        const res = await this.$api.post("players/login", {
-          bracketId: this.bracket._id,
-          name: this.name,
-        });
-        console.log("res", res.data?.player);
-        store.setPlayer(res.data.player);
-        this.$router.push(`/player`);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        this.loading = false;
-      }
-    },
-    async register() {
       const store = playerAuthStore();
       try {
         const res = await this.$api.post("players/register", {

@@ -10,7 +10,7 @@
       >
         <!-- Modal content here -->
         <div class="text-center" v-if="player.name">
-          <h2 class="text-2xl font-semibold uppercase mb-4">
+          <h2 class="text-2xl font-semibold uppercase mb-4 cursor-pointer hover:text-blue-200" @click="$router.push(`/admin/player/${player._id}`)">
             {{ player.name }}
           </h2>
           <div class="py-2 my-5 w-full min-w-3xl">

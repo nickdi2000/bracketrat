@@ -37,6 +37,7 @@
         @start="drag = true"
         @end="handleEnd"
         item-key="name"
+        :disabled="!canDrag"
       >
         <template #item="{ element }">
           <tr
@@ -47,7 +48,12 @@
               scope="row"
               class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
             >
-              {{ element.name }}
+              <router-link
+                class="player-btn"
+                :to="'/admin/player/' + element._id"
+              >
+                {{ element.name }}</router-link
+              >
             </th>
             <td class="px-6 py-4">
               <span
@@ -124,7 +130,15 @@ export default {
       drag: false,
       pendingSave: false,
       rows: this.records,
+      canDrag: true,
     };
+  },
+  emits: ["updated"],
+  created() {
+    //if mobile device, set canDrag to false
+    if (window.innerWidth < 768) {
+      this.canDrag = false;
+    }
   },
   methods: {
     saveChanges() {
@@ -155,8 +169,16 @@ export default {
           `players?bracketId=${bracketId}&playerId=${record._id}`,
           {}
         );
-        this.$store.setPlayers(rec.data.bracket.players);
-        console.log("Destroyed", rec.data.bracket.players);
+        //this.$store.setPlayers(rec.data.bracket.players);
+        //this.$emit("updated");
+        if (rec.data.bracket.players) {
+          console.log("setting players");
+          const newPlayers = JSON.parse(
+            JSON.stringify(rec.data.bracket.players)
+          );
+          await this.$store.setPlayers(newPlayers);
+          this.$emit("updated");
+        }
       } catch (error) {
         console.error("Error", error);
         this.$toast.error("Error deleting record");
@@ -200,3 +222,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.player-btn {
+  text-decoration: none;
+  @apply bg-gray-800 uppercase p-2 text-lg w-full rounded-md text-white hover:bg-gray-600;
+}
+</style>

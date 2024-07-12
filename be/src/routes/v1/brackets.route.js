@@ -7,6 +7,10 @@ router.post("/", (req, res, next) => {
 	bracketController.upsert(req, res, next);
 });
 
+router.patch("/:id", (req, res, next) => {
+	bracketController.patch(req, res, next);
+});
+
 router.get("/", (req, res, next) => {
 	bracketController.list(req, res, next);
 });

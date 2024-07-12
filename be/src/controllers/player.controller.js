@@ -70,8 +70,43 @@ const destroy = catchAsync(async (req, res) => {
 	}
 });
 
+const showPlayer = catchAsync(async (req, res) => {
+	const { id } = req.params;
+
+	try {
+		const player = await Player.findById(id).populate("user");
+
+		const brackets = await Bracket.find({ "players._id": id });
+
+		if (!player) {
+			return res.status(404).json({ message: "Player not found." });
+		}
+
+		res.json({ player, brackets });
+	} catch (error) {
+		console.error("Error getting player:", error);
+		res.status(500).json({ message: "Failed to get player." });
+	}
+});
+
+const register = catchAsync(async (req, res) => {
+	const { name, bracketId } = req.body;
+
+	try {
+		const result = await bracketService.addPlayerToBracket({ name, bracketId });
+		const playerId = result.newPlayer._id;
+
+		res.status(201).json({ player: result.newPlayer });
+	} catch (error) {
+		console.error("Error adding player to bracket:", error);
+		res.status(500).json({ message: error.message });
+	}
+});
+
 module.exports = {
 	insertPlayer,
 	getByBracketId,
 	destroy,
+	showPlayer,
+	register,
 };

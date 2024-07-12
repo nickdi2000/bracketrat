@@ -38,6 +38,10 @@ const organizationSchema = new mongoose.Schema({
 			ref: "Bracket",
 		},
 	],
+	defaultBracket: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "Bracket",
+	},
 	// Additional fields like website, social media links, etc.
 	website: String,
 	// Timestamps

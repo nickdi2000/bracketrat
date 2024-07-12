@@ -44,16 +44,24 @@ import {
   ExclamationTriangleIcon,
   QuestionMarkCircleIcon,
   PlusCircleIcon,
+  UserCircleIcon,
 } from "@heroicons/vue/24/solid";
 
 import piniaPlugin from "./plugins/pinia";
 import { authStore } from "./store/auth";
 import openDialog from "@/services/dialog.service";
 import bottomAlert from "./services/bottom.alert.service";
+import vue3GoogleLogin from "vue3-google-login";
 
 const app = createApp(App);
+app.use(vue3GoogleLogin, {
+  clientId:
+    "59253511509-r5uob532ime0c9jvmoq5m8ob6tajim2l.apps.googleusercontent.com",
+});
+
 app.use(piniaPlugin);
 app.config.globalProperties.$appName = "Bracket Rat";
+app.config.globalProperties.$baseUrl = "BracketRat.com";
 app.config.globalProperties.$api = api;
 app.config.globalProperties.$store = authStore();
 app.config.globalProperties.$openDialog = openDialog;
@@ -74,6 +82,7 @@ app.component("Spinner", FwbSpinner);
 app.component("Select", FwbSelect);
 app.component("QuestionMarkCircleIcon", QuestionMarkCircleIcon);
 app.component("PlusCircleIcon", PlusCircleIcon);
+app.component("UserCircleIcon", UserCircleIcon);
 //custom
 app.component("Loader", Loader);
 app.component("ProgressBar", ProgressBar);

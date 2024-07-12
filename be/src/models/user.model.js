@@ -20,6 +20,16 @@ const userSchema = mongoose.Schema(
 			enum: ["guest", "active", "upgraded", "inactive", "archived"],
 			default: "active",
 		},
+		player_at: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Player",
+			},
+		],
+		isAdmin: {
+			type: Boolean,
+			default: true,
+		},
 		email: {
 			type: String,
 			required: false,
@@ -35,7 +45,7 @@ const userSchema = mongoose.Schema(
 		},
 		password: {
 			type: String,
-			required: true,
+			required: false,
 			trim: true,
 			minlength: 8,
 			validate(value) {
@@ -73,6 +83,10 @@ const userSchema = mongoose.Schema(
 		},
 		location: {
 			type: mongoose.Schema.Types.Mixed,
+		},
+		defaultBracket: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Bracket",
 		},
 	},
 	{

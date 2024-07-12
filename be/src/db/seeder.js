@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
-const { User } = require("../models");
-const { Organization } = require("../models");
+const { User, Organization, Bracket } = require("../models");
+const { Player } = require("../models/player.model");
 const db = require("../db");
-const { userServices } = require("../services");
+const { userService } = require("../services");
 
 const OrganizationSeedData = [
 	{
@@ -29,25 +29,36 @@ db.connectToDatabase()
 		console.log("Connected to the database");
 
 		// Seed the Organization data
-		const orgs = await Organization.insertMany(OrganizationSeedData);
+		//const orgs = await Organization.insertMany(OrganizationSeedData);
 		addPasswords(userSeedData);
 
 		// Get the Organization ID
-		const OrganizationId = orgs[0]._id; // Assuming we want to use the first Organization's ID
+		//const OrganizationId = orgs[0]._id; // Assuming we want to use the first Organization's ID
 
 		// Update the user seed data with the Organization ID
-		const modifiedUserSeedData = userSeedData.map((user) => ({
-			...user,
-			OrganizationId,
-		}));
+		// const modifiedUserSeedData = userSeedData.map((user) => ({
+		// 	...user,
+		// 	OrganizationId,
+		// }));
 
 		//delete Users:
 		await User.deleteMany({});
+		await Organization.deleteMany({});
+		await Bracket.deleteMany({});
+		await Player.deleteMany({});
+		// Seed the User data
 
 		try {
 			await Promise.all(
-				modifiedUserSeedData.map(async (user) => {
-					await User.create(user);
+				userSeedData.map(async (userData) => {
+					//await User.create(user);
+
+					let user = await userService.createUser(userData);
+					const org = await userService.createOrganization(user);
+
+					user = await userService.updateUserById(user._id, {
+						organization: org._id,
+					});
 					console.log("Created user: ", user.email);
 				})
 			);

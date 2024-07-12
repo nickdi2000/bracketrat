@@ -1,9 +1,13 @@
 <template>
   <div
-    v-if="!code && !loading"
+    v-if="(!code && !loading) || $route.params.path == 'find'"
     class="bg-gradient-to-bl from-gray-800 to-sky-950 text-white"
   >
-    <PublicWelcome :key="$route.fullPath + '-publicwelcome'" />
+    <PublicWelcome
+      v-if="code"
+      :path="code"
+      :key="$route.fullPath + '-publicwelcome'"
+    />
   </div>
 
   <div v-else class="bg-gradient-to-bl from-gray-800 to-sky-950">
@@ -67,6 +71,8 @@ export default {
   mounted() {
     //get code from url
     this.code = this.$route.params.path;
+    console.log("publicLayout code", this.code);
+    if (this.code == "find" || this.code == "play") return;
     this.getData();
   },
   components: {

@@ -1,5 +1,5 @@
 const httpStatus = require("http-status");
-const { User, Document, Organization } = require("../models");
+const { User, Document, Organization, Bracket } = require("../models");
 const ApiError = require("../utils/ApiError");
 
 /**
@@ -7,11 +7,28 @@ const ApiError = require("../utils/ApiError");
  * @param {Object} userBody
  * @returns {Promise<User>}
  */
+// user.save() is not a function here, how can i fix this method?:
+
 const createUser = async (userBody) => {
 	if (await User.isEmailTaken(userBody.email)) {
 		throw new ApiError(httpStatus.BAD_REQUEST, "Email already taken");
 	}
-	return User.create(userBody);
+	let user = await User.create(userBody);
+
+	// Create the organization
+	const org = await createOrganization(user);
+
+	// Update user's organization and defaultBracket
+	user = await User.findByIdAndUpdate(
+		user._id,
+		{
+			organization: org._id,
+			defaultBracket: org.defaultBracket,
+		},
+		{ new: true }
+	); //.populate("defaultBracket"); // Populate the defaultBracket reference
+
+	return user;
 };
 
 const createOrganization = async (user) => {
@@ -27,6 +44,16 @@ const createOrganization = async (user) => {
 		name: name,
 		owner: user._id,
 	});
+
+	//also create a bracket for the organization and set the defaultBracket for the org to it
+	const bracket = await Bracket.create({
+		name: "My First Bracket",
+		organization: org._id,
+	});
+	org.brackets.push(bracket._id);
+	org.defaultBracket = bracket._id;
+	await org.save();
+
 	return org;
 };
 

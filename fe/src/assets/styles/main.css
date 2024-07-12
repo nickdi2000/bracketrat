@@ -6,6 +6,14 @@ body {
   font-family: "Fira Sans", sans-serif;
 }
 
+/* veritcal centering */
+.mid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+}
+
 .fadein {
   animation: fadeIn 0.3s ease-in-out;
 }
@@ -35,6 +43,23 @@ body {
   font-size: 2.5rem;
 }
 
+.header {
+  font-size: 1.5rem;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: rgb(212, 212, 212);
+}
+
+.trans {
+  transition: all 0.3s;
+}
+
+.shrink {
+  transform: scale(0.6) translateY(-40%);
+  margin-bottom: 0px;
+}
+
 .subheader {
   font-size: 0.8rem;
   letter-spacing: 0.2em;
@@ -42,6 +67,10 @@ body {
   text-transform: uppercase;
   color: rgb(212, 212, 212);
   opacity: 0.8;
+}
+
+.card {
+  @apply bg-gray-800 shadow-lg rounded-lg p-4 min-w-96;
 }
 
 .btn {

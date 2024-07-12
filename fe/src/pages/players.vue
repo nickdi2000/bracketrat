@@ -29,7 +29,7 @@
       ref="playerForm"
     />
 
-    <div class="mt-5 no-print" v-if="!$store.players.length">
+    <div class="mt-5 no-print text-center" v-if="!$store.players.length">
       <Alert type="info" class="fadeinUp"
         >No {{ $store.teamPlayer }}'s exist yet. Invite them with your unique
         bracket link/QR code... or add them manually.</Alert
@@ -44,6 +44,7 @@
       v-if="$store.players.length && !showShareLink"
       :records="players"
       :key="playerKey"
+      @updated="handleUpdated"
       class="pt-4"
     />
   </div>

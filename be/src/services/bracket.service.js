@@ -138,6 +138,7 @@ const addPlayerToBracket = async ({ name, bracketId }) => {
 		}
 
 		const newPlayer = await Player.create({ name });
+		newPlayer.brackets.push(bracketId);
 
 		const updatedBracket = await Bracket.findById(bracketId).populate(
 			"players"

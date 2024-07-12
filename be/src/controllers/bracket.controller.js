@@ -230,6 +230,28 @@ class BracketController extends BaseController {
 			res.status(400).send("BracketController error" + JSON.stringify(error));
 		}
 	}
+
+	async patch(req, res) {
+		const body = req.body;
+		const { id } = req.params;
+
+		try {
+			const bracket = await Bracket.findById(id);
+			if (!bracket) {
+				return res.status(404).send("Item not found");
+			}
+
+			Object.keys(body).forEach((key) => {
+				bracket[key] = body[key];
+			});
+
+			await bracket.save();
+			res.status(200).send(bracket);
+		} catch (error) {
+			console.log("bracketController error", error);
+			res.status(400).send("bracketController error" + JSON.stringify(error));
+		}
+	}
 }
 
 module.exports = new BracketController();

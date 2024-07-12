@@ -3,7 +3,7 @@
     <div
       class="flex flex-col items-center justify-center px-6 pb-1 mx-auto md:h-screen lg:py-0"
     >
-      <span
+      <!-- <span
         @click="test()"
         class="flex items-center lg:mt-0 sm:mt-5 fade fadeinUp text-2xl font-semibold text-gray-900 dark:text-white"
       >
@@ -12,7 +12,7 @@
           class="logo-image"
           :class="[animate ? 'altered' : '', bounce ? 'animate-bounce' : '']"
         />
-      </span>
+      </span> -->
       <div class="text-2xl my-2 fadein font-bold">{{ $appName }}</div>
 
       <div
@@ -153,9 +153,13 @@
               Login
             </button>
           </p>
+
+          <div class="flex items-center justify-center space-x-4">
+            <SocialLogin />
+          </div>
         </div>
       </div>
-      <div>
+      <div class="footer">
         <p class="text-sm text-gray-500 dark:text-gray-400 text-center">
           &copy; {{ new Date().getFullYear() }} All rights reserved.
           <br />
@@ -169,8 +173,13 @@
 </template>
 
 <script>
+import SocialLogin from "@/components/SocialLogin.vue";
+
 export default {
   name: "Login",
+  components: {
+    SocialLogin,
+  },
   data() {
     return {
       registering: this.$route.name == "register",
@@ -188,6 +197,9 @@ export default {
     setTimeout(() => {
       this.animate = true;
     }, 300);
+    if (this.registering) {
+      this.getGeo();
+    }
   },
   methods: {
     async test() {
@@ -215,7 +227,7 @@ export default {
       try {
         const rec = await this.$api.register(this.form);
         this.$store.setUser(rec);
-        this.$router.push("/admin/home");
+        this.$router.push("/admin/dashboard");
       } catch (error) {
         console.log("ERROR", error);
         this.$toast.error("Error registering");
@@ -236,6 +248,25 @@ export default {
       }
       this.loading = false;
     },
+    async getGeo() {
+      const API_KEY = import.meta.env.VITE_GEO_API_KEY;
+      const url = `https://api.ipgeolocation.io/ipgeo?apiKey=${API_KEY}`;
+      try {
+        const rec = await fetch(url);
+        const data = await rec.json();
+        this.form.location = {
+          city: data.city,
+          country: data.country_name,
+          state: data.state_prov,
+          lat: data.latitude,
+          long: data.longitude,
+          state: data.state_prov,
+          zip: data.zipcode,
+        };
+      } catch (error) {
+        console.log("error getting geo", error);
+      }
+    },
   },
 };
 </script>
@@ -253,7 +284,8 @@ export default {
 }
 
 .bg-image {
-  background-image: url("https://mrwallpaper.com/images/hd/play-to-your-full-potential-frvfo9ot2l8kbe6l.jpg");
+  /* background-image: url("https://mrwallpaper.com/images/hd/play-to-your-full-potential-frvfo9ot2l8kbe6l.jpg"); */
+  background-image: url("/images/soccer-fire.jpg");
   background-size: cover;
   background-position: center;
   background-blend-mode: multiply;

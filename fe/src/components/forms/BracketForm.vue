@@ -191,11 +191,27 @@
         </button>
       </div>
     </div>
+    <div v-if="shouldDisable">
+      <div class="text-white text-sm alert alert-danger">
+        <span class="font-bold">Note:</span> This feature is only available for
+        our Beta Users. Please
+        <router-link
+          class="text-blue-300 underline hover:text-blue-100 font-bold"
+          :to="'/admin/contact'"
+          >Contact Us</router-link
+        >
+        to signup and enjoy everything we have to offer!
+      </div>
+    </div>
     <div class="my-4 py-2 flex justify-center">
       <button
         v-if="showSave"
         @click="$emit('save', form)"
-        class="btn btn-success mt-4"
+        class="p-3 rounded-md text-white mt-4"
+        :class="
+          shouldDisable ? 'bg-gray-500 opacity-4 text-gray-200' : 'bg-green-700'
+        "
+        :disabled="shouldDisable"
       >
         Save Changes
       </button>
@@ -230,7 +246,7 @@ export default {
         unit: "",
         require_auth: false,
         require_password: false,
-        auto_bracket: false,
+        auto_bracket: true,
       },
       units: [
         {
@@ -350,6 +366,13 @@ export default {
     },
     link() {
       return import.meta.env.VITE_BASE_FE_URL + "" + this.form.code;
+    },
+    shouldDisable() {
+      return (
+        this.form.type != "single-elimination" ||
+        this.form.require_auth ||
+        this.form.require_password
+      );
     },
   },
   components: {},

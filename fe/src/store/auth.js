@@ -28,26 +28,6 @@ export const authStore = defineStore({
       this.organization = organization;
     },
 
-    //non promise based
-    //this function works except the this.setSelectedBracket(bracket); i'm not sure is working, because areas thruout my app uses $store.authStore.getBracket() and it returns null until i reffresh the page
-
-    async _fetchBracket(bracket_id) {
-      if (!bracket_id) {
-        console.warn("No bracket bracket_id provided to authStore");
-        return;
-      }
-      const rec = await api.get(`/brackets/${bracket_id}`);
-      //console.log("rounds are", rec);
-
-      this.setPlayers(rec.data.players);
-      this.setRounds(rec.data.rounds);
-
-      const bracket = JSON.parse(JSON.stringify(rec.data));
-      delete bracket.players;
-      delete bracket.rounds;
-
-      this.setSelectedBracket(bracket);
-    },
     //to make th fetchBracket a promisebased on we could do it like this:
     async fetchBracket(bracket_id) {
       return new Promise((resolve, reject) => {
@@ -111,7 +91,7 @@ export const authStore = defineStore({
         }
       });
     },
-    setUser(userData) {
+    async setUser(userData) {
       if (!userData.data.user) {
         return;
       }
@@ -119,6 +99,9 @@ export const authStore = defineStore({
       this.tokens = userData.data.tokens;
       localStorage.setItem("user", JSON.stringify(this.user));
       localStorage.setItem("token", this.tokens.access.token);
+
+      //if selected_bracket is not set, fetch and then set it to the users defaultBracket
+      await this.fetchBracket(this.user.defaultBracket);
     },
     setPlayers(players) {
       this.players = players;
@@ -129,6 +112,22 @@ export const authStore = defineStore({
     patchUser(partialData) {
       Object.assign(this.user, partialData);
       localStorage.setItem("user", JSON.stringify(this.user));
+    },
+    patchBracket(partialData) {
+      try {
+        const rec = api.patch(
+          "brackets/" + this.selected_bracket._id,
+          partialData
+        );
+        //set selected_bracket details from partiaLData
+        Object.assign(this.selected_bracket, partialData);
+        localStorage.setItem(
+          "selected_bracket",
+          JSON.stringify(this.selected_bracket)
+        );
+      } catch (err) {
+        console.log(err);
+      }
     },
     setSelectedBracket(bracket) {
       this.selected_bracket = bracket;
@@ -169,6 +168,9 @@ export const authStore = defineStore({
     },
     check() {
       return this.user !== null || localStorage.getItem("user") !== null;
+    },
+    checkIfPlayer() {
+      return localStorage.getItem("player") !== null;
     },
     getRounds() {
       return this.rounds ?? [];

@@ -76,9 +76,18 @@ import Logo from "@/components/Logo.vue";
 
 export default {
   name: "PublicWelcome",
-  props: {},
+  props: {
+    path: {
+      type: String,
+      default: "",
+    },
+  },
   mounted() {
-    //console.log("PublicWelcome mounted");
+    console.log("public wrapper code: ", this.path);
+    if (this.path == "find") {
+      console.log("code is find");
+      this.trigger("join");
+    }
   },
   components: {
     Logo,
@@ -105,6 +114,7 @@ export default {
         "Welcome to " + this.$appName,
         "What do you want to do next?"
       );
+      //this.$router.push("/");
     },
   },
   data() {

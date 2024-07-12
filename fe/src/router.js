@@ -2,19 +2,27 @@ import AuthLayout from "@/layouts/AuthLayout.vue";
 import Index from "@/pages/index.vue";
 import Login from "@/pages/login.vue";
 import Players from "@/pages/players.vue";
+import Player from "@/pages/player.vue";
 import Options from "@/pages/options.vue";
 import Settings from "@/pages/settings.vue";
 import NotFound from "@/pages/not-found.vue";
 import Profile from "@/pages/profile.vue";
 import Brackets from "@/pages/brackets.vue";
+import PrivacyPolicy from "@/pages/privacy-policy.vue";
+import TermsOfService from "@/pages/terms-of-service.vue";
 import DashLayout from "./layouts/DashLayout.vue";
+import DocsLayout from "./layouts/DocsLayout.vue";
 import PublicLayout from "./layouts/PublicLayout.vue";
+import PublicEntryLayout from "./layouts/PublicEntryLayout.vue";
 import BracketEdit from "@/pages/bracket.vue";
 import Landing from "@/pages/landing.vue";
 import Home from "@/pages/home.vue";
 import Contact from "@/pages/contact.vue";
+import Pricing from "@/pages/pricing.vue";
 import Organization from "@/pages/organization.vue";
 import PublicIndex from "@/pages/public/public-index.vue";
+import PublicEntry from "@/pages/public/public-entry.vue";
+import PublicHome from "@/pages/public/public-home.vue";
 
 import { createRouter, createWebHistory } from "vue-router";
 
@@ -23,10 +31,10 @@ import { authStore } from "./store/auth";
 const routes = [
   {
     path: "/",
-    name: "Public",
+    name: "PublicPlay",
     meta: { isPublic: true },
-    component: PublicLayout,
-    children: [{ path: "", name: "PublicIndex", component: PublicIndex }],
+    component: PublicEntryLayout,
+    children: [{ path: "", name: "PublicEntry", component: PublicEntry }],
   },
   {
     path: "/auth",
@@ -70,12 +78,18 @@ const routes = [
       { path: "dashboard", name: "Dashboard", component: Index },
       { path: "org", name: "Organization", component: Organization },
       { path: "players/:page?", name: "Players", component: Players },
+      { path: "player/:id?", name: "Player", component: Player },
       { path: "settings", name: "Settings", component: Settings },
       { path: "profile", name: "My Profile", component: Profile },
       {
         path: "contact/:flag?",
         name: "contact",
         component: Contact,
+      },
+      {
+        path: "pricing/:flag?",
+        name: "pricing",
+        component: Pricing,
       },
       {
         path: "brackets",
@@ -94,12 +108,42 @@ const routes = [
       },
     ],
   },
-
   {
-    path: "/:path(.*)",
-    name: "NotFound",
-    component: NotFound,
+    path: "/player",
+    name: "player-home",
+    meta: { isPlayerAuth: true },
+    children: [{ path: "", name: "PublicHome", component: PublicHome }],
   },
+  {
+    path: "/docs",
+    name: "documents",
+    meta: { isPublic: true },
+    component: DocsLayout,
+    children: [
+      {
+        path: "privacy-policy",
+        name: "PrivacyPolicy",
+        component: PrivacyPolicy,
+      },
+      {
+        path: "terms-of-service",
+        name: "TermsOfService",
+        component: TermsOfService,
+      },
+    ],
+  },
+  {
+    path: "/:path",
+    name: "Public",
+    meta: { isPublic: true },
+    component: PublicLayout,
+    children: [{ path: "", name: "PublicIndex", component: PublicIndex }],
+  },
+  // {
+  //   path: "/:path(.*)",
+  //   name: "NotFound",
+  //   component: NotFound,
+  // },
 ];
 
 // const router = createRouter({
@@ -120,16 +164,21 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const store = authStore();
   const isAuthenticated = store.check;
+  const isPlayer = store.checkIfPlayer;
 
   const isPublicRoute = to.matched.some((record) => record.meta.isPublic);
   const defaultRoute = "/login";
-
+  console.log("check ", isPublicRoute, isAuthenticated, isPlayer);
   if (isPublicRoute && isAuthenticated) {
     next("/admin");
-  } else if (!isPublicRoute && !isAuthenticated) {
-    next(defaultRoute);
   } else {
-    next();
+    if (isPublicRoute && isPlayer) {
+      console.log("going to dashboard");
+      next("/player");
+    } else {
+      console.log("ELSE");
+      next();
+    }
   }
 });
 

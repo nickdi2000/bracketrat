@@ -11,6 +11,9 @@ router.post(
 	validate(authValidation.register),
 	authController.register
 );
+
+router.post("/sso-login-register", authController.ssoLoginRegister);
+
 router.post("/login", validate(authValidation.login), authController.login);
 router.post("/logout", validate(authValidation.logout), authController.logout);
 router.post(
