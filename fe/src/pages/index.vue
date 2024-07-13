@@ -46,7 +46,7 @@
 
     <div
       v-else
-      class="min-h-96 mt-20 flex flex-col items-center justify-center"
+      class="min-h-96 mt-20 mb-6 flex flex-col items-center justify-center"
     >
       <div
         class="fadein p-5 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
@@ -101,21 +101,6 @@
           {{ p.name }}
         </span>
       </div>
-
-      <div class="m-8 fixed bottom-0 left-0" v-if="!showingDummy">
-        <button
-          class="p-2 bg-teal-900 text-white rounded-md hover:bg-teal-600"
-          @click="viewDummyData"
-        >
-          Show Sample Data <users-icon class="inline h-6 w-6" />
-        </button>
-      </div>
-    </div>
-    <div class="fixed bottom-0 left-0 m-8 z-50" v-if="showingDummy">
-      <button class="btn btn-primary" @click="showingDummy = !showingDummy">
-        <TrashIcon class="h-6 w-6 inline" />
-        Clear Dummy Data
-      </button>
     </div>
 
     <PlayerForm
@@ -144,7 +129,6 @@
 import Bracket from "vue-tournament-bracket";
 
 import { UsersIcon } from "@heroicons/vue/24/solid";
-import { dummyRounds } from "@/constants/dummyData";
 import { bracketMixin } from "@/mixins/bracketMixin";
 import PlayerCard from "@/components/PlayerCard.vue";
 import BracketBottomMenu from "@/components/BracketBottomMenu.vue";
@@ -169,8 +153,6 @@ export default {
   mixins: [bracketMixin],
   data() {
     return {
-      dummyRounds: dummyRounds,
-      showingDummy: false,
       selectedPlayer: {},
       dev: false,
       selectedGame: {},

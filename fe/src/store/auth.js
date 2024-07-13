@@ -106,6 +106,9 @@ export const authStore = defineStore({
     setPlayers(players) {
       this.players = players;
     },
+    addPlayer(player) {
+      this.players.push(player);
+    },
     setRounds(rounds) {
       this.rounds = rounds;
     },

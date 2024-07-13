@@ -81,9 +81,29 @@ const generateBracket = async (bracketId) => {
 
 	bracket.markModified("rounds");
 	await bracket.save();
-	return bracket;
+	const augmentedBracket = augmentPlayerData(bracket);
+	return augmentedBracket;
 };
 
+//use same players (without pulling in straggler players)
+const reGenerateBracket = async (bracketId) => {
+	let bracket = await Bracket.findById(bracketId).populate("players");
+	if (!bracket) {
+		throw new Error("Bracket not found.");
+	}
+
+	const players = bracket.players;
+
+	// Clear current rounds
+	bracket.rounds = [];
+	await bracket.save();
+
+	// Re-generate the bracket with the same players
+	bracket.players = players;
+	await bracket.save();
+
+	return await generateBracket(bracketId);
+};
 //so this migh tbe the problem, if the game doesn't exist, it should create a new one and also a blank spot for the second player
 const addPlayerToFirstEmptySpot = async (bracketId, playerId) => {
 	let bracket = await Bracket.findById(bracketId);
@@ -491,4 +511,5 @@ module.exports = {
 	undoOutcomes,
 	addPlayerToFirstEmptySpot,
 	addPlayerToBracket,
+	reGenerateBracket,
 };

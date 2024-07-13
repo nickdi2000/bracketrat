@@ -111,14 +111,32 @@ class BracketController extends BaseController {
 				return res.status(404).json({ message: "Bracket not found." });
 			}
 
-			const augmentedBracket = bracketService.augmentPlayerData(bracket);
 			res.json({
 				message: "Bracket generated successfully with blank rounds.",
-				bracket: augmentedBracket,
+				bracket: bracket,
 			});
 		} catch (error) {
 			console.error("Error generating bracket:", error);
 			res.status(500).json({ message: "Failed to generate bracket." });
+		}
+	}
+
+	async reGenerate(req, res) {
+		const { bracketId } = req.params;
+
+		try {
+			let bracket = await bracketService.reGenerateBracket(bracketId);
+			if (!bracket) {
+				return res.status(404).json({ message: "Bracket not found." });
+			}
+
+			res.json({
+				message: "Bracket re-generated successfully with blank rounds.",
+				bracket: bracket,
+			});
+		} catch (error) {
+			console.error("Error re-generating bracket:", error);
+			res.status(500).json({ message: "Failed to re-generate bracket." });
 		}
 	}
 

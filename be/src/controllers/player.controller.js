@@ -3,6 +3,7 @@ const { Bracket } = require("../models");
 const { Player } = require("../models/player.model");
 const { bracketService } = require("../services");
 const catchAsync = require("../utils/catchAsync");
+const socket = require("../utils/socket");
 
 //insert into player list
 const insertPlayer = async (req, res) => {
@@ -94,7 +95,11 @@ const register = catchAsync(async (req, res) => {
 
 	try {
 		const result = await bracketService.addPlayerToBracket({ name, bracketId });
-		const playerId = result.newPlayer._id;
+		//const playerId = result.newPlayer._id;
+
+		// Emit an event to all connected clients
+		const io = socket.getIo();
+		io.emit("player-created", { player: result.newPlayer });
 
 		res.status(201).json({ player: result.newPlayer });
 	} catch (error) {

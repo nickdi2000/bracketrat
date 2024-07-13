@@ -32,12 +32,12 @@
             :key="index"
           >
             <div>{{ option.label }}</div>
-            <div
+            <!-- <div
               v-if="option.tip"
               class="text-sm text-gray-900 opacity-50 dark:text-gray-100"
             >
               {{ option.tip }}
-            </div>
+            </div> -->
           </button>
         </div>
         <div class="footnote text-center m-auto mt-12 opacity-30">
@@ -126,12 +126,12 @@ export default {
       subText: "What do you want to do next?",
       options: [
         {
-          label: "Join a Tournament",
+          label: "Join",
           action: "join",
           tip: "With a room code",
         },
         {
-          label: "Create Organization",
+          label: "Create",
           action: "create",
           tip: "..then create a tournament.",
         },
@@ -143,7 +143,7 @@ export default {
 
 <style scoped lang="scss">
 .big-button {
-  @apply text-center ease-in-out px-8 py-5 mt-3 w-full text-3xl uppercase font-semibold text-white rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50;
+  @apply text-center ease-in-out px-10 py-8 mt-3 w-full text-3xl uppercase font-semibold text-white rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50;
 }
 
 .text-animation {

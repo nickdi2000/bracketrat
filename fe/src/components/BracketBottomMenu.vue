@@ -1,158 +1,65 @@
 <template>
-  <div v-if="!show" class="botton-nav-btn p-3 mb-2">
-    <button @click="newPlayer()" class="btn btn-secondary mr-2">
-      <PlusCircleIcon class="h-6 w-6 inline-block" />
-    </button>
-    <button class="btn btn-primary" @click="showNav">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="w-6 h-6 inline-block"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M6 13.5V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 9.75V10.5"
-        />
-      </svg>
-    </button>
-  </div>
-  <div
-    v-else
-    class="fadeInUp fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600"
-  >
-    <div
-      class="bottom-bar grid h-full max-w-lg grid-cols-4 mx-auto font-medium"
-    >
-      <button
-        type="button"
-        @click="toggleView()"
-        class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="w-6 h-6"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z"
-          />
-        </svg>
-
-        <span
-          class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
-          ><span class="hidden md:inline">Toggle</span> View</span
-        >
+  <span>
+    <div v-if="!show" class="botton-nav-btn p-3 mb-2">
+      <button @click="newPlayer()" class="btn btn-secondary mr-2">
+        <PlusCircleIcon class="h-6 w-6 inline-block" />
       </button>
-
-      <button
-        type="button"
-        @click="generate()"
-        class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
-      >
+      <button class="btn btn-primary" @click="showNav">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          class="w-6 h-6"
+          class="w-6 h-6 inline-block"
         >
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
-            d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+            d="M6 13.5V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 9.75V10.5"
           />
         </svg>
-
-        <span
-          class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
-          >Generate</span
-        >
-      </button>
-      <!-- <button
-        type="button"
-        class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
-      >
-        <svg
-          class="w-5 h-5 mb-2 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-        >
-          <path
-            d="M11.074 4 8.442.408A.95.95 0 0 0 7.014.254L2.926 4h8.148ZM9 13v-1a4 4 0 0 1 4-4h6V6a1 1 0 0 0-1-1H1a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h17a1 1 0 0 0 1-1v-2h-6a4 4 0 0 1-4-4Z"
-          />
-          <path
-            d="M19 10h-6a2 2 0 0 0-2 2v1a2 2 0 0 0 2 2h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1Zm-4.5 3.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2ZM12.62 4h2.78L12.539.41a1.086 1.086 0 1 0-1.7 1.352L12.62 4Z"
-          />
-        </svg>
-        <span
-          class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
-          >Wallet</span
-        >
-      </button> -->
-      <button
-        type="button"
-        @click="clearBracket"
-        class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="w-6 h-6"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="m21 7.5-2.25-1.313M21 7.5v2.25m0-2.25-2.25 1.313M3 7.5l2.25-1.313M3 7.5l2.25 1.313M3 7.5v2.25m9 3 2.25-1.313M12 12.75l-2.25-1.313M12 12.75V15m0 6.75 2.25-1.313M12 21.75V19.5m0 2.25-2.25-1.313m0-16.875L12 2.25l2.25 1.313M21 14.25v2.25l-2.25 1.313m-13.5 0L3 16.5v-2.25"
-          />
-        </svg>
-
-        <span
-          class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
-          >Clear</span
-        >
-      </button>
-      <button
-        type="button"
-        @click="toggle"
-        class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="w-6 h-6"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-          />
-        </svg>
-
-        <span
-          class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
-          >Close</span
-        >
       </button>
     </div>
-  </div>
+    <div>
+      <!-- Overlay -->
+      <div
+        v-if="show"
+        class="fixed inset-0 bg-black bg-opacity-50 z-40"
+        @click="show = false"
+      ></div>
+
+      <!-- Drawer -->
+      <div class="fixed inset-x-0 bottom-0 flex justify-center z-50">
+        <div
+          v-show="show"
+          class="fadeInUp bg-slate-800 shadow-lg rounded-t-lg w-full max-w-lg p-4 md:max-w-sm md:w-1/2"
+        >
+          <div class="flex flex-col space-y-4">
+            <button
+              v-for="(button, index) in buttons"
+              :key="index"
+              class="wide-button"
+            >
+              <component
+                v-if="button.icon"
+                :is="button.icon"
+                class="w-6 h-6 mr-3 mt-1"
+              />
+
+              <div>{{ button.text }}</div>
+            </button>
+          </div>
+          <button
+            @click="show = false"
+            class="p-4 text-2xl font-bold uppercase text-gray-500 bg-slate-900 w-full rounded-md mt-8"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </span>
 </template>
 
 <script>
@@ -169,6 +76,41 @@ export default {
     };
   },
   emits: ["generate"],
+  computed: {
+    buttons() {
+      return [
+        {
+          icon: "eye",
+          text: "Toggle View",
+          action: "toggleView",
+          icon: "TableCellsIcon",
+        },
+        {
+          icon: "refreshIcon",
+          text: "Generate Bracket",
+          action: "generate",
+          desc: "Generate a new bracket with all players, including new players (stragglers added since the last generation.)",
+        },
+        {
+          text: "Reset",
+          action: "reset",
+          icon: "ArrowPathIcon",
+          desc: "Reset bracket with the same players",
+        },
+        {
+          icon: "trash",
+          text: "Clear",
+          action: "clearBracket",
+        },
+        {
+          text: "Lock",
+          action: "lock",
+          icon: "lock",
+          desc: `Lock the bracket to prevent more ${this.$teamPlayer}'s from being added.`,
+        },
+      ];
+    },
+  },
   methods: {
     async generate() {
       const ask = await this.$openDialog(
@@ -240,5 +182,9 @@ export default {
     height: 290px;
     margin-bottom: 150px;
   }
+}
+
+.wide-button {
+  @apply w-full bg-slate-700 text-gray-300 py-4 px-8 rounded-md text-2xl font-bold flex flex-row;
 }
 </style>

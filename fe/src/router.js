@@ -111,7 +111,7 @@ const routes = [
   {
     path: "/player",
     name: "player-home",
-    meta: { isPlayerAuth: true },
+    meta: { isPlayerAuth: false },
     children: [{ path: "", name: "PublicHome", component: PublicHome }],
   },
   {

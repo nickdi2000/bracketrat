@@ -60,6 +60,7 @@ import {
   ArrowLongLeftIcon,
 } from "@heroicons/vue/24/solid";
 import { handler } from "flowbite/plugin";
+import socketMixn from "@/mixins/socketMixin";
 
 export default {
   components: {
@@ -70,6 +71,7 @@ export default {
     LinkIcon,
     ArrowLongLeftIcon,
   },
+  mixins: [socketMixn],
   data() {
     return {
       records: [],

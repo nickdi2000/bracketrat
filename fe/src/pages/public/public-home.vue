@@ -1,5 +1,5 @@
 <template>
-  <div class="mid text-white">
+  <div class="mid text-white main-public">
     <nav class="bg-gray-800 mainNav z-50" style="">
       <div class="flex flex-row justify-between">
         <div class="p-3 font-bold text-lg uppercase text-gray-400">
@@ -17,9 +17,33 @@
       </div>
     </nav>
 
-    <div class="card mx-4">
-      <div class="py-4">Welcome Home player</div>
-      <div>{{ player }}</div>
+    <div class="mx-4 scrollable">
+      <div>
+        <bracket
+          :rounds="bracket.rounds"
+          class="bracket z-40-"
+          :key="'bracket-' + compKey"
+        >
+          <template #player="{ player }">
+            <div
+              @click="selectPlayer(player)"
+              class="player-box text-lg"
+              :class="!player?.name ? 'un-played' : 'swift-in-left'"
+            >
+              {{ player.name }}
+              <div class="text-xs" v-if="false">F:{{ player.filled }}</div>
+            </div>
+          </template>
+          <template #player-extension-bottom="{ match }">
+            <div
+              class="text-muted uppercase font-bold text-xs text-gray-500"
+              v-if="dev"
+            >
+              {{ match?._id }}
+            </div>
+          </template>
+        </bracket>
+      </div>
     </div>
   </div>
 </template>
@@ -27,6 +51,8 @@
 <script>
 import { playerAuthStore } from "@/store/playerAuth";
 import { UserIcon } from "@heroicons/vue/24/solid";
+import Bracket from "vue-tournament-bracket";
+
 //const store = playerAuthStore();
 
 export default {
@@ -35,6 +61,9 @@ export default {
     return {
       bracket: {},
     };
+  },
+  components: {
+    Bracket,
   },
   mounted() {
     console.log("PublicHome mounted");
@@ -63,7 +92,7 @@ export default {
     async logout() {
       const store = playerAuthStore();
       await store.destroy();
-      this.$router.push("/landing");
+      this.$router.push("/find");
     },
   },
 };
@@ -77,5 +106,21 @@ export default {
   right: 0;
   transition: all 0.3s;
   min-height: 3rem;
+}
+
+.scrollable {
+  margin-top: 8rem;
+  overflow-y: auto;
+  height: calc(100vh - 3rem);
+}
+
+.main-public {
+  /* gradient dark */
+  background: linear-gradient(
+    180deg,
+    rgba(21, 15, 63, 0.8) 0%,
+    rgba(15, 22, 37, 0.8) 100%
+  );
+  height: 100vh;
 }
 </style>

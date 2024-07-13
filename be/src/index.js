@@ -2,16 +2,20 @@ const app = require("./app");
 const db = require("./db");
 const config = require("./config/config");
 const logger = require("./config/logger");
+const socket = require("./utils/socket");
 
 let server;
 
 db.connectToDatabase()
 	.then(() => {
 		logger.info("Connected to MongoDB");
+
 		server = app.listen(config.port, () => {
 			server.on("error", onError);
 			logger.info(`Listening on http://localhost:${config.port}/api/v1/test`);
 		});
+
+		socket.init(server);
 	})
 	.catch((error) => {
 		logger.error("Failed to connect to MongoDB", error);

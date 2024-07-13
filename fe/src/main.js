@@ -45,6 +45,8 @@ import {
   QuestionMarkCircleIcon,
   PlusCircleIcon,
   UserCircleIcon,
+  ArrowPathIcon,
+  TableCellsIcon,
 } from "@heroicons/vue/24/solid";
 
 import piniaPlugin from "./plugins/pinia";
@@ -88,6 +90,7 @@ app.component("Loader", Loader);
 app.component("ProgressBar", ProgressBar);
 
 //icons
+app.component("TableCellsIcon", TableCellsIcon);
 app.component("TrashIcon", TrashIcon);
 app.component("PlayCircleIcon", PlayCircleIcon);
 app.component("CheckCircleIcon", CheckCircleIcon);
@@ -100,6 +103,7 @@ app.component("ArrowLongLeftIcon", ArrowLongLeftIcon);
 app.component("ArrowUturnDownIcon", ArrowUturnDownIcon);
 app.component("PencilSquareIcon", PencilSquareIcon);
 app.component("ExclamationTriangleIcon", ExclamationTriangleIcon);
+app.component("ArrowPathIcon", ArrowPathIcon);
 
 app.use(router);
 

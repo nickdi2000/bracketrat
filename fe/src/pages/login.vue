@@ -1,5 +1,5 @@
 <template>
-  <section class="bg-image h-full lg:pt-0 md:pt-0 sm:pt-10">
+  <section class="middle bg-image h-full lg:pt-0 md:pt-0 sm:pt-10">
     <div
       class="flex flex-col items-center justify-center px-6 pb-1 mx-auto md:h-screen lg:py-0"
     >
@@ -16,13 +16,14 @@
       <div class="text-2xl my-2 fadein font-bold">{{ $appName }}</div>
 
       <div
-        class="w-full rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:border-gray-700 backdrop-blur-md"
+        class="w-full md:w-96 rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:border-gray-700 backdrop-blur-md"
       >
         <div v-if="error" class="pb-2 m-3">
           <Alert type="danger" class="w-full">{{ error }}</Alert>
         </div>
         <div class="p-6 space-y-4 md:space-y-1 sm:p-8">
           <h1
+            v-on:dblclick="copyDummy()"
             class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white mb-4"
           >
             {{ registering ? "Register" : "Sign In" }}
@@ -159,6 +160,10 @@
           </div>
         </div>
       </div>
+
+      <div class="my-12">
+        <router-link :to="'/find'" class="btn">Join as Player</router-link>
+      </div>
       <div class="footer">
         <p class="text-sm text-gray-500 dark:text-gray-400 text-center">
           &copy; {{ new Date().getFullYear() }} All rights reserved.
@@ -187,9 +192,13 @@ export default {
       loading: false,
       bounce: false,
       error: "",
-      form: {
+      dummy_form: {
         email: "admin@example.com",
         password: "password123",
+      },
+      form: {
+        email: "",
+        password: "",
       },
     };
   },
@@ -202,6 +211,9 @@ export default {
     }
   },
   methods: {
+    copyDummy() {
+      this.form = this.dummy_form;
+    },
     async test() {
       try {
         const rec = await this.$api.test();

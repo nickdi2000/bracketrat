@@ -26,10 +26,10 @@ if (config.env !== "test") {
 
 app.use(
 	session({
-		secret: "secret-key-chanz-32123", // The secret used to sign the session ID cookie. Can be a string for a single secret, or an array of multiple secrets
-		resave: false, // Forces the session to be saved back to the session store, even if the session was never modified during the request
-		saveUninitialized: true, // Forces a session that is "uninitialized" to be saved to the store
-		cookie: { secure: false }, // secure: true for HTTPS(SSL) websites, false for HTTP websites
+		secret: "secret-key-bracket-32123",
+		resave: false,
+		saveUninitialized: true,
+		cookie: { secure: false },
 	})
 );
 

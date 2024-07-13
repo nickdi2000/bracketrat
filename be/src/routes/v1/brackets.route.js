@@ -27,6 +27,11 @@ router.post("/:bracketId/generate", (req, res, next) => {
 	bracketController.generate(req, res, next);
 });
 
+//re-generate uses the same players in the bracket without incorporating new stragglers
+router.post("/:bracketId/re-generate", (req, res, next) => {
+	bracketController.reGenerate(req, res, next);
+});
+
 router.post("/:bracketId/set-winner", (req, res, next) => {
 	bracketController.updateGameWinner(req, res, next);
 });
