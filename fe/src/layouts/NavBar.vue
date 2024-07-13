@@ -64,7 +64,7 @@
             <div class="flex flex-shrink-0 items-center">
               <div
                 class="flex flex-row cursor-pointer"
-                @click="$router.push({ name: 'Brackets' })"
+                @click="$router.push({ name: 'Bracket' })"
               >
                 <img
                   src="/images/logo-light.png"
@@ -191,13 +191,13 @@ export default {
     },
     items() {
       return [
-        { name: "Bracket", route: "Dashboard", icon: BracketIcon },
+        // { name: "Bracket", route: "Dashboard", icon: BracketIcon },
         {
           name: this.teamPlayer + "s",
           route: "Players",
           icon: UsersIcon,
         },
-        { name: "Setup", route: "Settings", icon: Cog6ToothIcon },
+        { name: "Bracket Setup", route: "Settings", icon: Cog6ToothIcon },
       ];
     },
   },

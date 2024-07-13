@@ -78,7 +78,18 @@ export const authStore = defineStore({
         }
       });
     },
-
+    async resetBracket(bracketId) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const rec = await api.post(`brackets/${bracketId}/regenerate`);
+          console.log("rec regenerated", rec.data);
+          this.setSelectedBracket(rec.data.bracket);
+          resolve(rec);
+        } catch (err) {
+          reject(err);
+        }
+      });
+    },
     async clearBracket(bracketId) {
       return new Promise((resolve, reject) => {
         try {

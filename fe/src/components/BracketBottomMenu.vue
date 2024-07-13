@@ -40,6 +40,7 @@
               v-for="(button, index) in buttons"
               :key="index"
               class="wide-button"
+              @click="execute(button.action)"
             >
               <component
                 v-if="button.icon"
@@ -80,13 +81,7 @@ export default {
     buttons() {
       return [
         {
-          icon: "eye",
-          text: "Toggle View",
-          action: "toggleView",
-          icon: "TableCellsIcon",
-        },
-        {
-          icon: "refreshIcon",
+          icon: "BoltIcon",
           text: "Generate Bracket",
           action: "generate",
           desc: "Generate a new bracket with all players, including new players (stragglers added since the last generation.)",
@@ -98,15 +93,21 @@ export default {
           desc: "Reset bracket with the same players",
         },
         {
-          icon: "trash",
+          icon: "TrashIcon",
           text: "Clear",
           action: "clearBracket",
         },
         {
           text: "Lock",
           action: "lock",
-          icon: "lock",
+          icon: "LockClosedIcon",
           desc: `Lock the bracket to prevent more ${this.$teamPlayer}'s from being added.`,
+        },
+        {
+          icon: "eye",
+          text: "Toggle View",
+          action: "toggleView",
+          icon: "TableCellsIcon",
         },
       ];
     },
@@ -119,11 +120,18 @@ export default {
       );
       this.$emit("generate");
     },
+    execute(action) {
+      this[action]();
+      this.show = false;
+    },
     toggleView() {
       this.$emit("toggleView");
     },
     toggle() {
       this.show = !this.show;
+    },
+    async reset() {
+      this.$store.resetBracket(this.bracket._id);
     },
     showNav() {
       this.show = true;
@@ -185,6 +193,6 @@ export default {
 }
 
 .wide-button {
-  @apply w-full bg-slate-700 text-gray-300 py-4 px-8 rounded-md text-2xl font-bold flex flex-row;
+  @apply w-full bg-slate-700 text-gray-300 py-4 px-8 rounded-md text-2xl font-bold flex flex-row hover:bg-slate-600;
 }
 </style>
