@@ -54,6 +54,10 @@ const bracketSchema = new mongoose.Schema(
 			enum: ["active", "draft", "completed", "cancelled", "paused"],
 			default: "draft",
 		},
+		locked: {
+			type: Boolean,
+			default: false,
+		},
 		code: {
 			type: String,
 			default: () => generateRandomCode(6), // Use the function to generate a default code

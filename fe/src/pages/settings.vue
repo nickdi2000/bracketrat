@@ -41,6 +41,7 @@ export default {
       try {
         const rec = await this.$api.post("brackets", data);
         this.$store.fetchBracket(e._id);
+        this.$toast.success("Bracket saved successfully");
       } catch (e) {
         console.log("error saving bracket", e);
       }

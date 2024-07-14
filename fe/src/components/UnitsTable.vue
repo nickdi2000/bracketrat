@@ -46,10 +46,10 @@
           >
             <th
               scope="row"
-              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+              class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white"
             >
               <router-link
-                class="player-btn"
+                class="player-btn text-sm"
                 :to="'/admin/player/' + element._id"
               >
                 {{ element.name }}</router-link
@@ -59,7 +59,7 @@
               <span
                 @click="showTip(element)"
                 :class="'badge badge-' + element.status"
-                class_="bg-gray-400 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded uppercase"
+                class="text-xs"
               >
                 {{ element.status }}</span
               >

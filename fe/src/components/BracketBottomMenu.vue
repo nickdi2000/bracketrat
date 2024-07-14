@@ -35,20 +35,35 @@
           v-show="show"
           class="fadeInUp bg-slate-800 shadow-lg rounded-t-lg w-full max-w-lg p-4 md:max-w-sm md:w-1/2"
         >
+          <div class="floating-action-button">
+            <button
+              @click="showHelp = !showHelp"
+              class="p-2 bg-slate-900 text-gray-500 rounded-full hover:bg-slate-800"
+            >
+              <QuestionMarkCircleIcon class="w-4 h-4" />
+            </button>
+          </div>
           <div class="flex flex-col space-y-4">
             <button
               v-for="(button, index) in buttons"
               :key="index"
-              class="wide-button"
+              class="wide-button trans"
               @click="execute(button.action)"
             >
-              <component
-                v-if="button.icon"
-                :is="button.icon"
-                class="w-6 h-6 mr-3 mt-1"
-              />
-
-              <div>{{ button.text }}</div>
+              <div class="flex flex-row">
+                <component
+                  v-if="button.icon"
+                  :is="button.icon"
+                  class="w-6 h-6 mr-3 mt-1"
+                />
+                <div>{{ button.text }}</div>
+              </div>
+              <div
+                class="text-left text-gray-400 text-xs fadein"
+                v-if="showHelp"
+              >
+                {{ button.desc }}
+              </div>
             </button>
           </div>
           <button
@@ -74,6 +89,7 @@ export default {
   data() {
     return {
       show: false,
+      showHelp: false,
     };
   },
   emits: ["generate"],
@@ -96,11 +112,12 @@ export default {
           icon: "TrashIcon",
           text: "Clear",
           action: "clearBracket",
+          desc: `Destroy bracket and clear out all ${this.$teamPlayer}'s.`,
         },
         {
-          text: "Lock",
+          text: this.bracket?.locked ? "Lock" : "Unlock",
           action: "lock",
-          icon: "LockClosedIcon",
+          icon: !this.bracket?.locked ? "LockClosedIcon" : "LockOpenIcon",
           desc: `Lock the bracket to prevent more ${this.$teamPlayer}'s from being added.`,
         },
         {
@@ -108,6 +125,7 @@ export default {
           text: "Toggle View",
           action: "toggleView",
           icon: "TableCellsIcon",
+          desc: "Toggle between bracket view and table view.",
         },
       ];
     },
@@ -115,14 +133,14 @@ export default {
   methods: {
     async generate() {
       const ask = await this.$openDialog(
-        "Re-Generate Bracket?",
-        "This will overwrite the existing bracket. Any existing info on matches won/lost will be lost."
+        "Build Bracket?",
+        `This will build a fresh new bracket with any new ${this.$teamPlayer}s added since the last generation.`
       );
       this.$emit("generate");
     },
-    execute(action) {
-      this[action]();
+    async execute(action) {
       this.show = false;
+      await this[action]();
     },
     toggleView() {
       this.$emit("toggleView");
@@ -131,10 +149,20 @@ export default {
       this.show = !this.show;
     },
     async reset() {
+      const ask = await this.$openDialog(
+        "Reset Bracket?",
+        `This will overwrite the existing bracket and rebuild it with the only the ${this.$teamPlayer}s already in the bracket. Any existing info on matche results will be lost.`
+      );
       this.$store.resetBracket(this.bracket._id);
     },
     showNav() {
       this.show = true;
+    },
+    lock() {
+      const shouldLock = !this.bracket.locked;
+      this.$store.patchBracket({ locked: shouldLock });
+      let msg = shouldLock ? "Bracket Unlocked" : "Bracket Locked";
+      this.$toast.success(msg);
     },
     newPlayer() {
       this.$emit("new-player");
@@ -193,6 +221,13 @@ export default {
 }
 
 .wide-button {
-  @apply w-full bg-slate-700 text-gray-300 py-4 px-8 rounded-md text-2xl font-bold flex flex-row hover:bg-slate-600;
+  @apply w-full bg-slate-700 text-gray-300 py-4 px-8 rounded-md text-2xl font-bold hover:bg-slate-600;
+}
+
+.floating-action-button {
+  position: absolute;
+  top: -20px;
+  right: 0;
+  z-index: 999;
 }
 </style>

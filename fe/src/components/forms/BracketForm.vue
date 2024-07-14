@@ -203,7 +203,7 @@
         to signup and enjoy everything we have to offer!
       </div>
     </div>
-    <div class="my-4 py-2 flex justify-center">
+    <div class="my-4 pt-2 pb-12 flex justify-center">
       <button
         v-if="showSave"
         @click="$emit('save', form)"
@@ -214,6 +214,13 @@
         :disabled="shouldDisable"
       >
         Save Changes
+      </button>
+
+      <button
+        @click="$router.go(-1)"
+        class="p-3 rounded-md text-white mt-4 bg-gray-700 ml-3"
+      >
+        Cancel
       </button>
     </div>
   </span>
