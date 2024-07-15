@@ -151,7 +151,6 @@ import {
   UserIcon,
   PlayCircleIcon,
 } from "@heroicons/vue/24/solid";
-import { Store } from "vuex";
 
 export default {
   components: {

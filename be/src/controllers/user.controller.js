@@ -2,6 +2,8 @@ const httpStatus = require("http-status");
 const pick = require("../utils/pick");
 const ApiError = require("../utils/ApiError");
 const catchAsync = require("../utils/catchAsync");
+const { User } = require("../models");
+
 const { userService, transactionService } = require("../services");
 
 const createUser = catchAsync(async (req, res) => {
@@ -53,6 +55,11 @@ const updateFamily = catchAsync(async (req, res) => {
 	res.send(user);
 });
 
+const getAllUsers = catchAsync(async (req, res) => {
+	const users = await User.find();
+	res.send(users);
+});
+
 module.exports = {
 	createUser,
 	getUsers,
@@ -61,4 +68,5 @@ module.exports = {
 	updateUser,
 	deleteUser,
 	getFamily,
+	getAllUsers,
 };

@@ -8,6 +8,7 @@ import Settings from "@/pages/settings.vue";
 import NotFound from "@/pages/not-found.vue";
 import Profile from "@/pages/profile.vue";
 import Brackets from "@/pages/brackets.vue";
+import Super from "@/pages/super.vue";
 import PrivacyPolicy from "@/pages/privacy-policy.vue";
 import TermsOfService from "@/pages/terms-of-service.vue";
 import DashLayout from "./layouts/DashLayout.vue";
@@ -118,6 +119,11 @@ const routes = [
         path: "brackets/edit/:id?",
         name: "Edit Bracket",
         component: BracketEdit,
+      },
+      {
+        path: "super",
+        name: "Super Component",
+        component: Super,
       },
     ],
   },
