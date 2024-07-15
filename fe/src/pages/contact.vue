@@ -23,7 +23,16 @@
       >
         Contact Us
       </h2>
+      <p v-if="$route.query?.feedback">
+        <Alert type="success"
+          >Thanks for your interest in our premium plan. Please use the form to
+          request your free upgrade. If you don't have any specific feedback or
+          suggestions, just tell us what you plan to use it for!</Alert
+        >
+      </p>
+
       <p
+        v-else
         class="mb-8 lg:mb-16 font-light text-center text-gray-500 dark:text-gray-400 sm:text-xl"
       >
         Contact us with any questions you have, technical or otherwise. We will
@@ -80,6 +89,7 @@ export default {
       form: {
         email: "",
         message: "",
+        tags: [],
       },
     };
   },
@@ -90,7 +100,13 @@ export default {
     },
   },
   created() {
-    this.form.email = this.$store.user.email;
+    if (this.$store?.user?.email) {
+      this.form.email = this.$store.user.email;
+    }
+
+    if (this.$route.query?.feedback) {
+      this.form.tags.push("upgrade_request");
+    }
   },
   methods: {
     async submit() {

@@ -25,12 +25,12 @@
           </div>
         </div>
         <div
-          class="flex-1 flex flex-col justify-between px-6 pt-6 pb-8 bg-gray-50 sm:p-10 sm:pt-6"
+          class="flex-1 flex flex-col justify-between px-6 pt-0 pb-8 bg-gray-50 sm:p-10 sm:pt-1"
         >
           <ul>
             <li class="flex items-center" v-for="opt in block.options">
               <span class="text-base font-medium text-gray-500">
-                {{ opt.name }}
+                ‣ {{ opt.name }}
               </span>
             </li>
           </ul>
@@ -57,11 +57,17 @@
       </div>
     </div>
 
-    <div class="mt-5 text-white">
-      *Also Free?! Yes. For this plan you also don't have to pay any money, but
-      you
-      <i>do</i> have to pay us in feedback. Let us know how you like the app,
-      and what features you'd like to see in the next upgrade!
+    <div class="flex justify-center pb-12 fadein mx-0">
+      <div
+        class="mt-5 mx-1 text-blue-200 p-4 bg-blue-900 border border-2 border-blue-800"
+      >
+        *Don't want to pay? Go ahead -- upgrade for free. All we ask is that you
+        <router-link to="/admin/contact?feedback=true" class="underline"
+          >contact us</router-link
+        >
+        and provide any feedback you have for the app. Feature ideas, harsh
+        critisisms, or just to say hi. We'd love to hear from you!
+      </div>
     </div>
   </section>
 </template>
@@ -86,7 +92,7 @@ export default {
         },
         {
           name: "Pro",
-          price: "Also Free*",
+          price: "*$29",
           options: [
             {
               name: "No Player/Team Limit!",
@@ -96,6 +102,12 @@ export default {
             },
             {
               name: "All tournament types",
+            },
+            {
+              name: "Multi-tier brackets and grouping",
+            },
+            {
+              name: "Scheduling, email and calendar integrations",
             },
             {
               name: "Priority support",
@@ -110,6 +122,9 @@ export default {
   methods: {
     select(block) {
       this.$toast.success("You've selected the " + block.name + " plan!");
+      if (block.name == "Pro") {
+        this.$router.push("/admin/contact?feedback=true");
+      }
     },
   },
 };

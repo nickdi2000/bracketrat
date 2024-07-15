@@ -30,12 +30,25 @@ import { authStore } from "./store/auth";
 
 const routes = [
   {
+    path: "/pages",
+    name: "pages",
+    children: [
+      {
+        path: "contact",
+        name: "Contact",
+        component: Contact,
+        meta: { isPublic: true },
+      },
+    ],
+  },
+  {
     path: "/",
     name: "PublicPlay",
     meta: { isPublic: true },
     component: PublicEntryLayout,
     children: [{ path: "", name: "PublicEntry", component: PublicEntry }],
   },
+
   {
     path: "/auth",
     component: AuthLayout,
