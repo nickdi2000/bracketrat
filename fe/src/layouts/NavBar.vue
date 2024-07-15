@@ -127,7 +127,7 @@
           </button>
 
           <div class="mobile-dropdown py-10">
-            <ProfileDropdown :mobile="true" />
+            <ProfileDropdown :mobile="true" @close="handleClose()" />
           </div>
         </div>
       </div>
@@ -163,9 +163,15 @@ export default {
     BracketIcon,
     ProfileDropdown,
   },
+  emits: ["close"],
   methods: {
     handleClick(route) {
+      this.$emit("close");
       this.$router.push({ name: route });
+      this.showMobile = false;
+    },
+    handleClose() {
+      this.$emit("close");
       this.showMobile = false;
     },
     async logout() {

@@ -108,6 +108,7 @@ export default {
   beforeDestroy() {
     document.removeEventListener("click", this.closeDropdown);
   },
+  emits: ["close"],
   methods: {
     closeDropdown(event) {
       if (!this.$el.contains(event.target)) {
@@ -120,6 +121,7 @@ export default {
     },
     navTo(route) {
       this.show = false;
+      this.$emit("close");
       this.$router.push(route);
     },
   },
