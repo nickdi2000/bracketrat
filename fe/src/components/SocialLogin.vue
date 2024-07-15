@@ -39,12 +39,7 @@ export default {
       }
 
       await this.$store.setUser(userData);
-      this.$toast.add({
-        severity: "success",
-        summary: "Success",
-        detail: "Login Successful",
-        life: 3000,
-      });
+      this.$toast.success("Logged in successfully");
       this.$router.push("/admin/dashboard?initial=true");
       this.loading = false;
       //this.$router.push('/register/complete');
