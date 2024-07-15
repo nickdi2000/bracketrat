@@ -137,8 +137,9 @@ export default {
           name: this.name,
         });
         console.log("res", res.data?.player);
-        store.setPlayer(res.data.player);
-        this.$router.push(`/player`);
+        await store.setPlayer(res.data.player);
+        await nextTick();
+        window.location = "/player";
       } catch (e) {
         console.error(e);
       } finally {

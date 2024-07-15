@@ -15,7 +15,7 @@
         </p>
         <div class="flex flex-col text-center">
           <label class="text-gray-700 mb-2"
-            >Enter your name to login or create a new account.</label
+            >EEnter your name to login or create a new account.</label
           >
           <input
             type="text"
@@ -95,7 +95,7 @@ export default {
     };
   },
   mounted() {
-    console.log("PublicIndex mounted");
+    console.log("public-entry mounted");
   },
   methods: {
     async joinBracket() {

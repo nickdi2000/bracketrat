@@ -22,7 +22,7 @@ import Contact from "@/pages/contact.vue";
 import Pricing from "@/pages/pricing.vue";
 import Organization from "@/pages/organization.vue";
 import PublicIndex from "@/pages/public/public-index.vue";
-import PublicEntry from "@/pages/public/public-entry.vue";
+//import PublicEntry from "@/pages/public/public-entry.vue";
 import PublicHome from "@/pages/public/public-home.vue";
 
 import { createRouter, createWebHistory } from "vue-router";
@@ -47,7 +47,7 @@ const routes = [
     name: "PublicPlay",
     meta: { isPublic: true },
     component: PublicEntryLayout,
-    children: [{ path: "", name: "PublicEntry", component: PublicEntry }],
+    //children: [{ path: "", name: "PublicEntry", component: PublicEntry }],
   },
 
   {
