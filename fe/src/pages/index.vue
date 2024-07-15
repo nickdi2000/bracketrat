@@ -1,5 +1,5 @@
 <template>
-  <span class="dark:text-white">
+  <span class="dark:text-white main-span">
     <Loader v-if="loading" />
     <div v-if="playersNotInBracket?.length">
       <PlayerBadges
@@ -254,6 +254,12 @@ export default {
 </script>
 
 <style lang="scss">
+.main-span {
+  /*transparent */
+  background-color: rgba(0, 0, 0, 0.5);
+  height: 100vh;
+}
+
 .bracket-container {
   display: flex;
   justify-content: center;
@@ -266,7 +272,9 @@ export default {
 
 .vtb-wrapper {
   background: inherit;
-  padding: 0px;
+  position: absolute;
+  top: 0;
+  padding-top: 4rem;
 }
 
 .player-box {

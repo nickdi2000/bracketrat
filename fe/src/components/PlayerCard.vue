@@ -21,6 +21,15 @@
               <p class="px-3 uppercase text-gray-300 italic">
                 {{ player.name }} gets a BYE for this round.
               </p>
+
+              <button
+                class="btn btn-secondary mt-0 mt-3 px-4"
+                @click="removePlayerFromGame()"
+              >
+                <div>
+                  <ArrowLongLeftIcon class="w-6 h-6 mr-1 inline" /> Remove
+                </div>
+              </button>
             </div>
 
             <div v-else-if="player.winner == null">
