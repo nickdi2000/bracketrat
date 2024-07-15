@@ -118,7 +118,9 @@ export default {
           text: this.bracket?.locked ? "Lock" : "Unlock",
           action: "lock",
           icon: !this.bracket?.locked ? "LockClosedIcon" : "LockOpenIcon",
-          desc: `Lock the bracket to prevent more ${this.$teamPlayer}'s from being added.`,
+          desc: !this.bracket?.locked
+            ? `Unlock the bracket to allow ${this.$teamPlayer}'s to enter the bracket`
+            : `Lock the bracket to prevent more ${this.$teamPlayer}'s from being added.`,
         },
         {
           icon: "eye",
@@ -220,14 +222,20 @@ export default {
   }
 }
 
-.wide-button {
-  @apply w-full bg-slate-700 text-gray-300 py-4 px-8 rounded-md text-2xl font-bold hover:bg-slate-600;
+.floating-action-button {
+  margin-bottom: 14px;
 }
 
-.floating-action-button {
-  position: absolute;
-  top: -20px;
-  right: 0;
-  z-index: 999;
+@media (max-width: 640px) {
+  .floating-action-button {
+    position: absolute;
+    top: -20px;
+    right: 0;
+    z-index: 999;
+  }
+}
+
+.wide-button {
+  @apply w-full bg-slate-700 text-gray-300 py-4 px-8 rounded-md text-2xl font-bold hover:bg-slate-600;
 }
 </style>

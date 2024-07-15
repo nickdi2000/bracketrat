@@ -22,10 +22,12 @@
           <div
             @click="selectPlayer(player)"
             class="player-box text-lg"
-            :class="!player?.name ? 'un-played' : 'swift-in-left'"
+            :class="[
+              !player?.name ? 'un-played' : 'swift-in-left',
+              player?.hasBye ? 'has-bye' : '',
+            ]"
           >
             {{ player.name }}
-            <div class="text-xs" v-if="false">F:{{ player.filled }}</div>
           </div>
         </template>
         <template #player-extension-bottom="{ match }">
@@ -252,22 +254,6 @@ export default {
 </script>
 
 <style lang="scss">
-.fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
-  animation-delay: var(--delay, 0s);
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    //transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    //transform: translateY(0);
-  }
-}
-
 .bracket-container {
   display: flex;
   justify-content: center;
@@ -372,11 +358,6 @@ p {
   background-color: rgb(46, 113, 78) !important;
 }
 
-.winner {
-  // background-color: rgb(90, 116, 75) !important;
-  // filter: hue-rotate(342deg) !important;
-}
-
 .vtb-item-players .defeated {
   background-color: rgb(99, 59, 59) !important;
   text-decoration: line-through;
@@ -466,6 +447,15 @@ p {
 .bracket-winner {
   background-color: rgb(9, 178, 91) !important;
   transform: scale(1.3);
+}
+
+.has-bye {
+  font-style: italic;
+  @apply text-gray-400;
+}
+
+.has-bye::after {
+  content: " ↪";
 }
 
 /* smaller screens @ media */

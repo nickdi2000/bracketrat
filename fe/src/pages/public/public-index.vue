@@ -79,6 +79,7 @@
 <script>
 import Loader from "@/components/Loader2.vue";
 import { playerAuthStore } from "@/store/playerAuth";
+import { nextTick } from "vue";
 
 export default {
   name: "PublicIndex",
@@ -119,8 +120,9 @@ export default {
           name: this.name,
         });
         console.log("res", res.data?.player);
-        store.setPlayer(res.data.player);
-        this.$router.push(`/player`);
+        await store.setPlayer(res.data.player);
+        await nextTick();
+        window.location = "/player";
       } catch (e) {
         console.error(e);
       } finally {

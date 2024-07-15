@@ -14,15 +14,6 @@ const insertPlayer = async (req, res) => {
 		const playerId = result.newPlayer._id;
 
 		res.status(201).json(result);
-
-		// try {
-		// 	//await bracketService.addPlayerToFirstEmptySpot(bracketId, playerId);
-		// 	//const bracket = await bracketService.generateBracket(bracketId);
-		// 	res.status(201).json(result);
-		// } catch (error) {
-		// 	console.error("Failed to add player to bracket:", error);
-		// 	res.status(500).json({ message: "Failed to add player to bracket" });
-		// }
 	} catch (error) {
 		console.error("Error adding player to bracket:", error);
 		res.status(500).json({ message: error.message });
@@ -108,10 +99,30 @@ const register = catchAsync(async (req, res) => {
 	}
 });
 
+const login = catchAsync(async (req, res) => {
+	const { name, bracketId } = req.body;
+
+	try {
+		const player = await bracketService.findPlayerInBracket({
+			name,
+			bracketId,
+		});
+
+		const io = socket.getIo();
+		io.emit("player-loggedin", { player: player });
+
+		res.status(201).json({ player: player });
+	} catch (error) {
+		console.error("Error finding player in bracket:", error);
+		res.status(500).json({ message: error.message });
+	}
+});
+
 module.exports = {
 	insertPlayer,
 	getByBracketId,
 	destroy,
 	showPlayer,
 	register,
+	login,
 };

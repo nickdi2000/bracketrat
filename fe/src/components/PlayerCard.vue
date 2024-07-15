@@ -10,11 +10,20 @@
       >
         <!-- Modal content here -->
         <div class="text-center" v-if="player.name">
-          <h2 class="text-2xl font-semibold uppercase mb-4 cursor-pointer hover:text-blue-200" @click="$router.push(`/admin/player/${player._id}`)">
-            {{ player.name }}
+          <h2
+            class="text-2xl font-semibold uppercase mb-4 cursor-pointer hover:text-blue-200"
+            @click="$router.push(`/admin/player/${player._id}`)"
+          >
+            {{ player.name }} | {{ player.hasBye }}
           </h2>
-          <div class="py-2 my-5 w-full min-w-3xl">
-            <div v-if="player.winner == null">
+          <div class="py-2 w-full min-w-3xl">
+            <div v-if="player.hasBye">
+              <p class="px-3 uppercase text-gray-300 italic">
+                {{ player.name }} gets a BYE for this round.
+              </p>
+            </div>
+
+            <div v-else-if="player.winner == null">
               <button
                 class="btn btn-success btn-block"
                 @click="markPlayerAsWinner()"
@@ -48,6 +57,7 @@
                 </button>
               </div>
             </div>
+
             <div
               v-else-if="player.winner == true"
               class="flex flex-col items-center justify-center"
@@ -168,14 +178,7 @@ export default {
       if (this.roundIndex === this.rounds.length - 1) {
         return false;
       }
-      const opponent =
-        this.rounds[this.player.roundIndex].games.find(
-          (game) =>
-            game.player1._id === this.player._id ||
-            game.player2._id === this.player._id
-        ).player1._id === this.player._id
-          ? this.game.player2
-          : this.game.player1;
+      const opponent = this.getOpponent(this.player);
 
       return this.rounds
         .slice(this.player.roundIndex + 1)
@@ -196,6 +199,14 @@ export default {
         bracketId: this.$store.getBracket?._id,
         roundIndex: this.player.roundIndex,
       };
+    },
+    getOpponent(player) {
+      return this.rounds[player.roundIndex].games.find(
+        (game) =>
+          game.player1._id === player._id || game.player2._id === player._id
+      ).player1._id === player._id
+        ? this.game.player2
+        : this.game.player1;
     },
     async markPlayerAsWinner() {
       const bracketId = this.$store.getBracket?._id;

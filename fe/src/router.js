@@ -109,10 +109,17 @@ const routes = [
     ],
   },
   {
-    path: "/player",
+    path: "/player/:view?",
     name: "player-home",
-    meta: { isPlayerAuth: false },
-    children: [{ path: "", name: "PublicHome", component: PublicHome }],
+    meta: { isPlayerAuth: true },
+    children: [
+      {
+        path: "",
+        name: "PublicHome",
+        component: PublicHome,
+        meta: { isPlayerAuth: true },
+      },
+    ],
   },
   {
     path: "/docs",
@@ -163,21 +170,47 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const store = authStore();
-  const isAuthenticated = store.check;
-  const isPlayer = store.checkIfPlayer;
+  const isAuthenticated = store.check; // For general authentication
+  const isPlayer = store.checkIfPlayer; // For player-specific authentication
 
   const isPublicRoute = to.matched.some((record) => record.meta.isPublic);
-  const defaultRoute = "/login";
-  console.log("check ", isPublicRoute, isAuthenticated, isPlayer);
-  if (isPublicRoute && isAuthenticated) {
-    next("/admin");
-  } else {
-    if (isPublicRoute && isPlayer) {
-      console.log("going to dashboard");
+  const isPlayerAuth = to.matched.some((record) => record.meta.isPlayerAuth);
+
+  console.log(
+    "Route check: isPublicRoute =",
+    isPublicRoute,
+    "isAuthenticated =",
+    isAuthenticated,
+    "isPlayer =",
+    isPlayer
+  );
+
+  if (isPublicRoute) {
+    if (isAuthenticated) {
+      // Redirect authenticated non-players to their portal
+      next("/admin");
+    } else if (isPlayer) {
+      // Redirect authenticated players to their portal
       next("/player");
     } else {
-      console.log("ELSE");
+      // Allow access to public routes for unauthenticated users
       next();
+    }
+  } else if (isPlayerAuth) {
+    if (isPlayer) {
+      // Allow access to player-authenticated routes for players
+      next();
+    } else {
+      // Redirect non-players to the admin portal or login page
+      next(isAuthenticated ? "/admin" : "/login");
+    }
+  } else {
+    if (isAuthenticated) {
+      // Allow access to non-public, non-player-authenticated routes for authenticated non-players
+      next();
+    } else {
+      // Redirect unauthenticated users to login for non-public routes
+      next("/login");
     }
   }
 });

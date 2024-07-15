@@ -392,8 +392,12 @@ augmentPlayerData = (bracketOriginal) => {
 			//add gameId for frontend to use
 			game.player1.gameId = game._id;
 			game.player2.gameId = game._id;
+
 			game.player1.roundIndex = roundIndex;
 			game.player2.roundIndex = roundIndex;
+
+			game.player1.hasBye = game.player2.name ? false : true;
+			game.player2.hasBye = game.player1.name ? false : true;
 
 			game.player1.filled = game.player1.name ? true : false;
 			game.player2.filled = game.player2.name ? true : false;
@@ -501,6 +505,21 @@ updateGameWinner = async (bracketId, gameId, winnerId, roundIndex) => {
 	return augmentPlayerData(bracket);
 };
 
+findPlayerInBracket = async ({ name, bracketId }) => {
+	//get bracket and player from bracket if exists
+	let bracket = await Bracket.findById(bracketId).populate("players");
+	if (!bracket) {
+		throw new Error("Bracket not found.");
+	}
+
+	let player = bracket.players.find((player) => player.name === name);
+	if (!player) {
+		throw new Error("Player not found in bracket.");
+	}
+
+	return player;
+};
+
 module.exports = {
 	generateBracket,
 	clearRounds,
@@ -512,4 +531,5 @@ module.exports = {
 	addPlayerToFirstEmptySpot,
 	addPlayerToBracket,
 	reGenerateBracket,
+	findPlayerInBracket,
 };

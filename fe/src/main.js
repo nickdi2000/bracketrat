@@ -50,6 +50,7 @@ import {
   BoltIcon,
   LockClosedIcon,
   LockOpenIcon,
+  TrophyIcon,
   QrCodeIcon,
 } from "@heroicons/vue/24/solid";
 
@@ -113,6 +114,7 @@ app.component("PencilSquareIcon", PencilSquareIcon);
 app.component("ExclamationTriangleIcon", ExclamationTriangleIcon);
 app.component("ArrowPathIcon", ArrowPathIcon);
 app.component("QrCodeIcon", QrCodeIcon);
+app.component("TrophyIcon", TrophyIcon);
 
 app.use(router);
 
