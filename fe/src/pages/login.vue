@@ -237,6 +237,8 @@ export default {
     },
     async register() {
       try {
+        window.gtag_report_conversion;
+
         const rec = await this.$api.register(this.form);
         this.$store.setUser(rec);
         this.$router.push("/admin/dashboard");

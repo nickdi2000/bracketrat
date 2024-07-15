@@ -37,7 +37,7 @@ export default {
         //   user_id: userData.data?.user?.id,
         // });
       }
-
+      window.gtag_report_conversion;
       await this.$store.setUser(userData);
       this.$toast.success("Logged in successfully");
       this.$router.push("/admin/dashboard?initial=true");
