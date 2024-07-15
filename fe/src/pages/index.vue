@@ -258,7 +258,10 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  padding: 6rem;
+  margin-top: 6rem;
+  height: 90vh;
+  overflow: scroll;
 }
 
 .vtb-wrapper {

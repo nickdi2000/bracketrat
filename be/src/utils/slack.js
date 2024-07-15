@@ -31,6 +31,11 @@ async function sendMessage(message, channel = defaultChannel) {
 }
 
 async function sendNewUser(user) {
+	const env = process.env.NODE_ENV;
+	if (env != "production") {
+		return;
+	}
+
 	let msg = `NEW User: ${user.email}`;
 	if (user.location) {
 		msg += `\n from ${user.location.city}, ${user.location.state}, ${user.location.country}`;
