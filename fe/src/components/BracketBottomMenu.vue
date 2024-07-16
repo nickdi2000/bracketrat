@@ -103,10 +103,10 @@ export default {
           desc: "Generate a new bracket with all players, including new players (stragglers added since the last generation.)",
         },
         {
-          text: "Reset",
+          text: "Rebuild",
           action: "reset",
           icon: "ArrowPathIcon",
-          desc: "Reset bracket with the same players",
+          desc: "Reset current bracket with the same players",
         },
         {
           icon: "TrashIcon",
