@@ -4,8 +4,9 @@
       <ul id="scene" class="scene">
         <li class="layer layer1" data-depth="0.40"></li>
         <li class="layer layer2" data-depth="0.60"></li>
-        <li class="layer layer3" data-depth="0.80"></li>
-        <li class="layer layer4" data-depth="1.00"></li>
+        <!--
+          <li class="layer layer3" data-depth="0.80"></li>
+        <li class="layer layer4" data-depth="1.00"></li> -->
       </ul>
     </div>
   </div>
@@ -61,7 +62,7 @@ export default {
 }
 
 .layer1 {
-  background-image: url("/images/stadium.png");
+  background-image: url("/images/stadium.jpg");
 }
 
 .layer2 {
@@ -70,11 +71,11 @@ export default {
   transform: hue-rotate(290deg);
   mix-blend-mode: screen;
 }
-
+/* 
 .layer3 {
   background-image: url("/images/footballer2.png");
   mix-blend-mode: screen;
-}
+} */
 
 /* .layer4 {
   background-image: url("https://www.freepnglogos.com/uploads/football-player-png/american-football-player-png-image-purepng-8.png");

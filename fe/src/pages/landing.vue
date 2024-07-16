@@ -17,12 +17,17 @@
             >Home</a
           >
           <router-link
-            to="/contact"
+            to="/pages/contact"
             class="text-gray-600 dark:hover:text-gray-300 dark:text-gray-400"
             >Contact</router-link
           >
           <router-link
-            to="/register"
+            to="/find"
+            class="text-gray-600 dark:hover:text-gray-300 dark:text-gray-400"
+            >Player Access</router-link
+          >
+          <router-link
+            to="/login"
             class="text-gray-600 dark:hover:text-gray-300 dark:text-gray-400"
             >Login</router-link
           >
@@ -106,13 +111,17 @@
             </h3>
             <p class="text-gray-600 dark:text-gray-400">
               The first genuinly mult-user bracket system. Have the bracket
-              build itself by having the players enter their own details. Watch
-              the magic happen.
+              build itself by having the players join the bracket themselves via
+              a QR code or a custom link.
             </p>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- PRICING -->
+
+    <PricingTable />
 
     <!-- Footer -->
     <footer class="py-6 bg-gray-200 dark:bg-gray-700 z-10">
@@ -127,10 +136,12 @@
 
 <script>
 import landingWallpaper from "./landingWallpaper.vue";
+import PricingTable from "../components/PricingTable.vue";
 
 export default {
   components: {
     landingWallpaper,
+    PricingTable,
   },
   data() {
     return {};
