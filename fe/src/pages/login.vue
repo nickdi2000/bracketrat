@@ -203,6 +203,7 @@ export default {
     };
   },
   mounted() {
+    this.$store.setUTMSource();
     setTimeout(() => {
       this.animate = true;
     }, 300);
@@ -229,6 +230,10 @@ export default {
     },
     submit() {
       this.loading = true;
+      if (this.$store.utm_source) {
+        this.form.utm_source = this.$store.utm_source;
+      }
+
       if (this.registering) {
         this.register();
       } else {

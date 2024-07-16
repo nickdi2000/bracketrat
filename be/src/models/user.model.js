@@ -73,7 +73,6 @@ const userSchema = mongoose.Schema(
 		},
 		utm_source: {
 			type: String,
-			default: false,
 			required: false,
 			default: "",
 		},

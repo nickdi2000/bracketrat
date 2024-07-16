@@ -11,7 +11,7 @@ export const authStore = defineStore({
     tokens: localStorage.getItem("token")
       ? { access: { token: localStorage.getItem("token") } }
       : null,
-    utm_source: null,
+    utm_source: localStorage.getItem("utm_source") || null,
     players: [],
     rounds: [],
     organization: null,
@@ -21,8 +21,20 @@ export const authStore = defineStore({
         : null,
   }),
   actions: {
-    setUTMSource(utm_source) {
+    setUTMSource() {
+      //get utm_source from url and set it to localstorage
+      const urlParams = new URLSearchParams(window.location.search);
+      const utm_source = urlParams.get("utm_source");
+      if (!utm_source) {
+        return;
+      }
+      //remove it from url
+      const url = new URL(window.location.href);
+      url.searchParams.delete("utm_source");
+      window.history.replaceState({}, document.title, url);
+
       this.utm_source = utm_source;
+      localStorage.setItem("utm_source", utm_source);
     },
     setOrganization(organization) {
       this.organization = organization;
@@ -30,6 +42,10 @@ export const authStore = defineStore({
 
     //to make th fetchBracket a promisebased on we could do it like this:
     async fetchBracket(bracket_id) {
+      if (!bracket_id) {
+        console.warn("No bracket bracket_id provided to authStore");
+        return;
+      }
       return new Promise((resolve, reject) => {
         if (!bracket_id) {
           console.warn("No bracket bracket_id provided to authStore");

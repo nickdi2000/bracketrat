@@ -35,9 +35,14 @@
             v-if="!foundMatch"
             @click="joinBracket"
             :disabled="name.length < 3"
-            class="mt-4 text-3xl px-6 py-3 text-lg font-bold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            :class="
+              name.length < 3
+                ? 'opacity-50 bg-gray-800'
+                : 'bg-blue-500 hover:bg-blue-600'
+            "
+            class="mt-4 text-3xl px-6 py-3 text-lg font-bold text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
           >
-            Join!
+            JOIN!
           </button>
 
           <div v-else>
@@ -151,7 +156,9 @@ export default {
     name: {
       handler(v) {
         //check if name matches a 'name' from the bracket.players array
-        this.foundMatch = this.bracket.players.some((p) => p.name === v);
+        this.foundMatch =
+          this.bracket.players.some((p) => p.name === v) &&
+          this.name.length > 2;
       },
     },
   },

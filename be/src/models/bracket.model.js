@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+//const { toJSON } = require("./plugins");
 
 const { roundSchema } = require("./round.model");
 const { playerSchema } = require("./player.model");
@@ -76,8 +77,18 @@ const bracketSchema = new mongoose.Schema(
 	},
 	{
 		timestamps: true,
+		toJSON: { virtuals: true },
 	}
 );
+
+bracketSchema.virtual("isReady").get(function () {
+	if (this.rounds.length === 0) {
+		return false;
+	}
+
+	const firstRound = this.rounds[0];
+	return !firstRound.games.some((game) => !game.player1 && !game.player2);
+});
 
 function generateRandomCode(length = 10) {
 	let result = "";
@@ -92,6 +103,8 @@ function generateRandomCode(length = 10) {
 
 //add indexes to the schema
 bracketSchema.index({ code: 1 });
+
+//bracketSchema.plugin(toJSON);
 
 const Bracket = mongoose.model("Bracket", bracketSchema);
 module.exports = Bracket;

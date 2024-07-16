@@ -27,11 +27,11 @@
         >
           Loading Bracket...
         </h1>
-        <div v-else class="flex flex-col items-center">
+        <div v-else class="flex flex-col items-center p-7 shadow-lg">
           <ExclamationTriangleIcon
             class="w-16 h-16 text-white fadein animate-pulse"
           />
-          <p class="alert alert-warning text-3xl text-white font-bold">
+          <p class="alert alert-warning text-1xl text-orange-400 font-bold">
             Bracket not found for code: {{ code }}
           </p>
           <p v-if="!showNewCodeInput">
@@ -43,15 +43,16 @@
             </button>
           </p>
           <div v-if="showNewCodeInput" class="centered">
-            <Input
+            <input
               v-model="newCode"
-              class="mt-4 text-2xl font-bold w-full"
+              class="mt-4 text-4xl font-bold uppercase p-3 bg-gray-900 text-gray-200 w-full"
               size="lg"
               placeholder="Enter new code"
             />
             <button
               @click="navToNewCode"
-              class="btn btn-primary"
+              class="btn btn-block mt-4"
+              :class="newCode ? 'btn-primary' : 'btn-secondary'"
               :disabled="!newCode"
             >
               Go
@@ -94,13 +95,7 @@ export default {
       }
     },
     navToNewCode() {
-      this.$router.push({
-        name: "FallBack",
-        params: { path: this.newCode.toLowerCase() },
-      });
-      this.code = this.newCode;
-      this.newCode = "";
-      this.getData();
+      window.location = `/${this.newCode}`;
     },
   },
   data() {

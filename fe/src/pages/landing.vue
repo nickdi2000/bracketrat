@@ -146,6 +146,9 @@ export default {
   data() {
     return {};
   },
+  mounted() {
+    this.$store.setUTMSource();
+  },
   computed: {
     getYear() {
       return new Date().getFullYear();
