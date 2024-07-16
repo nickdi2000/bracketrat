@@ -123,9 +123,19 @@
           <p class="p-3" v-if="player.roundIndex">
             Nothing to see here. Waiting on previous round...
           </p>
-          <p class="p-3" v-else>Opponent gets a BYE for this round.</p>
+          <span v-else>
+            <p class="p-3">
+              Blank Spot. The Opponent gets a BYE for this round.
+            </p>
+            <button
+              @click="$emit('addNew', false)"
+              class="btn btn-primary mr-2"
+            >
+              + Add {{ $teamPlayer }} Here
+            </button>
+          </span>
           <button @click="$emit('update', false)" class="btn btn-secondary">
-            Okay..
+            Close
           </button>
         </div>
       </div>
@@ -153,7 +163,7 @@ export default {
       default: () => ({}),
     },
   },
-  emits: ["update"],
+  emits: ["update", "addNew", "generate"],
   computed: {
     rounds() {
       return this.$store.getRounds;
@@ -252,8 +262,10 @@ export default {
       );
       //console.log("rec", rec);
       this.$store.setRounds(rec.data.bracket.rounds);
+      //this.$store.resetBracket(rec.data.bracket._id);
       // this.$emit("update", false);
       this.closeModal();
+      //this.$emit("generate");
     },
 
     async undoOutcomes() {

@@ -18,5 +18,8 @@ const playerSchema = new mongoose.Schema(
 	}
 );
 
+//add index
+playerSchema.index({ name: "text" });
+
 const Player = mongoose.model("Player", playerSchema);
 module.exports = { Player, playerSchema };

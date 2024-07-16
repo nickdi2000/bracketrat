@@ -13,7 +13,8 @@
     </div>
     <span
       :style="{ '--delay': index * 0.1 + 's' }"
-      class="badge mr-2 fade-in opacity-0 cursor-pointer hover:bg:blue-400 dark:hover:bg-blue-400 hover:text-blue-800 dark:hover:text-blue-800"
+      style="z-index: 1000"
+      class="badge opacity-9 mr-2 fade-in cursor-pointer hover:bg:blue-400 dark:hover:bg-blue-400 hover:text-blue-800 dark:hover:text-blue-800"
       v-for="(player, index) in players"
       :key="player.id"
       @click="add(player)"

@@ -250,7 +250,7 @@ export default {
     },
     async login() {
       try {
-        gtag_report_conversion();
+        //gtag_report_conversion();
         const rec = await this.$api.login(this.form);
         this.$store.setUser(rec);
         this.$router.push("/admin/dashboard");

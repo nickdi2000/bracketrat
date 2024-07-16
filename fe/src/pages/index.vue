@@ -1,7 +1,10 @@
 <template>
   <span class="dark:text-white main-span">
     <Loader v-if="loading" />
-    <div v-if="playersNotInBracket?.length">
+    <div
+      v-if="playersNotInBracket?.length"
+      style="position: absolute; right: 40px; top: 85px"
+    >
       <PlayerBadges
         :players="playersNotInBracket"
         v-if="!showingDummy"
@@ -107,7 +110,7 @@
 
     <PlayerForm
       v-if="$store.getBracket"
-      @update="playerKey++"
+      @update="handlePlayerAdded()"
       @invite="showShareLink = !showShareLink"
       ref="playerForm"
     />
@@ -116,6 +119,8 @@
       :player="selectedPlayer"
       :game="selectedGame"
       @update="refresh"
+      @generate="generateBracket"
+      @addNew="handleAddPlayer"
     />
 
     <BracketBottomMenu
@@ -123,6 +128,7 @@
       @generate="generateBracket"
       @toggleView="toggleView"
       @new-player="$refs.playerForm.showModal()"
+      ref="bottomMenu"
     />
   </span>
 </template>
@@ -179,6 +185,11 @@ export default {
     async update() {
       this.compKey++;
     },
+    async handlePlayerAdded() {
+      this.loading = true;
+      await this.generateBracket();
+      this.update();
+    },
     toggleView() {
       this.view = this.view === "bracket" ? "list" : "bracket";
     },
@@ -212,6 +223,10 @@ export default {
     refresh() {
       this.selectedPlayer = {};
       //this.compKey++;
+    },
+    handleAddPlayer() {
+      this.refresh();
+      this.$refs.playerForm.showModal();
     },
   },
   computed: {
@@ -366,11 +381,11 @@ p {
 
 .vtb-item-players .winner {
   // filter: hue-rotate(342deg);
-  background-color: rgb(46, 113, 78) !important;
+  background-color: rgb(57, 102, 79) !important;
 }
 
 .vtb-item-players .defeated {
-  background-color: rgb(99, 59, 59) !important;
+  background-color: rgb(71, 67, 64) !important;
   text-decoration: line-through;
 }
 
@@ -466,7 +481,7 @@ p {
 }
 
 .has-bye::after {
-  content: " ↪";
+  content: " →";
 }
 
 /* smaller screens @ media */

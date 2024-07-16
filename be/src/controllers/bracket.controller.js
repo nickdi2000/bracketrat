@@ -155,12 +155,11 @@ class BracketController extends BaseController {
 
 	async updateGameWinner(req, res) {
 		const { bracketId } = req.params;
-		const { gameId, playerId, roundIndex } = req.body;
+		const { playerId, roundIndex } = req.body;
 
 		try {
 			let bracket = await bracketService.updateGameWinner(
 				bracketId,
-				gameId,
 				playerId,
 				roundIndex
 			);
@@ -174,12 +173,11 @@ class BracketController extends BaseController {
 
 	async removePlayerFromGame(req, res) {
 		const { bracketId } = req.params;
-		const { gameId, playerId, roundIndex } = req.body;
+		const { playerId, roundIndex } = req.body;
 
 		try {
 			let bracket = await bracketService.removePlayerFromGame(
 				bracketId,
-				gameId,
 				playerId,
 				roundIndex
 			);

@@ -38,6 +38,11 @@ const gameSchema = new mongoose.Schema({
 	// Additional fields to represent game details (scores, status, etc.)
 });
 
+gameSchema.plugin(toJSON);
+
+//add indexes
+gameSchema.index({ status: 1 });
+
 const roundSchema = new mongoose.Schema(
 	{
 		games: [gameSchema],
@@ -52,6 +57,9 @@ const roundSchema = new mongoose.Schema(
 
 roundSchema.plugin(toJSON);
 roundSchema.plugin(paginate);
+
+//add indexes
+roundSchema.index({ roundNumber: 1 });
 
 const Round = mongoose.model("Round", roundSchema);
 

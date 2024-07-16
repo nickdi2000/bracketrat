@@ -3,21 +3,6 @@ const mongoose = require("mongoose");
 const { roundSchema } = require("./round.model");
 const { playerSchema } = require("./player.model");
 
-// const optionSchema = new mongoose.Schema({
-// 	require_auth: {
-// 		type: Boolean,
-// 		default: false,
-// 	},
-// 	require_password: {
-// 		type: Boolean,
-// 		default: false,
-// 	},
-// 	auto_bracket: {
-// 		type: Boolean,
-// 		default: false,
-// 	},
-// });
-
 const bracketSchema = new mongoose.Schema(
 	{
 		name: {
@@ -104,6 +89,9 @@ function generateRandomCode(length = 10) {
 	}
 	return result;
 }
+
+//add indexes to the schema
+bracketSchema.index({ code: 1 });
 
 const Bracket = mongoose.model("Bracket", bracketSchema);
 module.exports = Bracket;
