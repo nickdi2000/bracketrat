@@ -88,15 +88,15 @@
             </h3>
             <p class="text-gray-600 dark:text-gray-400">
               It's the simplist one. If you can find a smoother more intuitive
-              tournament bracket system, send us the link and we'll give you 6
-              months of our platform on the house.
+              tournament bracket system, send us the link and we'll give you a
+              free membership to our platform.
             </p>
           </div>
           <div class="text-center">
             <h3
               class="text-xl font-semibold mb-2 text-gray-900 dark:text-white"
             >
-              Flex.
+              Flexible.
             </h3>
             <p class="text-gray-600 dark:text-gray-400">
               Move things around. Add, remove, edit teams/players on the fly and
@@ -112,7 +112,7 @@
             <p class="text-gray-600 dark:text-gray-400">
               The first genuinly mult-user bracket system. Have the bracket
               build itself by having the players join the bracket themselves via
-              a QR code or a custom link.
+              a QR code or custom link.
             </p>
           </div>
         </div>
@@ -128,6 +128,15 @@
       <div class="container mx-auto text-center">
         <p class="text-gray-900 dark:text-white">
           &copy; {{ getYear }} {{ $appName }}. All rights reserved.
+        </p>
+        <p class="text-gray-600 dark:text-gray-400 mt-0">
+          <a href="/docs/privacy-policy" class="hover:underline"
+            >Privacy Policy</a
+          >
+          |
+          <a href="/docs/terms-of-service" class="hover:underline"
+            >Terms of Service</a
+          >
         </p>
       </div>
     </footer>

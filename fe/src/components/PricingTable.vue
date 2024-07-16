@@ -33,15 +33,21 @@
                 height="24"
               ></rect>
             </svg>
-            <span class="relative">Free</span>
+            <span class="relative sm:text-white lg:text-gray-800">Pricing</span>
           </span>
-          until 2025
         </h2>
-        <p class="text-base text-gray-700 md:text-lg">
-          While we collect feedback from our active users and build the thing up
-          -- we are not charging anything for full access to the platform. Early
-          users that provide feedback will be grandfathered in at a
-          significantly reduced rate (if ever charged).
+        <div class="text-orange-500 text-lg uppercase font-bold">
+          *Free Until 2025
+        </div>
+
+        <p
+          class="text-base sm:text-gray-300 md:text-gray-300 lg:text-gray-800 lg:text-lg"
+        >
+          <span class="text-orange-500 text-lg uppercase font-bold">*</span
+          >&nbsp;While we collect feedback from our active users and build the
+          thing up -- we are not charging anything for full access to the
+          platform. Users that signup and provide feedback early on will be
+          awarded life-time free access to the platform.
         </p>
       </div>
       <div class="grid max-w-screen-md gap-10 md:grid-cols-2 sm:mx-auto">
