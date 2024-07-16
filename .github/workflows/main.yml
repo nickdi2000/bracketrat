@@ -1,50 +1,28 @@
-name: Build and Deploy
+name: Node.js CD
 
 on:
   push:
     branches:
-      - main  # or the branch you want to trigger the deployment
+      - main
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Deploy using SSH
+        uses: appleboy/ssh-action@master
         with:
-          node-version: '18'  # Use the Node.js version your project requires
-
-      - name: Install frontend dependencies and build
-        run: |
-          echo "Building frontend..."
-          cd fe
-          npm install
-          npm run build
-
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.7.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_KEY }}
-
-      - name: Deploy to VPS
-        run: |
-          echo "Transferring frontend build files..."
-          rsync -avz --delete fe/build/ root@5.183.8.134:/opt/bracketrat/fe/build
-          
-          echo "Installing backend dependencies..."
-          root@5.183.8.134 'bash -s' <<'EOF'
-            cd /opt/bracketrat/fe
-            npm install
-
-            cd /opt/bracketrat/be
-            npm install
-            echo "Restarting bracket application..."
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          port: 22
+          script: |
+            cd /opt/bracketrat
+            git pull origin master
+            git status
+            npm install --only=prod
             pm2 restart bracket
-            echo "Deployment completed successfully."
-          EOF
-        env:
-          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
