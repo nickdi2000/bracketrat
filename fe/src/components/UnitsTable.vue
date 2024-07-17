@@ -55,7 +55,7 @@
                 {{ element.name }}</router-link
               >
             </th>
-            <td class="px-6 py-4">
+            <td class="px-6 py-4 status-td">
               <span
                 @click="showTip(element)"
                 :class="'badge badge-' + element.status"
@@ -227,5 +227,9 @@ export default {
 .player-btn {
   text-decoration: none;
   @apply bg-gray-800 uppercase p-2 text-lg w-full rounded-md text-white hover:bg-gray-600;
+}
+
+.status-td {
+  min-width: 190px;
 }
 </style>

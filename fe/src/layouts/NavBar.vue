@@ -66,10 +66,10 @@
                 class="flex flex-row cursor-pointer"
                 @click="$router.push({ name: 'Bracket' })"
               >
-                <img
+                <!-- <img
                   src="/images/logo-light.png"
                   class="w-14 h-auto logo-image"
-                />
+                /> -->
 
                 <span
                   class="text-white rounded-md py-2 px-3 bg-blue-900 font-bold ml-2 mt-2 hover:text-blue-200 truncate sm:max-w-40 md:max-w-80"

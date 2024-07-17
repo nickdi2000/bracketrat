@@ -26,7 +26,9 @@
       <div class="my-3">
         <button
           @click="save()"
-          class="p-4 mr-3 bg-blue-800 text-white p-2 rounded-lg"
+          :disabled="!newCode"
+          :class="!newCode ? 'bg-gray-400' : 'bg-blue-500'"
+          class="p-4 mr-3 text-white p-2 rounded-lg"
         >
           Save
         </button>

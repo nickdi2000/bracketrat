@@ -3,7 +3,7 @@
     <div v-if="!show" class="botton-nav-btn p-3 mb-2">
       <button
         class="btn btn-warning mr-2 fadeIn"
-        v-if="!bracket.isReady"
+        v-if="isBroken"
         @click="reset()"
       >
         <BoltIcon class="h-6 w-6 inline-block" />
@@ -30,6 +30,18 @@
         </svg>
       </button>
     </div>
+
+    <div
+      class="bottom-warning w-full text-center p-fluid pb-3 backdrop-blur-xl opacity-4"
+      v-if="isBroken"
+    >
+      <div
+        class="text-orange-400 opacity-60 w-full text-center uppercase text-xs"
+      >
+        Bracket is incomplete. Add players or rebuild.
+      </div>
+    </div>
+
     <div>
       <!-- Overlay -->
       <div
@@ -103,6 +115,9 @@ export default {
   },
   emits: ["generate"],
   computed: {
+    isBroken() {
+      return !this.bracket.isReady && this.bracket.rounds?.length;
+    },
     buttons() {
       return [
         {
@@ -231,6 +246,12 @@ export default {
   }
 }
 
+.bottom-warning {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  text-align: center;
+}
 .floating-action-button {
   margin-bottom: 14px;
 }

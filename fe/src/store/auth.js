@@ -99,9 +99,12 @@ export const authStore = defineStore({
             params
           );
 
+          //set selected Bracket
+          this.setSelectedBracket(rec.data.bracket);
+
           //update rounds
-          this.setRounds(rec.data?.bracket?.rounds);
-          this.setPlayers(rec.data?.bracket?.players);
+          //this.setRounds(rec.data?.bracket?.rounds);
+          //this.setPlayers(rec.data?.bracket?.players);
 
           resolve(rec);
         } catch (err) {
