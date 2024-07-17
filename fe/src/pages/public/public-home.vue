@@ -1,5 +1,5 @@
 <template>
-  <div class="mid text-white main-public">
+  <div class="mid- text-white main-public">
     <nav class="bg-gray-800 mainNav z-50" style="">
       <div class="flex flex-row justify-between">
         <div class="p-3 font-bold text-lg uppercase text-gray-400">
@@ -17,7 +17,7 @@
       </div>
     </nav>
 
-    <div v-if="view == 'game'" class="fadein">
+    <div v-if="view == 'game'" class="fadein middle flex flex-col">
       <div v-if="currentGame">
         <div
           class="mx-auto bg-gray-800 text-white rounded-lg drop-shadow-2xl overflow-hidden"
@@ -74,7 +74,9 @@
               </div>
 
               <div v-else>
-                <div class="flex flex-col justify-center p-3 shadow-lg">
+                <div
+                  class="flex flex-col justify-center p-3 shadow-lg fadeInUp rounded-md bg-gray-950"
+                >
                   <button
                     class="btn bg-green-900 mt-4 btn-block w-full"
                     @click="iWon()"
@@ -113,13 +115,13 @@
         </p>
       </div>
 
-      <div class="flex flex-row justify-between" v-if="myGames.length > 1">
+      <div class="flex justify-between w-1/3 fadein" v-if="myGames.length > 1">
         <button
           @click="gameIndex--"
           class="btn bg-gray-900 mt-4"
           v-if="gameIndex > 0"
         >
-          Previous Game
+          <ArrowLeftCircleIcon class="w-6 h-6 inline" />
         </button>
         <div v-else></div>
 
@@ -128,8 +130,9 @@
           @click="gameIndex++"
           class="btn bg-gray-900 mt-4"
         >
-          Next Game
+          <ArrowRightCircleIcon class="w-6 h-6 inline" />
         </button>
+        <div v-else></div>
       </div>
     </div>
 
@@ -171,7 +174,7 @@
 
 <script>
 import { playerAuthStore } from "@/store/playerAuth";
-import { UserIcon } from "@heroicons/vue/24/solid";
+import { ArrowLeftCircleIcon, UserIcon } from "@heroicons/vue/24/solid";
 import Bracket from "vue-tournament-bracket";
 import { nextTick } from "vue";
 import { findCurrentGame, findAllMyGames } from "./playerComposite";
@@ -351,5 +354,9 @@ export default {
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s, background-color 1.4s;
   background-color: rgb(55, 71, 103);
+}
+
+.bracket {
+  margin-left: 0 !important;
 }
 </style>

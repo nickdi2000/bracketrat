@@ -20,6 +20,7 @@ const login = {
 		password: Joi.string().required(),
 		familyUsername: Joi.string().allow(null, ""),
 		isGuest: Joi.boolean().default(false),
+		utm_source: Joi.string().optional().allow(null, ""),
 	}),
 };
 
