@@ -11,6 +11,7 @@ const playerSchema = new mongoose.Schema(
 		},
 		score: { type: Number, default: 0 },
 		wins: { type: Number, default: 0 },
+		strength: { type: Number, default: 0 },
 		brackets: [{ type: mongoose.Schema.Types.ObjectId, ref: "Bracket" }],
 	},
 	{

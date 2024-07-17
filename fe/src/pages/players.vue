@@ -72,7 +72,7 @@ export default {
     LinkIcon,
     ArrowLongLeftIcon,
   },
-  mixins: [socketMixn],
+  // mixins: [socketMixn],
   data() {
     return {
       records: [],

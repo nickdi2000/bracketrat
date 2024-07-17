@@ -136,6 +136,21 @@ export const authStore = defineStore({
         }
       });
     },
+    async batchUpdatePlayers(players) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const rec = await api.post(
+            `players/batch/${this.selected_bracket._id}`,
+            { players: players }
+          );
+          console.log("rec batch updated", rec.data);
+          this.setSelectedBracket(rec.data.bracket);
+          resolve(rec);
+        } catch (err) {
+          reject(err);
+        }
+      });
+    },
     async clearBracket(bracketId) {
       return new Promise((resolve, reject) => {
         try {

@@ -141,9 +141,13 @@ export default {
     }
   },
   methods: {
-    saveChanges() {
+    async saveChanges() {
+      console.log("Save changes");
+      const players = this.rows.map((v) => {
+        return { _id: v._id, strength: v.strength };
+      });
+      await this.$store.batchUpdatePlayers(players);
       this.pendingSave = false;
-      //this.$store.setPlayers(this.rows);
     },
     cancel() {
       this.pendingSave = false;

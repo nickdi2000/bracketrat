@@ -3,7 +3,7 @@
     <Loader v-if="loading" />
     <div
       v-if="playersNotInBracket?.length"
-      style="position: absolute; right: 40px; top: 85px"
+      style="position: absolute; right: 40px; top: 85px; z-index: 99"
     >
       <PlayerBadges
         :players="playersNotInBracket"
@@ -24,7 +24,7 @@
         <template #player="{ player }">
           <div
             @click="selectPlayer(player)"
-            class="player-box text-lg"
+            class="player-box"
             :class="[
               !player?.name ? 'un-played' : 'swift-in-left',
               player?.hasBye ? 'has-bye' : '',
@@ -280,7 +280,8 @@ export default {
   justify-content: center;
   align-items: center;
   padding: 6rem;
-  margin-top: 6rem;
+  margin-top: 10%;
+
   height: 90vh;
   overflow: scroll;
 }
@@ -290,6 +291,7 @@ export default {
   position: absolute;
   top: 0;
   padding-top: 4rem;
+  padding-right: 3rem;
 }
 
 .player-box {
@@ -514,6 +516,28 @@ p {
 
   .vtb-item-players:last-of-type {
     padding-right: 10px;
+  }
+}
+
+@media only screen and (max-width: 560px) {
+  .vtb-player {
+    padding: 2px;
+    width: 120px;
+    border-radius: 0;
+    font-size: 0.8rem;
+  }
+
+  .player-box {
+    font-size: 1rem;
+    padding: 2px;
+  }
+
+  .un-played {
+    height: 2rem;
+  }
+
+  .has-bye::after {
+    content: "";
   }
 }
 </style>

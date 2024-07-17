@@ -52,9 +52,11 @@ const destroy = catchAsync(async (req, res) => {
 			return res.status(404).send({ message: "Bracket not found." });
 		}
 
+		let augmentedBracket = bracketService.augmentPlayerData(updatedBracket);
+
 		res.status(200).send({
 			message: "Player removed successfully.",
-			bracket: updatedBracket,
+			bracket: augmentedBracket,
 		});
 	} catch (error) {
 		console.error("Error removing player from bracket:", error);
@@ -118,6 +120,30 @@ const login = catchAsync(async (req, res) => {
 	}
 });
 
+const batchUpdate = catchAsync(async (req, res) => {
+	const { players } = req.body;
+	const { bracketId } = req.params;
+
+	try {
+		const updatedBracket = await bracketService.batchUpdatePlayers(
+			bracketId,
+			players
+		);
+
+		if (!updatedBracket) {
+			return res.status(404).json({ message: "Bracket not found." });
+		}
+
+		res.json({
+			message: "Players updated successfully.",
+			bracket: updatedBracket,
+		});
+	} catch (error) {
+		console.error("Error updating players:", error);
+		res.status(500).json({ message: "Failed to update players." });
+	}
+});
+
 module.exports = {
 	insertPlayer,
 	getByBracketId,
@@ -125,4 +151,5 @@ module.exports = {
 	showPlayer,
 	register,
 	login,
+	batchUpdate,
 };

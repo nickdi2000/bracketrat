@@ -103,7 +103,9 @@ export default {
       this.form.bracketId = this.selectedBracket._id;
       try {
         const rec = await this.$api.post("players", this.form);
-        this.$store.setPlayers(rec.data.players);
+        if (rec.data.bracket?.players) {
+          this.$store.setPlayers(rec.data.bracket?.players);
+        }
         this.loading = false;
         this.form.name = "";
         this.$toast.success("Player added successfully");

@@ -166,21 +166,22 @@ const addPlayerToBracket = async ({ name, bracketId }) => {
 		const newPlayer = await Player.create({ name });
 		newPlayer.brackets.push(bracketId);
 
-		const updatedBracket = await Bracket.findById(bracketId).populate(
-			"players"
-		);
+		let updatedBracket = await Bracket.findById(bracketId).populate("players");
 
 		updatedBracket.players.push(newPlayer);
 		await updatedBracket.save();
 
-		const regeneratedBracket = await generateBracket(bracketId);
+		if (updatedBracket.auto_bracket) {
+			updatedBracket = await generateBracket(bracketId, true);
+		}
 
-		//let augmentedBracket = augmentPlayerData(updatedBracket);
+		let augmentedBracket = augmentPlayerData(updatedBracket);
 
 		return {
 			message: "Player added successfully",
 			newPlayer,
-			players: regeneratedBracket.players,
+			//players: updatedBracket.players,
+			bracket: augmentedBracket,
 		};
 	} catch (error) {
 		console.error("Error adding player to bracket:", error);
@@ -495,6 +496,27 @@ findPlayerInBracket = async ({ name, bracketId }) => {
 	return player;
 };
 
+batchUpdatePlayers = async (bracketId, players) => {
+	let bracket = await Bracket.findById(bracketId).populate("players");
+	if (!bracket) {
+		throw new Error("Bracket not found.");
+	}
+
+	// Update players
+	players.forEach((player) => {
+		let playerToUpdate = bracket.players.find(
+			(p) => p._id.toString() === player._id
+		);
+		if (playerToUpdate) {
+			Object.assign(playerToUpdate, player);
+		}
+	});
+
+	await bracket.save();
+
+	return augmentPlayerData(bracket);
+};
+
 module.exports = {
 	generateBracket,
 	clearRounds,
@@ -507,4 +529,5 @@ module.exports = {
 	addPlayerToBracket,
 	reGenerateBracket,
 	findPlayerInBracket,
+	batchUpdatePlayers,
 };
