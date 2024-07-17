@@ -184,7 +184,7 @@ const addPlayerToBracket = async ({ name, bracketId }) => {
 		};
 	} catch (error) {
 		console.error("Error adding player to bracket:", error);
-		throw new Error("Error adding player to bracket");
+		throw new Error(error);
 	}
 };
 

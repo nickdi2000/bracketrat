@@ -67,8 +67,8 @@ app.use(vue3GoogleLogin, {
 });
 
 app.use(piniaPlugin);
-app.config.globalProperties.$appName = "Bracket Rat";
-app.config.globalProperties.$baseUrl = "BracketRat.com";
+app.config.globalProperties.$appName = "Bracket Force";
+app.config.globalProperties.$baseUrl = "BracketForce.com";
 app.config.globalProperties.$api = api;
 app.config.globalProperties.$store = authStore();
 app.config.globalProperties.$openDialog = openDialog;

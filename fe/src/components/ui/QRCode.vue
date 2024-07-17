@@ -117,7 +117,7 @@ export default {
       return this.$store.getBracket;
     },
     link() {
-      return "BracketRat.com/" + this.bracket?.code;
+      return "BracketForce.com/" + this.bracket?.code;
     },
   },
   methods: {

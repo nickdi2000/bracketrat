@@ -111,8 +111,9 @@ export default {
         this.$emit("update");
       } catch (error) {
         this.loading = false;
-        console.log("error", error);
-        this.$toast.error("Error adding player");
+        console.log("save() error", error.response.data?.data?.message);
+        let msg = error.response.data?.data?.message || "Error adding player";
+        this.$toast.error(msg);
         this.closeModal();
       }
     },

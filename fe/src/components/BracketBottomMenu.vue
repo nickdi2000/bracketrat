@@ -1,6 +1,15 @@
 <template>
   <span>
     <div v-if="!show" class="botton-nav-btn p-3 mb-2">
+      <button
+        class="btn btn-warning mr-2 fadeIn"
+        v-if="!bracket.isReady"
+        @click="reset()"
+      >
+        <BoltIcon class="h-6 w-6 inline-block" />
+        Rebuild Bracket
+      </button>
+
       <button @click="newPlayer()" class="btn btn-secondary mr-2">
         <PlusCircleIcon class="h-6 w-6 inline-block" />
       </button>

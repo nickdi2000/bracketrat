@@ -83,6 +83,33 @@ export const authStore = defineStore({
         }
       });
     },
+
+    /*
+        playerId: this.player._id,
+        gameId: this.game._id,
+        bracketId: this.$store.getBracket?._id,
+        roundIndex: this.player.roundIndex,
+        */
+
+    async removePlayerFromGame(params) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const rec = await api.post(
+            `/brackets/${params.bracketId}/remove-player-from-game`,
+            params
+          );
+
+          //update rounds
+          this.setRounds(rec.data?.bracket?.rounds);
+          this.setPlayers(rec.data?.bracket?.players);
+
+          resolve(rec);
+        } catch (err) {
+          console.log("error", err);
+          reject(err);
+        }
+      });
+    },
     async getOrg() {
       return new Promise(async (resolve, reject) => {
         try {

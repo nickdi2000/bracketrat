@@ -42,7 +42,7 @@
       >
         {{ opt.name }}
       </button>
-      <div class="mt-0">
+      <div class="mt-0 mx-auto" style="max-width: 300px">
         <Alert type="info" style="min-height: 90px">
           {{ options.find((opt) => opt.value === selection).tip }}
         </Alert>

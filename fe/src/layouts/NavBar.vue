@@ -72,7 +72,7 @@
                 />
 
                 <span
-                  class="text-white text-xl font-bold ml-2 mt-2 hover:text-blue-200 truncate sm:max-w-40 md:max-w-80"
+                  class="text-white rounded-md py-2 px-3 bg-blue-900 font-bold ml-2 mt-2 hover:text-blue-200 truncate sm:max-w-40 md:max-w-80"
                 >
                   {{ getName }}
                 </span>

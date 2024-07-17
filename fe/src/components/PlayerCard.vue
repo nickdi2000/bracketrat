@@ -256,16 +256,16 @@ export default {
     async removePlayerFromGame() {
       const params = this.getParams();
       console.log("removing...", params);
+      /*
       const rec = await this.$api.post(
         `/brackets/${params.bracketId}/remove-player-from-game`,
         params
       );
-      //console.log("rec", rec);
-      this.$store.setRounds(rec.data.bracket.rounds);
-      //this.$store.resetBracket(rec.data.bracket._id);
-      // this.$emit("update", false);
+      */
+      await this.$store.removePlayerFromGame(params);
+      //this.$store.setRounds(rec.data.bracket.rounds);
+
       this.closeModal();
-      //this.$emit("generate");
     },
 
     async undoOutcomes() {
