@@ -102,6 +102,17 @@
         </div>
       </div>
 
+      <div v-else class="text-center mt-4 fadein">
+        <h2 class="text-teal-700">
+          <BoltIcon class="w-7 h-7 mb-2 inline" />
+        </h2>
+        <h2 class="text-xl font-bold">Welcome!</h2>
+        <p class="text-gray-300 text-sm">
+          <i>No games found.</i><br />You are either not in the bracket or do
+          not have any matches lined up yet.
+        </p>
+      </div>
+
       <div class="flex flex-row justify-between" v-if="myGames.length > 1">
         <button
           @click="gameIndex--"
