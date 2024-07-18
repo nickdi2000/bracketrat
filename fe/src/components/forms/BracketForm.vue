@@ -3,14 +3,14 @@
     <div v-if="!newUser">
       <div class="space-y-4">
         <Input label="Name" v-model="form.name" placeholder="My Tournament" />
-        <div class="flex justify-end">
+        <!-- <div class="flex justify-end">
           <button
             @click="generateName"
             class="text-gray-300 hover:bg-slate-800 px-2 py-1 text-xs mt-0 rounded-md text-right bg-slate-600"
           >
             Generate Name
           </button>
-        </div>
+        </div> -->
 
         <div class="pb-4" v-if="showDescription">
           <label class="text-white mb-2 font-bold text-sm">Description</label>
@@ -33,7 +33,7 @@
           />
           <div class="text-xs text-gray-300 m-2">
             This is the link that players will use to join your tournament.
-            <span class="font-bold text-white">{{ link }}</span>
+            <span class="text-lg font-bold text-slate">{{ link }}</span>
           </div>
         </div>
 
@@ -62,7 +62,7 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2">
+        <!-- <div class="grid grid-cols-2">
           <div>
             <label class="block text-sm font-medium text-white"
               >Sport Category</label
@@ -88,7 +88,7 @@
               placeholder="Select Sport (Optional)"
             />
           </div>
-        </div>
+        </div> -->
 
         <div>
           <label class="block text-sm font-medium text-white"
@@ -100,8 +100,9 @@
               class="p-3"
               :key="`option-${optIndex}`"
             >
-              <td class="p-3">
-                <Toggle v-model="form[opt.key]" :label="opt.label" />
+              <td class="py-3 flex flex-row">
+                <div><Toggle v-model="form[opt.key]" /></div>
+                <div class="text-gray-300 ml-2">{{ opt.label }}</div>
               </td>
             </tr>
           </table>
@@ -206,7 +207,7 @@
     <div class="my-4 pt-2 pb-12 flex justify-center">
       <button
         v-if="showSave"
-        @click="$emit('save', form)"
+        @click="save()"
         class="p-3 rounded-md text-white mt-4"
         :class="
           shouldDisable ? 'bg-gray-500 opacity-4 text-gray-200' : 'bg-green-700'
@@ -223,16 +224,19 @@
         Cancel
       </button>
     </div>
+    <Loader3 v-if="loading" class="fadein" />
   </span>
 </template>
 
 <script>
 import { BracketNames, teamSports, options } from "@/constants/enums";
+import Loader3 from "../Loader3.vue";
 
 export default {
   emits: ["save"],
   data() {
     return {
+      loading: false,
       BracketNames,
       teamSports,
       options,
@@ -375,6 +379,7 @@ export default {
       return import.meta.env.VITE_BASE_FE_URL + "" + this.form.code;
     },
     shouldDisable() {
+      return false;
       return (
         this.form.type != "single-elimination" ||
         this.form.require_auth ||
@@ -382,12 +387,12 @@ export default {
       );
     },
   },
-  components: {},
+  components: {
+    Loader3,
+  },
   mounted() {
-    console.log("post mount");
     //check if we get it as prop first
     if (this.selectedBracket) {
-      console.log("is provided", this.selectedBracket);
       this.form = this.selectedBracket;
       return;
     }
@@ -398,6 +403,49 @@ export default {
     }
   },
   methods: {
+    async save() {
+      if (!this.validate()) {
+        return;
+      }
+
+      this.loading = true;
+      //this.$emit("save", this.form);
+
+      console.log("saving data", "brackets");
+      let data = JSON.parse(JSON.stringify(this.selectedBracket));
+      delete data.players;
+      delete data.rounds;
+
+      try {
+        const rec = await this.$api.post("brackets", data);
+        this.$store.fetchBracket(this.selectedBracket._id);
+        this.stopLoading();
+      } catch (e) {
+        console.log("error saving bracket", e);
+        this.stopLoading();
+      }
+    },
+    validate() {
+      //check if form code has spaces in it
+      if (this.selectedBracket.code.includes(" ")) {
+        this.$toast.error("Code cannot contain spaces");
+        return false;
+      }
+
+      //check if it has special characters
+      if (/[^a-zA-Z0-9]/.test(this.selectedBracket.code)) {
+        this.$toast.error("Code cannot contain special characters");
+        return false;
+      }
+
+      //check if its longer than 10 characters
+      if (this.selectedBracket.code.length > 10) {
+        this.$toast.error("Code cannot be longer than 10 characters");
+        return false;
+      }
+
+      return true;
+    },
     setShowTip() {
       clearTimeout(this.timer);
       this.showTip = true;
@@ -421,6 +469,12 @@ export default {
     generateName() {
       this.form.name =
         this.BracketNames[Math.floor(Math.random() * this.BracketNames.length)];
+    },
+    stopLoading() {
+      setTimeout(() => {
+        this.loading = false;
+        this.$toast.success("Bracket saved successfully");
+      }, 700);
     },
   },
 };

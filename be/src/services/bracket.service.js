@@ -225,6 +225,23 @@ const removePlayerFromGame = async (bracketId, playerId, roundIndex) => {
 			);
 		}
 
+		//remove outcomes from previous games
+		for (let i = 0; i < roundIndex; i++) {
+			const round = bracket.rounds[i];
+			round.games.forEach((game) => {
+				if (game.player1 && game.player1._id.toString() === playerId) {
+					game.player1.winner = null;
+					game.player2.winner = null;
+				}
+				if (game.player2 && game.player2._id.toString() === playerId) {
+					game.player2.winner = null;
+					game.player1.winner = null;
+				}
+				game.winner = null;
+				game.status = "pending";
+			});
+		}
+
 		bracket.markModified("rounds"); // Necessary because rounds is an array of subdocuments
 
 		await bracket.save();

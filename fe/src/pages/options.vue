@@ -74,8 +74,7 @@ export default {
           value: false,
         },
         {
-          label:
-            "Automatically throw user into Tournament bracket upon registration",
+          label: "Automatically throw user into bracket upon registration",
           key: "auto_bracket",
           value: true,
         },

@@ -113,7 +113,7 @@ export const options = Object.freeze([
     value: false,
   },
   {
-    label: "Automatically throw user into Tournament bracket upon registration",
+    label: "Automatically throw user into bracket upon signup",
     key: "auto_bracket",
     value: true,
   },

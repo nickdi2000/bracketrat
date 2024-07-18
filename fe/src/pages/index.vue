@@ -5,11 +5,7 @@
       v-if="playersNotInBracket?.length"
       style="position: absolute; right: 40px; top: 85px; z-index: 99"
     >
-      <PlayerBadges
-        :players="playersNotInBracket"
-        v-if="!showingDummy"
-        @update="update"
-      />
+      <PlayerBadges :players="playersNotInBracket" @update="update" />
     </div>
     <div
       class="bracket-container fadein"
@@ -193,9 +189,7 @@ export default {
     toggleView() {
       this.view = this.view === "bracket" ? "list" : "bracket";
     },
-    viewDummyData() {
-      this.showingDummy = !this.showingDummy;
-    },
+
     async generateBracket() {
       this.loading = true;
       try {
@@ -218,7 +212,6 @@ export default {
       this.selectedPlayer = player;
       const game = this._findGameByPlayer(player._id);
       this.selectedGame = game;
-      console.log("game", player.gameId, "roundIndex", player.roundIndex);
     },
     refresh() {
       this.selectedPlayer = {};
@@ -251,9 +244,6 @@ export default {
       return this.$store.getBracket;
     },
     rounds() {
-      if (this.showingDummy) {
-        return this.dummyRounds;
-      }
       if (this.$store?.rounds?.length) {
         return this.$store.rounds;
       }

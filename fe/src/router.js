@@ -195,15 +195,6 @@ router.beforeEach((to, from, next) => {
   const isPublicRoute = to.matched.some((record) => record.meta.isPublic);
   const isPlayerAuth = to.matched.some((record) => record.meta.isPlayerAuth);
 
-  console.log(
-    "Route check: isPublicRoute =",
-    isPublicRoute,
-    "isAuthenticated =",
-    isAuthenticated,
-    "isPlayer =",
-    isPlayer
-  );
-
   if (isPublicRoute) {
     if (isAuthenticated) {
       // Redirect authenticated non-players to their portal

@@ -1,11 +1,7 @@
 <template>
   <div class="pt-0 text-white min-h-screen- max-w-4xl">
     <div class="">
-      <BracketForm
-        @save="save"
-        :selectedBracket="selectedBracket"
-        v-if="selectedBracket"
-      />
+      <BracketForm :selectedBracket="selectedBracket" v-if="selectedBracket" />
       <div v-else>
         <Alert type="warning"
           >No bracket selected. Please
@@ -32,20 +28,19 @@ export default {
     },
   },
   methods: {
-    async save(e) {
-      console.log("saving data", "brackets");
-      let data = JSON.parse(JSON.stringify(e));
-      delete data.players;
-      delete data.rounds;
-
-      try {
-        const rec = await this.$api.post("brackets", data);
-        this.$store.fetchBracket(e._id);
-        this.$toast.success("Bracket saved successfully");
-      } catch (e) {
-        console.log("error saving bracket", e);
-      }
-    },
+    // async save(e) {
+    //   console.log("saving data", "brackets");
+    //   let data = JSON.parse(JSON.stringify(e));
+    //   delete data.players;
+    //   delete data.rounds;
+    //   try {
+    //     const rec = await this.$api.post("brackets", data);
+    //     this.$store.fetchBracket(e._id);
+    //     this.$toast.success("Bracket saved successfully");
+    //   } catch (e) {
+    //     console.log("error saving bracket", e);
+    //   }
+    // },
   },
   data() {
     return {
@@ -55,24 +50,6 @@ export default {
           require_auth: false,
         },
       },
-      options: [
-        {
-          label: "Force users to register via Email",
-          key: "require_auth",
-          value: false,
-        },
-        {
-          label: "Require a password to join",
-          key: "require_password",
-          value: false,
-        },
-        {
-          label:
-            "Automatically throw user into Tournament bracket upon registration",
-          key: "auto_bracket",
-          value: true,
-        },
-      ],
     };
   },
 };
