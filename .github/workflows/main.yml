@@ -21,6 +21,7 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: 22
           script: |
+            sudo chown -R ${{ secrets.USERNAME }} /opt/bracketrat
             cd /opt/bracketrat
             git pull origin master
             git status
