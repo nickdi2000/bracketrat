@@ -74,8 +74,7 @@
                 <span
                   class="text-white rounded-md py-2 px-3 bg-blue-900 font-bold ml-2 mt-2 hover:text-blue-200 truncate sm:max-w-40 md:max-w-80"
                 >
-                  <BoltIcon class="h-4 w-4 inline mr-1" />
-                  {{ getName }}
+                  <BracketIcon class="h-6 w-6 inline" /> View Bracket
                 </span>
               </div>
             </div>
@@ -151,7 +150,6 @@ import {
   UsersIcon,
   UserIcon,
   PlayCircleIcon,
-  BoltIcon,
 } from "@heroicons/vue/24/solid";
 
 export default {

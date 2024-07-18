@@ -1,6 +1,6 @@
 <template>
   <span v-if="showStragglers">
-    <div style="max-width: 170px" class="shadow-lg p-4 fadein">
+    <div style="max-width: 170px" class="bg-gray-900 shadow-lg p-4 fadein">
       <div class="subheader mb-2">
         Stragglers:
         <QuestionMarkCircleIcon
@@ -34,7 +34,10 @@
   </span>
 
   <span v-else>
-    <button @click="showStragglers = true" class="btn btn-secondary btn-sm">
+    <button
+      @click="showStragglers = true"
+      class="p-1 bg-gray-600 text-xs uppercase rounded-md opacity-60"
+    >
       {{ players.length }} other {{ $teamPlayer
       }}{{ players.length > 1 ? "s" : "" }}
     </button>
