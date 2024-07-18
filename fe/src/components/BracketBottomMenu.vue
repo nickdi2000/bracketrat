@@ -247,7 +247,7 @@ export default {
 }
 
 .bottom-warning {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
   text-align: center;

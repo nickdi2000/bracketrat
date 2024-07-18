@@ -5,7 +5,7 @@
         type="button"
         v-if="!showShareLink"
         @click="$refs.playerForm.showModal()"
-        class="no-print text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 me-2"
+        class="no-print text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-gray-600 dark:bg-blue-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 me-2"
       >
         <PlusCircleIcon class="h-6 text-white mr-2" /> Add Manually
       </button>
@@ -29,10 +29,11 @@
       ref="playerForm"
     />
 
-    <div class="mt-5 no-print text-center" v-if="!$store.players.length">
-      <Alert type="info" class="fadeinUp"
-        >⚠ No {{ $store.teamPlayer }}'s exist yet.</Alert
-      >
+    <div
+      class="mt-5 no-print text-center text-gray-300"
+      v-if="!$store.players.length"
+    >
+      ⚠ No {{ $store.teamPlayer }}'s exist yet.
     </div>
 
     <div class="fadein py-4" v-if="!$store.players.length || showShareLink">
@@ -46,6 +47,15 @@
       @updated="handleUpdated"
       class="pt-4"
     />
+
+    <button
+      type="button"
+      v-if="!showShareLink && !$store.players.length"
+      @click="$refs.playerForm.showModal()"
+      class="fab-btn no-print"
+    >
+      <PlusCircleIcon class="h-8 text-white" />
+    </button>
   </div>
 </template>
 
@@ -122,4 +132,12 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss">
+.fab-btn {
+  position: fixed;
+  bottom: 60px;
+  right: 20px;
+  z-index: 1000;
+  @apply bg-blue-900 p-2 rounded-full shadow-lg;
+}
+</style>

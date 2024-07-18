@@ -72,9 +72,12 @@ export const authStore = defineStore({
             `/brackets/${this.selected_bracket._id}/player/${player._id}`
           );
 
+          //set selected Bracket
+          await this.setSelectedBracket(rec.data.bracket);
+
           //update rounds
-          this.setRounds(rec.data?.bracket?.rounds);
-          this.setPlayers(rec.data?.bracket?.players);
+          //this.setRounds(rec.data?.bracket?.rounds);
+          //this.setPlayers(rec.data?.bracket?.players);
 
           resolve(rec);
         } catch (err) {

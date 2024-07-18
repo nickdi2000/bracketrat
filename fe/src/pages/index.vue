@@ -1,10 +1,10 @@
 <template>
-  <span class="dark:text-white main-span">
+  <span class="main-span- text-white">
     <Loader v-if="loading" />
 
     <div
       v-if="playersNotInBracket?.length && players.length > 2"
-      style="position: absolute; right: 40px; top: 85px; z-index: 99"
+      style="position: fixed; right: 40px; top: 85px; z-index: 99"
     >
       <PlayerBadges :players="playersNotInBracket" @update="update" />
     </div>
@@ -267,8 +267,10 @@ export default {
 <style lang="scss">
 .main-span {
   /*transparent */
-  background-color: rgba(0, 0, 0, 0.5);
-  height: 100vh;
+  // background-color: rgba(0, 0, 0, 0.5);
+  // height: 100vh;
+  width: 120vw;
+  overflow: auto;
 }
 
 .bracket-container {
@@ -279,7 +281,7 @@ export default {
   margin-top: 10%;
 
   height: 90vh;
-  overflow: scroll;
+  overflow: auto;
 }
 
 .vtb-wrapper {

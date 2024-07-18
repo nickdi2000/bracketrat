@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col items-center p-3 print-padding">
-    <div class="subheader">Bracket Player-Link</div>
+    <div class="subheader mb-0">Player-Link</div>
     <Link :darkMode="darkMode" :code="bracket?.code" @update="handleUpdate" />
     <div
       v-for="instance in [0, 1]"
