@@ -198,13 +198,13 @@ export default {
     },
     items() {
       return [
-        // { name: "Bracket", route: "Dashboard", icon: BracketIcon },
+        { name: "Bracket", route: "Dashboard", icon: BracketIcon },
         {
           name: this.teamPlayer + "s",
           route: "Players",
           icon: UsersIcon,
         },
-        { name: "Bracket Setup", route: "Settings", icon: Cog6ToothIcon },
+        { name: "Setup", route: "Settings", icon: Cog6ToothIcon },
       ];
     },
   },

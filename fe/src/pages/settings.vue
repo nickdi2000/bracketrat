@@ -1,6 +1,8 @@
 <template>
-  <div class="pt-0 text-white min-h-screen- max-w-4xl">
-    <div class="">
+  <div
+    class="pt-0 text-white min-h-screen- m-auto flex flex-row justify-center"
+  >
+    <div class="max-w-4xl">
       <BracketForm :selectedBracket="selectedBracket" v-if="selectedBracket" />
       <div v-else>
         <Alert type="warning"
