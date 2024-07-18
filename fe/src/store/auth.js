@@ -124,6 +124,17 @@ export const authStore = defineStore({
         }
       });
     },
+    async updateOrg(data) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const rec = await api.post("/organizations", data);
+          //this.setOrganization(rec.data);
+          resolve(rec);
+        } catch (err) {
+          reject(err);
+        }
+      });
+    },
     async resetBracket(bracketId) {
       return new Promise(async (resolve, reject) => {
         try {

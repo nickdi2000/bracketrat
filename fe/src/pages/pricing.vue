@@ -17,6 +17,7 @@
           </div>
           <div
             class="mt-4 flex items-baseline text-3xl leading-none font-extrabold text-gray-900"
+            :class="index ? 'line-through' : ''"
           >
             {{ block.price }}
             <span class="ml-1 text-2xl leading-8 font-medium text-gray-500">

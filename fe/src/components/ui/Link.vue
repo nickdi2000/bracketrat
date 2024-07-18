@@ -2,7 +2,7 @@
   <div>
     <div
       v-if="!editing"
-      class="uppercase text-3xl font-bold py-4"
+      class="text-2xl font-bold py-4"
       :class="!darkMode ? 'text-black' : 'text-white'"
       @click="editing = true"
     >

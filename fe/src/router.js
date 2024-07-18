@@ -7,7 +7,7 @@ import Options from "@/pages/options.vue";
 import Settings from "@/pages/settings.vue";
 import NotFound from "@/pages/not-found.vue";
 import Profile from "@/pages/profile.vue";
-import Brackets from "@/pages/brackets.vue";
+import MyOrganization from "@/pages/my-organization.vue";
 import Super from "@/pages/super.vue";
 import PrivacyPolicy from "@/pages/privacy-policy.vue";
 import TermsOfService from "@/pages/terms-of-service.vue";
@@ -106,9 +106,14 @@ const routes = [
         component: Pricing,
       },
       {
+        path: "my-organization",
+        name: "Organization",
+        component: MyOrganization,
+      },
+      {
         path: "brackets",
         name: "Brackets",
-        component: Brackets,
+        component: MyOrganization,
       },
       {
         path: "brackets/create",

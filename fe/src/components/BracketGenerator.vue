@@ -95,12 +95,12 @@ export default {
           tip: "Standard 'seeding' technique where the strongest players are matched against the weakest players in the first round to avoid early eliminations of strong players.",
           info: "Seeding based on strength",
         },
-        {
-          name: "Manual",
-          value: "manual",
-          tip: "You can manually assign opponents to eachother",
-          info: "Opponents will be manually assigned to eachother",
-        },
+        // {
+        //   name: "Manual",
+        //   value: "manual",
+        //   tip: "You can manually assign opponents to eachother",
+        //   info: "Opponents will be manually assigned to eachother",
+        // },
       ],
     };
   },

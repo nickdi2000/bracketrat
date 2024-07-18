@@ -26,6 +26,10 @@ const organizationSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "User",
 	},
+	code: {
+		type: String,
+		default: () => generateRandomCode(6), // Use the function to generate a default code
+	},
 	users: [
 		{
 			type: mongoose.Schema.Types.ObjectId,
@@ -51,5 +55,16 @@ const organizationSchema = new mongoose.Schema({
 	},
 	updatedAt: Date,
 });
+
+function generateRandomCode(length = 10) {
+	let result = "";
+	const characters =
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	const charactersLength = characters.length;
+	for (let i = 0; i < length; i++) {
+		result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	}
+	return result;
+}
 
 module.exports = mongoose.model("Organization", organizationSchema);

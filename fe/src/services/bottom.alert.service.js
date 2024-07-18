@@ -8,15 +8,21 @@ function bottomAlert(message, details = null) {
   const dialogApp = createApp(BottomAlertComponent, { message, details });
   const instance = dialogApp.mount(div);
 
-  setTimeout(() => {
-    dialogApp.unmount();
-    document.body.removeChild(div);
-  }, 7000);
+  // Open the alert (ensure it's visible when created)
+  if (instance.open) {
+    instance.open();
+  }
 
-  // return instance.open().finally(() => {
-  //   dialogApp.unmount();
-  //   document.body.removeChild(div);
-  // });
+  // Automatically close the alert after 9 seconds
+  setTimeout(() => {
+    if (instance.close) {
+      instance.close();
+    }
+    setTimeout(() => {
+      dialogApp.unmount();
+      document.body.removeChild(div);
+    }, 500); // Allow some time for the close animation
+  }, 9000);
 }
 
 export default bottomAlert;

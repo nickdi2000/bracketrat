@@ -1,8 +1,9 @@
 <template>
   <span class="dark:text-white main-span">
     <Loader v-if="loading" />
+
     <div
-      v-if="playersNotInBracket?.length"
+      v-if="playersNotInBracket?.length && players.length > 2"
       style="position: absolute; right: 40px; top: 85px; z-index: 99"
     >
       <PlayerBadges :players="playersNotInBracket" @update="update" />
@@ -61,9 +62,10 @@
             Share your unique room link/QR code or add them manually.
           </div>
           <button
-            class="btn btn-secondary btn-sm mt-4 fadein animate-pulse"
+            class="btn btn-secondary mt-4 fadein"
             @click="$router.push('/admin/players')"
           >
+            <PlusCircleIcon class="h-6 inline mr-1 mb-1" />
             Add {{ $teamPlayer }}'s
           </button>
         </div>
@@ -132,7 +134,7 @@
 <script>
 import Bracket from "vue-tournament-bracket";
 
-import { UsersIcon } from "@heroicons/vue/24/solid";
+import { PlusCircleIcon, UsersIcon } from "@heroicons/vue/24/solid";
 import { bracketMixin } from "@/mixins/bracketMixin";
 import PlayerCard from "@/components/PlayerCard.vue";
 import BracketBottomMenu from "@/components/BracketBottomMenu.vue";
@@ -175,6 +177,10 @@ export default {
       this.$store?.getBracket?._id
     ) {
       this.$store.fetchBracket(this.$store.getBracket._id);
+    }
+
+    if (this.currentBracket) {
+      console.log("currentBracket", this.currentBracket);
     }
   },
   methods: {

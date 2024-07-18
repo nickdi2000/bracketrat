@@ -1,22 +1,30 @@
 <template>
-  <div class="bottom-div fadeinUp">
+  <div class="bottom-div fadeinUp fadeOut" v-if="isVisible">
     <div
       class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400"
       role="alert"
     >
       <span class="font-medium">Tip:</span> {{ message }}
+      <div class="my-3">
+        <button
+          @click="close"
+          class="text-blue-800 dark:text-blue-400 p-3 bg-blue-900 hover:bg-blue-700"
+        >
+          Dismiss
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, provide } from "vue";
 
 const props = defineProps({
   message: String,
 });
 
-const isVisible = ref(false);
+const isVisible = ref(true);
 
 function open() {
   isVisible.value = true;
@@ -27,7 +35,7 @@ function close() {
 }
 
 // Expose the open function to parent components
-defineExpose({ open });
+defineExpose({ open, close });
 </script>
 
 <style>
@@ -42,5 +50,10 @@ defineExpose({ open });
   justify-content: center;
   align-items: center;
   transition-duration: 1s !important;
+}
+
+.fadeinUp-enter-active,
+.fadeinUp-leave-active {
+  transition: opacity 1.5s;
 }
 </style>
