@@ -1,19 +1,33 @@
-name: Node.js CD
-
+# See https://zellwk.com/blog/github-actions-deploy/ an explanation of this code
+name: deploy
 on:
   push:
     branches:
       - main
-
+      - master
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
 
-      - name: Deploy using SSH
+      - run: npm install
+      - run: npm run build
+
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.PRIVATE_KEY }}
+          known_hosts: unnecessary
+
+      - name: Adding Known Hosts
+        run: ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy with rsync
+        run: rsync -avz -e "ssh -p ${{ secrets.SSH_PORT }}" ./dist/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/opt/bracketrat/fe/dist
+
+      - name: Restart Server
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -21,11 +35,9 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: 22
           script: |
-            # Configure Git to add exception for the directory
-            git config --global --add safe.directory /opt/bracketrat
-
-            cd /opt/bracketrat
-            git pull origin main
-            git status
-            npm install --only=prod
+            cd /opt/bracketrat/be
+            git fetch origin master
+            git reset --hard FETCH_HEAD
+            git clean -d -f --exclude secrets
+            npm install --production
             pm2 restart bracket
