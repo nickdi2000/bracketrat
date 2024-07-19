@@ -62,11 +62,10 @@ jobs:
             # Load NVM and set Node.js version
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            nvm install 18
             nvm use 18
 
-            # Ensure Node.js is available for PM2
-            export PATH="$NVM_DIR/versions/node/v18.18.2/bin:$PATH"
+            # Add Node.js to PATH
+            export PATH="$NVM_DIR/versions/node/v18.20.4/bin:$PATH"
 
             cd /opt/bracketrat/be
             git fetch origin master
