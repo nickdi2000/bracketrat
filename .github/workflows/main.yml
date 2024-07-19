@@ -59,10 +59,14 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: 22
           script: |
-            # Ensure Node.js is available for PM2
+            # Load NVM and set Node.js version
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm install 18
             nvm use 18
+
+            # Add Node.js to PATH for PM2
+            export PATH="$NVM_DIR/versions/node/v18.18.2/bin:$PATH"
 
             cd /opt/bracketrat/be
             git fetch origin master
