@@ -1,10 +1,11 @@
-# See https://zellwk.com/blog/github-actions-deploy/ an explanation of this code
 name: deploy
+
 on:
   push:
     branches:
       - main
       - master
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -12,22 +13,41 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
 
-      - run: npm install
-      - run: npm run build
+      # Build Frontend
+      - name: Install Frontend Dependencies
+        working-directory: ./fe
+        run: npm install
+      
+      - name: Build Frontend
+        working-directory: ./fe
+        run: npm run build
 
+      # Build Backend
+      - name: Install Backend Dependencies
+        working-directory: ./be
+        run: npm install
+      
+      - name: Build Backend
+        working-directory: ./be
+        run: npm run build # Adjust if you have a specific build command for the backend
+
+      # Install SSH Key
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.PRIVATE_KEY }}
           known_hosts: unnecessary
 
+      # Adding Known Hosts
       - name: Adding Known Hosts
         run: ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Deploy with rsync
-        run: rsync -avz -e "ssh -p ${{ secrets.SSH_PORT }}" ./dist/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/opt/bracketrat/fe/dist
+      # Deploy Frontend with rsync
+      - name: Deploy Frontend with rsync
+        run: rsync -avz -e "ssh -p ${{ secrets.SSH_PORT }}" ./fe/dist/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/opt/bracketrat/fe/dist
 
-      - name: Restart Server
+      # Deploy Backend and Restart Server
+      - name: Deploy and Restart Backend
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
