@@ -1,19 +1,57 @@
-name: Node.js CD
+name: deploy
 
 on:
   push:
     branches:
       - main
+      - master
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v2
 
-      - name: Deploy using SSH
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      # Build Frontend
+      - name: Install Frontend Dependencies
+        working-directory: ./fe
+        run: npm install
+      
+      - name: Build Frontend
+        working-directory: ./fe
+        run: npm run build
+
+      # Build Backend
+      - name: Install Backend Dependencies
+        working-directory: ./be
+        run: npm install
+      
+      - name: Build Backend
+        working-directory: ./be
+        run: npm run build # Adjust if you have a specific build command for the backend
+
+      # Install SSH Key
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.PRIVATE_KEY }}
+          known_hosts: unnecessary
+
+      # Adding Known Hosts
+      - name: Adding Known Hosts
+        run: ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      # Deploy Frontend with rsync
+      - name: Deploy Frontend with rsync
+        run: rsync -avz -e "ssh -p ${{ secrets.SSH_PORT }}" ./fe/dist/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/opt/bracketrat/fe/dist
+
+      # Deploy Backend and Restart Server
+      - name: Deploy and Restart Backend
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -21,8 +59,17 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: 22
           script: |
-            cd /opt/bracketrat
-            git pull origin master
-            git status
-            npm install --only=prod
+            # Load NVM and set Node.js version
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm use 18
+
+            # Add Node.js to PATH
+            export PATH="$NVM_DIR/versions/node/v18.20.4/bin:$PATH"
+
+            cd /opt/bracketrat/be
+            git fetch origin master
+            git reset --hard FETCH_HEAD
+            git clean -d -f --exclude secrets
+            npm install --production
             pm2 restart bracket
