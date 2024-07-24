@@ -30,23 +30,6 @@
       rel="stylesheet"
     />
 
-    <!-- Hotjar Tracking Code for bracketforce -->
-    <script>
-      (function (h, o, t, j, a, r) {
-        h.hj =
-          h.hj ||
-          function () {
-            (h.hj.q = h.hj.q || []).push(arguments);
-          };
-        h._hjSettings = { hjid: 5064216, hjsv: 6 };
-        a = o.getElementsByTagName("head")[0];
-        r = o.createElement("script");
-        r.async = 1;
-        r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
-        a.appendChild(r);
-      })(window, document, "https://static.hotjar.com/c/hotjar-", ".js?sv=");
-    </script>
-
     <!-- <script src="https://maps.googleapis.com/maps/api/js?key=%VITE_GOOGLE_API_KEY%&libraries=places"></script> -->
   </head>
   <body>
@@ -58,21 +41,40 @@
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
 
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=AW-16641979521"
-    ></script>
+    <script type="module">
+      if (import.meta.env.VITE_ENV === "production") {
+        console.log("Loading GTAG");
+        const script = document.createElement("script");
+        script.async = true;
+        script.src =
+          "https://www.googletagmanager.com/gtag/js?id=AW-16641979521";
+        document.head.appendChild(script);
 
-    <script src="https://www.googletagmanager.com/gtag/js?id=G-GMVGD9DMRK"></script>
+        const gtagScript = document.createElement("script");
+        gtagScript.text = `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'AW-16641979521');
+        `;
+        document.head.appendChild(gtagScript);
 
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
+        //HOTJAR
+        (function (h, o, t, j, a, r) {
+          h.hj =
+            h.hj ||
+            function () {
+              (h.hj.q = h.hj.q || []).push(arguments);
+            };
+          h._hjSettings = { hjid: 5064216, hjsv: 6 };
+          a = o.getElementsByTagName("head")[0];
+          r = o.createElement("script");
+          r.async = 1;
+          r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
+          a.appendChild(r);
+        })(window, document, "https://static.hotjar.com/c/hotjar-", ".js?sv=");
+        //END HOTJAR
       }
-      gtag("js", new Date());
-
-      gtag("config", "AW-16641979521");
     </script>
 
     <!-- Event snippet for Admin Signup conversion page
