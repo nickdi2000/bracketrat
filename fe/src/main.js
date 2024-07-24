@@ -45,6 +45,8 @@ import {
   QuestionMarkCircleIcon,
   PlusCircleIcon,
   UserCircleIcon,
+  UserGroupIcon,
+  UsersIcon,
   ArrowPathIcon,
   TableCellsIcon,
   BoltIcon,
@@ -90,6 +92,9 @@ app.component("Select", FwbSelect);
 app.component("QuestionMarkCircleIcon", QuestionMarkCircleIcon);
 app.component("PlusCircleIcon", PlusCircleIcon);
 app.component("UserCircleIcon", UserCircleIcon);
+app.component("UserGroupIcon", UserGroupIcon);
+app.component("UsersIcon", UsersIcon);
+
 //custom
 
 app.component("Loader", Loader);

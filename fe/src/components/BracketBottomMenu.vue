@@ -66,7 +66,7 @@
           </div>
           <div class="flex flex-col space-y-4">
             <button
-              v-for="(button, index) in buttons"
+              v-for="(button, index) in filteredButtons"
               :key="index"
               class="wide-button trans"
               @click="execute(button.action)"
@@ -80,7 +80,7 @@
                 <div>{{ button.text }}</div>
               </div>
               <div
-                class="text-left text-gray-400 text-xs fadein"
+                class="ml-10 text-left text-gray-400 text-xs fadein"
                 v-if="showHelp"
               >
                 {{ button.desc }}
@@ -110,7 +110,7 @@ export default {
   data() {
     return {
       show: false,
-      showHelp: false,
+      showHelp: true,
     };
   },
   emits: ["generate"],
@@ -118,19 +118,22 @@ export default {
     isBroken() {
       return !this.bracket.isReady && this.bracket.rounds?.length;
     },
+    filteredButtons() {
+      return this.buttons.filter((button) => !button.hide);
+    },
     buttons() {
       return [
         {
-          icon: "BoltIcon",
+          icon: "UserGroupIcon",
           text: "Generate Bracket",
           action: "generate",
-          desc: "Generate a new bracket with all players, including new players (stragglers added since the last generation.)",
+          desc: "Generate a new bracket with all players, including new players.",
         },
         {
           text: "Rebuild",
           action: "reset",
-          icon: "ArrowPathIcon",
-          desc: "Reset current bracket with the same players",
+          icon: "UsersIcon",
+          desc: "Reset current bracket with the same set of players",
         },
         {
           icon: "TrashIcon",
@@ -145,6 +148,7 @@ export default {
           desc: !this.bracket?.locked
             ? `Unlock the bracket to allow ${this.$teamPlayer}'s to enter the bracket`
             : `Lock the bracket to prevent more ${this.$teamPlayer}'s from being added.`,
+          hide: true, // to add computed logic later
         },
         {
           icon: "eye",
@@ -152,6 +156,7 @@ export default {
           action: "toggleView",
           icon: "TableCellsIcon",
           desc: "Toggle between bracket view and table view.",
+          hide: true,
         },
       ];
     },
