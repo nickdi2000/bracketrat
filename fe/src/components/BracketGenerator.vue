@@ -60,8 +60,9 @@
     </div>
   </div>
 
-  <div v-else>
-    <BracketWarnings :players="players" />
+  <!-- if several players but no bracket built yet (no rounds) -->
+  <div v-else-if="players.length <= 2 && !rounds?.length">
+    <BracketWarnings :players="players" :bracket="bracket" />
   </div>
 </template>
 
@@ -75,6 +76,10 @@ export default {
   props: {
     players: {
       type: Array,
+      required: true,
+    },
+    bracket: {
+      type: Object,
       required: true,
     },
   },
@@ -103,6 +108,11 @@ export default {
         // },
       ],
     };
+  },
+  computed: {
+    rounds() {
+      return this.bracket?.rounds;
+    },
   },
   methods: {
     generateBracket() {

@@ -1,0 +1,59 @@
+const mongoose = require("mongoose");
+const autopopulate = require("mongoose-autopopulate");
+
+const { toJSON, paginate } = require("./plugins");
+
+const playerGameDetailsSchema = new mongoose.Schema(
+	{
+		player: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Player",
+		},
+		score: { type: Number, default: 0 },
+		winner: { type: Boolean, default: null },
+		filled: { type: Boolean, default: false },
+		bye: { type: Boolean, default: false },
+	},
+	{
+		timestamps: true,
+		toJSON: { virtuals: true },
+		toObject: { virtuals: true },
+	}
+);
+
+playerGameDetailsSchema.virtual("id").get(function () {
+	return this._id.toHexString();
+});
+
+const gameSchema = new mongoose.Schema(
+	{
+		player1: playerGameDetailsSchema,
+		player2: playerGameDetailsSchema,
+		winner: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Player",
+			required: false,
+		},
+		status: {
+			type: String,
+			enum: ["active", "completed", "cancelled", "pending", "paused", "bye"],
+			default: "pending",
+		},
+		scheduledDate: { type: Date, required: false },
+		nextGameId: { type: mongoose.Schema.Types.ObjectId, ref: "Game" },
+	},
+	{
+		timestamps: true,
+		toJSON: { virtuals: true },
+		toObject: { virtuals: true },
+	}
+);
+
+gameSchema.plugin(toJSON);
+
+// Add indexes
+gameSchema.index({ status: 1 });
+
+const Game = mongoose.model("Game", gameSchema);
+
+module.exports = Game;

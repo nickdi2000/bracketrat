@@ -412,13 +412,13 @@ export default {
       //this.$emit("save", this.form);
 
       console.log("saving data", "brackets");
-      let data = JSON.parse(JSON.stringify(this.selectedBracket));
+      let data = JSON.parse(JSON.stringify(this.form));
       delete data.players;
       delete data.rounds;
 
       try {
         const rec = await this.$api.post("brackets", data);
-        this.$store.fetchBracket(this.selectedBracket._id);
+        this.$store.fetchBracket(this.form._id);
         this.stopLoading();
       } catch (e) {
         console.log("error saving bracket", e);
@@ -427,19 +427,19 @@ export default {
     },
     validate() {
       //check if form code has spaces in it
-      if (this.selectedBracket.code.includes(" ")) {
+      if (this.form.code.includes(" ")) {
         this.$toast.error("Code cannot contain spaces");
         return false;
       }
 
       //check if it has special characters
-      if (/[^a-zA-Z0-9]/.test(this.selectedBracket.code)) {
+      if (/[^a-zA-Z0-9]/.test(this.form.code)) {
         this.$toast.error("Code cannot contain special characters");
         return false;
       }
 
       //check if its longer than 10 characters
-      if (this.selectedBracket.code.length > 10) {
+      if (this.form.code.length > 10) {
         this.$toast.error("Code cannot be longer than 10 characters");
         return false;
       }

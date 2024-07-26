@@ -5,7 +5,7 @@
       :class="extended ? 'extended' : ''"
       style=""
     >
-      <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-7xl- px-2 sm:px-6 lg:px-8">
         <div class="relative flex h-16 items-center justify-between">
           <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
             <!-- Mobile menu button-->
@@ -72,7 +72,7 @@
                 /> -->
 
                 <span
-                  class="text-white rounded-md py-2 px-3 bg-blue-900 font-bold ml-2 mt-2 hover:text-blue-200 truncate sm:max-w-40 md:max-w-80"
+                  class="text-white rounded-md py-2 px-3 bg-blue-900 font-bold mt-2 hover:text-blue-200 truncate sm:max-w-50 md:max-w-80"
                 >
                   <BracketIcon class="h-6 w-6 inline" /> View Bracket
                 </span>

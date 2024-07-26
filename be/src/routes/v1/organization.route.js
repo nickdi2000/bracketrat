@@ -11,6 +11,8 @@ router.route("/me").get(auth(), organizationController.getMe);
 router.route("/").post(organizationController.insert);
 router.route("/update").post(organizationController.update);
 
+router.route("/").put(organizationController.update);
+
 router.route("/").get(organizationController.getorganization);
 router.route("/code/:code").get(organizationController.getByCode);
 

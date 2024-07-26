@@ -1,16 +1,25 @@
 <template>
   <span class="main-span- text-white">
     <Loader v-if="loading" />
-
     <div
-      v-if="playersNotInBracket?.length && players.length > 2"
+      v-if="playersNotInBracket?.length && playerCount > 2"
       style="position: fixed; right: 40px; top: 85px; z-index: 99"
     >
       <PlayerBadges :players="playersNotInBracket" @update="update" />
     </div>
+
+    <div
+      v-if="$isLocal"
+      style="position: fixed; left: 43px; top: 90px; z-index: 999"
+    >
+      <button class="btn btn-secondary btn-sm z-100" @click="dev = !dev">
+        OBJ
+      </button>
+    </div>
+
     <div
       class="bracket-container fadein"
-      v-if="rounds.length && players.length"
+      v-if="rounds?.length && playerCount && !dev"
     >
       <bracket
         :rounds="rounds"
@@ -27,7 +36,7 @@
               player?.hasBye ? 'has-bye' : '',
             ]"
           >
-            {{ player.name }}
+            {{ player?.name }}
           </div>
         </template>
         <template #player-extension-bottom="{ match }">
@@ -42,9 +51,8 @@
       <div v-else>
         <BracketList :rounds="rounds" />
       </div>
-
-      <pre v-if="dev" class="text-xs z-50" style="">{{ rounds }}</pre>
     </div>
+    <pre v-if="dev" class="text-xs z-50" style="">{{ rounds }}</pre>
 
     <div
       v-else
@@ -54,7 +62,7 @@
         class="fadein p-5 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
       >
         <div
-          v-if="!players || !players.length"
+          v-if="!playerCount"
           class="flex flex-col justify-center content-center items-center"
         >
           <div class="text-2xl uppercase font-bold">No {{ $teamPlayer }}s</div>
@@ -70,7 +78,10 @@
           </button>
         </div>
 
-        <div class="flex flex-col align-center min-w-min" v-else>
+        <div
+          class="flex flex-col align-center min-w-min"
+          v-else-if="!currentBracket?.rounds?.length"
+        >
           <h5
             class="mb-2 ml-5 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
           >
@@ -80,14 +91,15 @@
 
           <BracketGenerator
             :players="players"
-            v-if="players.length"
+            :bracket="currentBracket"
+            v-if="playerCount"
             @generateBracket="generateBracket"
           />
         </div>
       </div>
 
       <div
-        v-if="players.length >= 3"
+        v-if="playerCount >= 3"
         class="text-white py-5 text-center max-w-96 flex flex-wrap justify-center gap-4"
       >
         <span
@@ -140,7 +152,6 @@ import PlayerCard from "@/components/PlayerCard.vue";
 import BracketBottomMenu from "@/components/BracketBottomMenu.vue";
 import BracketList from "@/components/BracketList.vue";
 import PlayerBadges from "@/components/PlayerBadges.vue";
-import BracketWarnings from "@/components/BracketWarnings.vue";
 import BracketGenerator from "@/components/BracketGenerator.vue";
 import PlayerForm from "@/components/forms/PlayerForm.vue";
 
@@ -152,7 +163,6 @@ export default {
     BracketBottomMenu,
     BracketList,
     PlayerBadges,
-    BracketWarnings,
     BracketGenerator,
     PlayerForm,
   },
@@ -170,17 +180,23 @@ export default {
       loading: false,
     };
   },
-  created() {
+  async created() {
     if (
-      !this.players.length &&
+      !this.players?.length &&
       !this.rounds.length &&
       this.$store?.getBracket?._id
     ) {
-      this.$store.fetchBracket(this.$store.getBracket._id);
+      await this.$store.fetchBracket(this.$store.getBracket._id);
     }
 
-    if (this.currentBracket) {
+    if (!this.players?.length) {
+      await this.$store.fetchPlayers();
+    }
+
+    if (Object.keys(this.currentBracket)?.length) {
       console.log("currentBracket", this.currentBracket);
+    } else {
+      this.$store.fetchDefaultBracket();
     }
   },
   methods: {
@@ -231,6 +247,9 @@ export default {
   computed: {
     players() {
       return this.$store.players;
+    },
+    playerCount() {
+      return this.$store.selected_bracket?.organization?.playerCount;
     },
     playersNotInBracket() {
       if (!this.rounds?.length) {

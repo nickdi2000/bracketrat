@@ -9,7 +9,7 @@
       You have only one {{ $teamPlayer }} in this bracket. You can't even play a
       game, let-alone generate a tournament bracket.
     </span>
-    <span v-else>
+    <span v-else-if="players.length == 2">
       You have only two {{ $teamPlayer }}'s in this bracket. I don't think you
       need a tournament bracket for that. Just play a game and see who wins.
     </span>
@@ -31,6 +31,15 @@ export default {
     players: {
       type: Array,
       required: true,
+    },
+    bracket: {
+      type: Object,
+      required: true,
+    },
+  },
+  computed: {
+    rounds() {
+      return this.bracket?.rounds;
     },
   },
 };

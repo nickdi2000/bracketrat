@@ -26,12 +26,6 @@
           >
         </div>
         <div class="mt-1 shadow-lg flex flex-col space-y-4">
-          <!-- <Input
-            label="Name"
-            v-model="name"
-            v-on:keydown.enter="save()"
-            ref="inputField"
-          /> -->
           <input
             type="text"
             ref="inputField"
@@ -50,7 +44,12 @@
           <fwb-button @click="closeModal" color="alternative">
             Cancel
           </fwb-button>
-          <fwb-button @click="save" color="green" :loading="loading">
+          <fwb-button
+            @click="save"
+            :disabled="!form.name"
+            color="green"
+            :loading="loading"
+          >
             Save
           </fwb-button>
         </div>
@@ -99,12 +98,18 @@ export default {
     },
     async save() {
       console.log("saving");
+      if (!this.form.name) {
+        this.$toast.error("Please enter a name");
+        return;
+      }
       this.loading = true;
       this.form.bracketId = this.selectedBracket._id;
       try {
         const rec = await this.$api.post("players", this.form);
-        if (rec.data.bracket?.players) {
-          this.$store.setPlayers(rec.data.bracket?.players);
+
+        if (rec.data.player) {
+          console.log("adding player", rec.data.player);
+          this.$store.addPlayer(rec.data.player);
         }
         this.loading = false;
         this.form.name = "";

@@ -14,12 +14,12 @@
             class="text-2xl font-semibold uppercase mb-4 cursor-pointer hover:text-blue-200"
             @click="$router.push(`/admin/player/${player._id}`)"
           >
-            {{ player.name }}
+            {{ player?.player?.name }}
           </h2>
           <div class="py-2 w-full min-w-3xl">
             <div v-if="player.hasBye">
               <p class="px-3 uppercase text-gray-300 italic">
-                {{ player.name }} gets a BYE for this round.
+                {{ player?.player.name }} gets a BYE for this round.
               </p>
 
               <button
@@ -119,13 +119,14 @@
           </button>
         </div>
 
-        <div v-else class="text-center">
+        <div v-if="!player.name" class="text-center">
           <p class="p-3" v-if="player.roundIndex">
             Nothing to see here. Waiting on previous round...
           </p>
           <span v-else>
-            <p class="p-3">
-              Blank Spot. The Opponent gets a BYE for this round.
+            <p class="p-3 subtitle my-2">
+              Blank Spot. <br />Leave blank (bye),<br />
+              or add a new {{ $teamPlayer }}.
             </p>
             <button
               @click="$emit('addNew', false)"

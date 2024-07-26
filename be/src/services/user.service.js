@@ -118,7 +118,15 @@ const getUserById = async (id) => {
  * @returns {Promise<User>}
  */
 const getUserByEmail = async (email) => {
-	return User.findOne({ email });
+	return User.findOne({ email }).populate("organization");
+
+	// return User.findOne({ email }).populate({
+	// 	path: "organization",
+	// 	populate: {
+	// 		path: "playerCount",
+	// 		model: "Player",
+	// 	},
+	// });
 };
 
 /**

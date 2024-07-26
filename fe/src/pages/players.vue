@@ -63,14 +63,13 @@
 import UnitsTable from "@/components/UnitsTable.vue";
 import PlayerForm from "@/components/forms/PlayerForm.vue";
 import QRCode from "@/components/ui/QRCode.vue";
+
 import {
   PlusCircleIcon,
   LinkIcon,
   ArrowLongLeftIcon,
   QrCodeIcon,
 } from "@heroicons/vue/24/solid";
-import { handler } from "flowbite/plugin";
-import socketMixn from "@/mixins/socketMixin";
 
 export default {
   components: {
@@ -81,10 +80,8 @@ export default {
     LinkIcon,
     ArrowLongLeftIcon,
   },
-  // mixins: [socketMixn],
   data() {
     return {
-      records: [],
       playerKey: 0,
       showShareLink: false,
     };
@@ -94,16 +91,13 @@ export default {
       return this.$store.players;
     },
   },
+
   mounted() {
-    // this.getRecords();
-    const bracket_id = this.$store.getBracket?._id;
-    this.$store.fetchBracket(bracket_id);
+    this.$store.fetchPlayers();
   },
   methods: {
     async getRecords() {
-      const bracket_id = this.$store.getBracket._id;
-      const rec = await this.$api.get(`players/${bracket_id}`);
-      this.records = rec.data.players;
+      await this.$store.fetchPlayers();
     },
     handleUpdated() {
       this.playerKey++;

@@ -1,21 +1,21 @@
 // controllers/MessageController.js
 const { Bracket } = require("../models");
 const { Player } = require("../models/player.model");
-const { bracketService } = require("../services");
+const { bracketService, playerService } = require("../services");
 const catchAsync = require("../utils/catchAsync");
 const socket = require("../utils/socket");
 
-//insert into player list
+/* create player and get org from req.user */
 const insertPlayer = async (req, res) => {
-	const { name, bracketId } = req.body;
-	console.log("bracketId", bracketId);
-	try {
-		const result = await bracketService.addPlayerToBracket({ name, bracketId });
-		const playerId = result.newPlayer._id;
+	const { name } = req.body;
+	const { organization } = req.user;
 
-		res.status(201).json(result);
+	try {
+		const player = await playerService.addPlayer(name, organization);
+
+		res.status(201).json({ player });
 	} catch (error) {
-		console.error("Error adding player to bracket:", error);
+		console.error("Error creating player:", error);
 		res.status(500).json({ message: error.message });
 	}
 };
@@ -38,25 +38,12 @@ const getByBracketId = catchAsync(async (req, res) => {
 });
 
 const destroy = catchAsync(async (req, res) => {
-	const { bracketId, playerId } = req.query;
+	const { playerId } = req.query;
 
 	try {
-		// Find the bracket by ID and update it by pulling the player from the 'players' array
-		const updatedBracket = await Bracket.findByIdAndUpdate(
-			bracketId,
-			{ $pull: { players: { _id: playerId } } },
-			{ new: true }
-		);
-
-		if (!updatedBracket) {
-			return res.status(404).send({ message: "Bracket not found." });
-		}
-
-		let augmentedBracket = bracketService.augmentPlayerData(updatedBracket);
-
+		await playerService.destroyPlayer(playerId);
 		res.status(200).send({
 			message: "Player removed successfully.",
-			bracket: augmentedBracket,
 		});
 	} catch (error) {
 		console.error("Error removing player from bracket:", error);
@@ -144,6 +131,17 @@ const batchUpdate = catchAsync(async (req, res) => {
 	}
 });
 
+const list = async (req, res) => {
+	const orgId = req.user.organization._id;
+	try {
+		const players = await Player.find({ organization: orgId });
+		res.status(200).json(players);
+	} catch (error) {
+		console.error("Error getting players:", error);
+		res.status(500).json({ message: "Failed to get players." });
+	}
+};
+
 module.exports = {
 	insertPlayer,
 	getByBracketId,
@@ -152,4 +150,5 @@ module.exports = {
 	register,
 	login,
 	batchUpdate,
+	list,
 };

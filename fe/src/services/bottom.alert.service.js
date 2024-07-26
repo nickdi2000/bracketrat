@@ -22,7 +22,7 @@ function bottomAlert(message, details = null) {
       dialogApp.unmount();
       document.body.removeChild(div);
     }, 500); // Allow some time for the close animation
-  }, 9000);
+  }, 11000);
 }
 
 export default bottomAlert;

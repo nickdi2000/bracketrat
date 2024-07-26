@@ -37,7 +37,7 @@ const update = catchAsync(async (req, res) => {
 	if (!req.body?.id) {
 		req.body.id = req.user.organization_id;
 	}
-	const data = await organizationService.updateorganization(req.body);
+	const data = await organizationService.updateOrganization(req.body);
 	res.status(httpStatus.CREATED).send(data);
 });
 

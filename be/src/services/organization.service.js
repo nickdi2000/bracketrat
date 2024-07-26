@@ -1,5 +1,6 @@
 const httpStatus = require("http-status");
-const { Organization, Player, Bracket } = require("../models");
+const { Organization, Bracket } = require("../models");
+const { Player } = require("../models/player.model");
 const ApiError = require("../utils/ApiError");
 
 const createOrganizationFromUser = async (body) => {
@@ -17,16 +18,16 @@ const createOrganization = async (body) => {
 };
 
 const getOrganizations = async () => {
-	const comps = await Organization.find();
-	return comps;
+	const orgs = await Organization.find();
+	return orgs;
 };
 
 const getOrganization = async (org) => {
 	try {
 		// Fetch the organization
 		const organization = await Organization.findOne(org)
-			.populate("players")
-			.populate("brackets");
+			.populate("brackets")
+			.populate("playerCount");
 
 		if (!organization) {
 			throw new Error("Organization not found");
@@ -45,7 +46,8 @@ const getByCode = async (code) => {
 };
 
 const updateOrganization = async (data) => {
-	const comp = await Organization.findByIdAndUpdate(data.id, data, {
+	console.log("updating org", data);
+	const comp = await Organization.findByIdAndUpdate(data._id, data, {
 		new: true,
 	});
 	return comp;

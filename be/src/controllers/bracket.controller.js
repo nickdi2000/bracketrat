@@ -2,7 +2,7 @@
 const BaseController = require("./baseController");
 const { Bracket } = require("../models");
 const { Player } = require("../models/player.model");
-const { bracketService } = require("../services");
+const { bracketService, organizationService } = require("../services");
 const mongoose = require("mongoose");
 class BracketController extends BaseController {
 	constructor() {
@@ -11,13 +11,12 @@ class BracketController extends BaseController {
 
 	//so how would i update this show method to include that function?
 	async show(req, res) {
+		const bracketId = req.params.id;
+
 		try {
-			const bracket = await Bracket.findById(req.params.id);
-			if (!bracket) {
-				return res.status(404).send("Bracket not found");
-			}
-			const augmentedBracket = bracketService.augmentPlayerData(bracket);
-			res.send(augmentedBracket);
+			const bracket = await bracketService.getFullBracket(bracketId);
+
+			res.send(bracket);
 		} catch (error) {
 			console.log("error", error);
 			res.status(400).send("BracketController error" + JSON.stringify(error));
@@ -155,14 +154,10 @@ class BracketController extends BaseController {
 
 	async updateGameWinner(req, res) {
 		const { bracketId } = req.params;
-		const { playerId, roundIndex } = req.body;
+		const { playerId, gameId } = req.body;
 
 		try {
-			let bracket = await bracketService.updateGameWinner(
-				bracketId,
-				playerId,
-				roundIndex
-			);
+			let bracket = await bracketService.updateGameWinner(gameId, playerId);
 
 			res.json({ message: "Updated Winner", bracket });
 		} catch (error) {

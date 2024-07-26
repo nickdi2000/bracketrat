@@ -75,7 +75,7 @@ app.config.globalProperties.$api = api;
 app.config.globalProperties.$store = authStore();
 app.config.globalProperties.$openDialog = openDialog;
 app.config.globalProperties.$bottomAlert = bottomAlert;
-
+app.config.globalProperties.$isLocal = import.meta.env.VITE_ENV === "local";
 app.config.globalProperties.$teamPlayer =
   authStore().teamPlayer ?? "Team/Player";
 

@@ -4,6 +4,14 @@
       <Input label="Name" v-model="org.name" placeholder="My Organization" />
     </div>
 
+    <div class="py-3 mt-5">
+      <Textarea
+        class="w-full p-2 rounded-md bg-slate-800 text-white"
+        v-model="org.description"
+        placeholder="Welcome to Jim Bob's Sports Club, please join our..."
+        label="Description"
+      ></Textarea>
+    </div>
     <div class="mt-6">
       <Input
         label="Organization Player Link"

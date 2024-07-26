@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 //const { toJSON } = require("./plugins");
 
 const { roundSchema } = require("./round.model");
-const { playerSchema } = require("./player.model");
+//const { playerSchema } = require("./player.model");
 
 const bracketSchema = new mongoose.Schema(
 	{
@@ -15,7 +15,7 @@ const bracketSchema = new mongoose.Schema(
 			required: false,
 		},
 
-		players: [playerSchema],
+		//players: [playerSchema],
 		rounds: [roundSchema],
 		organization: {
 			type: mongoose.Schema.Types.ObjectId,
@@ -90,7 +90,7 @@ bracketSchema.virtual("isReady").get(function () {
 	return !firstRound.games.some((game) => !game.player1 && !game.player2);
 });
 
-function generateRandomCode(length = 10) {
+function _generateRandomCode(length = 10) {
 	let result = "";
 	const characters =
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -98,6 +98,164 @@ function generateRandomCode(length = 10) {
 	for (let i = 0; i < length; i++) {
 		result += characters.charAt(Math.floor(Math.random() * charactersLength));
 	}
+	return result;
+}
+
+//create another generateRandomCode function, but use a random animal + random word + random number
+
+function generateRandomCode() {
+	let animalsArray = [
+		"dog",
+		"cat",
+		"bird",
+		"fish",
+		"elephant",
+		"tiger",
+		"lion",
+		"bear",
+		"wolf",
+		"fox",
+		"rabbit",
+		"deer",
+		"moose",
+		"horse",
+		"cow",
+		"pig",
+		"sheep",
+		"goat",
+		"chicken",
+		"duck",
+		"goose",
+		"turkey",
+		"eagle",
+		"owl",
+		"parrot",
+		"penguin",
+		"raven",
+		"swan",
+		"peacock",
+		"flamingo",
+		"crocodile",
+		"alligator",
+		"snake",
+		"lizard",
+		"turtle",
+		"frog",
+		"toad",
+		"salamaner",
+		"newt",
+		"gecko",
+		"iguana",
+		"chameleon",
+		"tarantula",
+		"scorpion",
+		"spider",
+		"beetle",
+		"butterfly",
+		"moth",
+		"dragonfly",
+		"grasshopper",
+		"cricket",
+		"ant",
+		"bee",
+		"wasp",
+		"hornet",
+		"fly",
+	];
+
+	let wordsArray = [
+		"apple",
+		"banana",
+		"orange",
+		"grape",
+		"strawberry",
+		"blueberry",
+		"raspberry",
+		"blackberry",
+		"kiwi",
+		"watermelon",
+		"melon",
+		"peach",
+		"pear",
+		"plum",
+		"cherry",
+		"apricot",
+		"mango",
+		"pineapple",
+		"coconut",
+		"papaya",
+		"guava",
+		"passionfruit",
+		"fig",
+		"date",
+		"lemon",
+		"lime",
+		"grapefruit",
+		"tangerine",
+		"clementine",
+		"mandarin",
+		"persimmon",
+		"pomegranate",
+		"avocado",
+		"tomato",
+		"potato",
+		"carrot",
+		"broccoli",
+		"cauliflower",
+		"spinach",
+		"lettuce",
+		"cabbage",
+		"onion",
+		"garlic",
+		"ginger",
+		"turmeric",
+		"pepper",
+		"chili",
+		"pumpkin",
+		"squash",
+		"zucchini",
+		"cucumber",
+		"eggplant",
+		"bellpepper",
+		"mushroom",
+		"asparagus",
+		"corn",
+		"peas",
+		"beans",
+		"lentils",
+		"chickpeas",
+		"soybeans",
+		"peanuts",
+		"almonds",
+		"walnuts",
+		"cashews",
+		"pistachios",
+		"hazelnuts",
+		"macadamia",
+		"pecans",
+		"chestnuts",
+		"coconut",
+		"olive",
+		"sunflower",
+		"sesame",
+		"flax",
+		"chia",
+		"quinoa",
+		"amaranth",
+		"buckwheat",
+		"barley",
+		"oats",
+	];
+
+	let animalsIndex = Math.floor(Math.random() * animalsArray.length);
+	let wordsIndex = Math.floor(Math.random() * wordsArray.length);
+	let randomNumber = Math.floor(Math.random() * 100);
+
+	let randomAnimal = animalsArray[animalsIndex];
+	let randomWord = wordsArray[wordsIndex];
+
+	let result = randomAnimal + randomWord + randomNumber;
+
 	return result;
 }
 

@@ -168,21 +168,9 @@ export default {
       const ask = await this.$openDialog("Delete Player?");
 
       try {
-        const bracketId = this.$store.getBracket._id;
-        const rec = await this.$api.delete(
-          `players?bracketId=${bracketId}&playerId=${record._id}`,
-          {}
-        );
-        //this.$store.setPlayers(rec.data.bracket.players);
+        this.$store.removePlayer(record._id);
         //this.$emit("updated");
-        if (rec.data.bracket.players) {
-          console.log("setting players");
-          const newPlayers = JSON.parse(
-            JSON.stringify(rec.data.bracket.players)
-          );
-          await this.$store.setPlayers(newPlayers);
-          this.$emit("updated");
-        }
+        this.rows = this.records;
       } catch (error) {
         console.error("Error", error);
         this.$toast.error("Error deleting record");

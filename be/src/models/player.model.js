@@ -13,6 +13,7 @@ const playerSchema = new mongoose.Schema(
 		wins: { type: Number, default: 0 },
 		strength: { type: Number, default: 0 },
 		brackets: [{ type: mongoose.Schema.Types.ObjectId, ref: "Bracket" }],
+		organization: { type: mongoose.Schema.Types.ObjectId, ref: "Organization" },
 	},
 	{
 		timestamps: true,
