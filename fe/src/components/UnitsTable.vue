@@ -58,10 +58,10 @@
             <td class="px-6 py-4 status-td">
               <span
                 @click="showTip(element)"
-                :class="'badge badge-' + element.status"
+                :class="'badge badge-' + element.state"
                 class="text-xs"
               >
-                {{ element.status }}</span
+                {{ element.stateLabel }}</span
               >
             </td>
             <td class="px-6 py-4">-</td>
@@ -178,12 +178,12 @@ export default {
     },
     showTip(record) {
       let tip = "";
-      if (record.status == "limbo") {
+      if (record.state == 0) {
         tip =
-          "This player is in limbo. Because they are not active in any brackets. Don't worry.. nothing wrong with limbo.";
-      } else if (record.status == "In-Bracket") {
+          "This player is in 'limbo', meaning they are not currently active in any brackets.";
+      } else if (record.state == 1) {
         tip =
-          "This player is active in this bracket. They are ready to play their next game! (Or maybe they are PLAYing their game. I wouldn't know.)";
+          "This player is active in this (the selected) bracket. They are ready to play their next game! (Or maybe they are PLAYing their game. I wouldn't know.)";
       } else if (record.status == "eliminated") {
         tip =
           "This player has been eliminated from this bracket. They will not be able to play any more games in this bracket.";

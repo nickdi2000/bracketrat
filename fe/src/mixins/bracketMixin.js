@@ -3,15 +3,14 @@ export const bracketMixin = {
   methods: {
     _findGameByPlayer(playerId) {
       let foundGame = null;
-
       // Iterate through each round
       this.rounds.forEach((round) => {
         // Within each round, iterate through each game
         round.games.forEach((game) => {
           // Check both player1 and player2 for a match with the playerId
           if (
-            (game.player1 && game.player1.id === playerId) ||
-            (game.player2 && game.player2.id === playerId)
+            (game.player1 && game.player1._id === playerId) ||
+            (game.player2 && game.player2._id === playerId)
           ) {
             foundGame = game; // Update foundGame each time the player is found
           }

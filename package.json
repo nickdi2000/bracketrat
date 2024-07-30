@@ -16,6 +16,7 @@
 	"bugs": {},
 	"homepage": "https://github.com/nickdi2000/bracketrat#readme",
 	"dependencies": {
-		"concurrently": "^8.2.1"
+		"concurrently": "^8.2.1",
+		"mitt": "^3.0.1"
 	}
 }

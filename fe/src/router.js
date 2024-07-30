@@ -3,6 +3,7 @@ import Index from "@/pages/index.vue";
 import Login from "@/pages/login.vue";
 import Players from "@/pages/players.vue";
 import Player from "@/pages/player.vue";
+import Rounds from "@/pages/rounds.vue";
 import Options from "@/pages/options.vue";
 import Settings from "@/pages/settings.vue";
 import NotFound from "@/pages/not-found.vue";
@@ -90,6 +91,7 @@ const routes = [
     children: [
       { path: "", name: "Bracket", component: Index },
       { path: "dashboard", name: "Dashboard", component: Index },
+      { path: "rounds", name: "Rounds", component: Rounds },
       { path: "org", name: "Organization", component: Organization },
       { path: "players/:page?", name: "Players", component: Players },
       { path: "player/:id?", name: "Player", component: Player },

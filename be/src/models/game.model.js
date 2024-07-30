@@ -5,13 +5,9 @@ const { toJSON, paginate } = require("./plugins");
 
 const playerGameDetailsSchema = new mongoose.Schema(
 	{
-		player: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "Player",
-		},
+		player: { type: mongoose.Schema.Types.ObjectId, ref: "Player" },
 		score: { type: Number, default: 0 },
 		winner: { type: Boolean, default: null },
-		filled: { type: Boolean, default: false },
 		bye: { type: Boolean, default: false },
 	},
 	{
@@ -23,6 +19,10 @@ const playerGameDetailsSchema = new mongoose.Schema(
 
 playerGameDetailsSchema.virtual("id").get(function () {
 	return this._id.toHexString();
+});
+
+playerGameDetailsSchema.virtual("filled").get(function () {
+	return this.player != null;
 });
 
 const gameSchema = new mongoose.Schema(
@@ -41,11 +41,10 @@ const gameSchema = new mongoose.Schema(
 		},
 		scheduledDate: { type: Date, required: false },
 		nextGameId: { type: mongoose.Schema.Types.ObjectId, ref: "Game" },
+		bracketId: { type: mongoose.Schema.Types.ObjectId, ref: "Bracket" },
 	},
 	{
-		timestamps: true,
 		toJSON: { virtuals: true },
-		toObject: { virtuals: true },
 	}
 );
 

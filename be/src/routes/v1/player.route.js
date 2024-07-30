@@ -5,6 +5,7 @@ const auth = require("../../middlewares/auth");
 const router = express.Router();
 
 router.route("/").post(playerController.insertPlayer);
+router.route("/create-to-slot").post(playerController.createToSlot);
 router.route("/batch/:bracketId").post(playerController.batchUpdate);
 router.route("/register").post(playerController.register);
 router.route("/login").post(playerController.login);

@@ -21,13 +21,12 @@ import "vue-toast-notification/dist/theme-bootstrap.css";
 
 import router from "./router";
 
-// const router = createRouter({
-//   history: createWebHistory(import.meta.env.VITE_BASE_PUBLIC_PATH),
-//   routes,
-// });
-
 import Loader from "@/components/Loader.vue";
 import ProgressBar from "@/components/ProgressBar.vue";
+
+import eventBus from "@/plugins/eventBus";
+
+import AddPlayerModal from "@/modals/AddPlayerModal.vue";
 
 import {
   TrashIcon,
@@ -54,6 +53,7 @@ import {
   LockOpenIcon,
   TrophyIcon,
   QrCodeIcon,
+  ListBulletIcon,
 } from "@heroicons/vue/24/solid";
 
 import piniaPlugin from "./plugins/pinia";
@@ -67,6 +67,12 @@ app.use(vue3GoogleLogin, {
   clientId:
     "59253511509-r5uob532ime0c9jvmoq5m8ob6tajim2l.apps.googleusercontent.com",
 });
+
+app.component("AddPlayerModal", AddPlayerModal);
+
+app.config.globalProperties.$showAddPlayerModal = (data = {}) => {
+  eventBus.emit("show-add-player-modal", data);
+};
 
 app.use(piniaPlugin);
 app.config.globalProperties.$appName = "Bracket Force";
@@ -94,6 +100,7 @@ app.component("PlusCircleIcon", PlusCircleIcon);
 app.component("UserCircleIcon", UserCircleIcon);
 app.component("UserGroupIcon", UserGroupIcon);
 app.component("UsersIcon", UsersIcon);
+app.component("ListBulletIcon", ListBulletIcon);
 
 //custom
 

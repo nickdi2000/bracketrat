@@ -1,5 +1,8 @@
 <template>
-  <router-view />
+  <div>
+    <router-view />
+    <add-player-modal></add-player-modal>
+  </div>
 </template>
 
 <script>

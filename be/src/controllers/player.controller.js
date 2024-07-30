@@ -12,10 +12,29 @@ const insertPlayer = async (req, res) => {
 
 	try {
 		const player = await playerService.addPlayer(name, organization);
+		const bracket = await Bracket.findOne({ organization: organization._id });
 
-		res.status(201).json({ player });
+		res.status(201).json({ player, bracket });
 	} catch (error) {
 		console.error("Error creating player:", error);
+		res.status(500).json({ message: error.message });
+	}
+};
+
+const createToSlot = async (req, res) => {
+	const { slotId, name, bracketId } = req.body;
+
+	try {
+		const player = await playerService.createPlayerToSlot({
+			slotId,
+			name,
+			bracketId,
+		});
+		const bracket = await bracketService.getFullBracket(bracketId);
+
+		res.status(201).json({ player, bracket });
+	} catch (error) {
+		console.error("Error creating player to slot:", error);
 		res.status(500).json({ message: error.message });
 	}
 };
@@ -151,4 +170,5 @@ module.exports = {
 	login,
 	batchUpdate,
 	list,
+	createToSlot,
 };

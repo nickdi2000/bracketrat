@@ -94,6 +94,23 @@ export const authStore = defineStore({
       });
     },
 
+    async createPlayerToSlot({ name, slotId }) {
+      const bracketId = this.selected_bracket._id;
+      return new Promise(async (resolve, reject) => {
+        try {
+          const rec = await api.post("/players/create-to-slot", {
+            name: name,
+            slotId: slotId,
+            bracketId: bracketId,
+          });
+          const bracket = rec.data.bracket;
+          this.setSelectedBracket(bracket);
+          resolve(rec);
+        } catch (err) {
+          reject(err);
+        }
+      });
+    },
     //add existing player to bracket
     async addPlayerToBracket(player) {
       return new Promise(async (resolve, reject) => {

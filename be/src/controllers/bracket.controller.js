@@ -157,9 +157,18 @@ class BracketController extends BaseController {
 		const { playerId, gameId } = req.body;
 
 		try {
-			let bracket = await bracketService.updateGameWinner(gameId, playerId);
+			let game = await bracketService.updateGameWinner(gameId, playerId);
 
-			res.json({ message: "Updated Winner", bracket });
+			try {
+				let bracket = await bracketService.getFullBracket(bracketId);
+				if (!bracket) {
+					return res.status(404).json({ message: "Bracket not found." });
+				}
+				res.json({ message: "Updated Winner", bracket });
+			} catch (error) {
+				console.error("Error updating winner of match:", error);
+				res.status(500).json({ message: "Failed to update winner." });
+			}
 		} catch (error) {
 			console.error("Error updating winner of match:", error);
 			res.status(500).json({ message: "Failed to update winner." });
@@ -207,11 +216,7 @@ class BracketController extends BaseController {
 		const { gameId, roundIndex } = req.body;
 
 		try {
-			let bracket = await bracketService.undoOutcomes(
-				bracketId,
-				roundIndex,
-				gameId
-			);
+			let bracket = await bracketService.undoOutcomes({ gameId });
 			if (!bracket) {
 				return res.status(404).json({ message: "Bracket not found." });
 			}

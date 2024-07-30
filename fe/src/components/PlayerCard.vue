@@ -10,6 +10,9 @@
       >
         <!-- Modal content here -->
         <div class="text-center" v-if="player.name">
+          <div class="uppercase text-2xl font-bold text-gray-400 mb-2">
+            {{ player.name }}
+          </div>
           <h2
             class="text-2xl font-semibold uppercase mb-4 cursor-pointer hover:text-blue-200"
             @click="$router.push(`/admin/player/${player._id}`)"
@@ -58,7 +61,7 @@
 
               <div v-else-if="!player.roundIndex">
                 <button
-                  class="btn btn-secondary btn-sm mt-3"
+                  class="btn btn-secondary btn-block mt-3"
                   @click="removePlayerFromGame()"
                 >
                   <TrashIcon class="w-6 h-6 mr-2 inline" />
@@ -103,10 +106,10 @@
 
               <button
                 @click="undoOutcomes()"
-                class="btn btn-secondary btn-sm"
+                class="btn hover:bg-gray-500 p-2 mb-5"
                 v-if="!hasFutureRounds && !opponentHasFutureRounds"
               >
-                <ArrowUturnDownIcon class="w-6 h-6 mr-2 inline" />
+                <ArrowUturnDownIcon class="w-5 h-5 mr-2 inline" />
                 Undo Outcome
               </button>
             </div>
@@ -124,14 +127,8 @@
             Nothing to see here. Waiting on previous round...
           </p>
           <span v-else>
-            <p class="p-3 subtitle my-2">
-              Blank Spot. <br />Leave blank (bye),<br />
-              or add a new {{ $teamPlayer }}.
-            </p>
-            <button
-              @click="$emit('addNew', false)"
-              class="btn btn-primary mr-2"
-            >
+            <p class="p-3 subtitle my-2">Blank Spot. (BYE)</p>
+            <button @click="addPlayer" class="btn btn-primary mr-2">
               + Add {{ $teamPlayer }} Here
             </button>
           </span>
@@ -212,6 +209,10 @@ export default {
     },
   },
   methods: {
+    addPlayer() {
+      this.$emit("update", false);
+      this.$showAddPlayerModal({ slotId: this.player._id });
+    },
     getParams() {
       return {
         playerId: this.player._id,

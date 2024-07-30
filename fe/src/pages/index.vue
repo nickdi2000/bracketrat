@@ -1,6 +1,7 @@
 <template>
   <span class="main-span- text-white">
     <Loader v-if="loading" />
+
     <div
       v-if="playersNotInBracket?.length && playerCount > 2"
       style="position: fixed; right: 40px; top: 85px; z-index: 99"
@@ -8,19 +9,23 @@
       <PlayerBadges :players="playersNotInBracket" @update="update" />
     </div>
 
-    <div
-      v-if="$isLocal"
-      style="position: fixed; left: 43px; top: 90px; z-index: 999"
-    >
-      <button class="btn btn-secondary btn-sm z-100" @click="dev = !dev">
+    <div style="position: fixed; left: 43px; top: 90px; z-index: 999">
+      <button
+        class="btn btn-secondary btn-sm z-100"
+        @click="dev = !dev"
+        v-if="$isLocal"
+      >
         OBJ
+      </button>
+      <button
+        class="btn btn-secondary btn-sm ml-3"
+        @click="$router.push('/admin/rounds')"
+      >
+        <ListBulletIcon class="h-4" />
       </button>
     </div>
 
-    <div
-      class="bracket-container fadein"
-      v-if="rounds?.length && playerCount && !dev"
-    >
+    <div class="bracket-container fadein" v-if="shouldShowBracket">
       <bracket
         :rounds="rounds"
         class="bracket z-40-"
@@ -48,18 +53,15 @@
           </div>
         </template>
       </bracket>
-      <div v-else>
-        <BracketList :rounds="rounds" />
-      </div>
     </div>
     <pre v-if="dev" class="text-xs z-50" style="">{{ rounds }}</pre>
 
     <div
-      v-else
+      v-if="!shouldShowBracket"
       class="min-h-96 mt-20 mb-6 flex flex-col items-center justify-center"
     >
       <div
-        class="fadein p-5 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+        class="no-shouldShowBracket fadein p-5 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
       >
         <div
           v-if="!playerCount"
@@ -87,7 +89,6 @@
           >
             {{ currentBracket?.name }}
           </h5>
-          <div></div>
 
           <BracketGenerator
             :players="players"
@@ -154,6 +155,7 @@ import BracketList from "@/components/BracketList.vue";
 import PlayerBadges from "@/components/PlayerBadges.vue";
 import BracketGenerator from "@/components/BracketGenerator.vue";
 import PlayerForm from "@/components/forms/PlayerForm.vue";
+import RoundsDetails from "@/components/RoundsDetails.vue";
 
 export default {
   components: {
@@ -165,6 +167,7 @@ export default {
     PlayerBadges,
     BracketGenerator,
     PlayerForm,
+    RoundsDetails,
   },
   mixins: [bracketMixin],
   data() {
@@ -194,7 +197,7 @@ export default {
     }
 
     if (Object.keys(this.currentBracket)?.length) {
-      console.log("currentBracket", this.currentBracket);
+      console.log("currentBracket exists");
     } else {
       this.$store.fetchDefaultBracket();
     }
@@ -221,7 +224,6 @@ export default {
         );
         this.bracket = rec.data.bracket;
         this.$store.setRounds(rec.data.bracket.rounds);
-
         this.loading = false;
       } catch (error) {
         this.loading = false;
@@ -233,6 +235,7 @@ export default {
       //console.log("selected player", player);
       this.selectedPlayer = player;
       const game = this._findGameByPlayer(player._id);
+      console.log("GameFound", game);
       this.selectedGame = game;
     },
     refresh() {
@@ -245,6 +248,13 @@ export default {
     },
   },
   computed: {
+    shouldShowBracket() {
+      const s = this.playerCount && this.rounds?.length && !this.dev; //rounds?.length && playerCount && !dev
+      console.log("shouldShowBracket", s);
+      console.log("rounds", this.rounds?.length);
+      console.log("playerCount", this.playerCount);
+      return s;
+    },
     players() {
       return this.$store.players;
     },
