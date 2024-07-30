@@ -13,10 +13,10 @@ const {
 const { getImages } = require("../services/image.service");
 
 const test = catchAsync(async (req, res) => {
-	const user = await User.findOne();
+	const user = await User.findOne({});
 	const data = {
 		user: user,
-		message: "Test api hit - electo v.3.2",
+		message: "Test api hit - bracket v.3.2",
 	};
 	res.json(data);
 });

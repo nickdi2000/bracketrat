@@ -1,36 +1,37 @@
 const app = require("./app");
-const db = require("./db");
+const { connectToDatabase } = require("./db");
 const config = require("./config/config");
 const logger = require("./config/logger");
 const socket = require("./utils/socket");
 
 let server;
 
-db.connectToDatabase()
-	.then(() => {
+const startServer = async () => {
+	try {
+		await connectToDatabase();
 		logger.info("Connected to MongoDB");
 
 		server = app.listen(config.port, () => {
-			server.on("error", onError);
-			logger.info(`Listening on http://localhost:${config.port}/api/v1/test`);
+			logger.info(`Listening on http://localhost:${config.port}`);
 		});
 
 		socket.init(server);
-	})
-	.catch((error) => {
+	} catch (error) {
 		logger.error("Failed to connect to MongoDB", error);
 		process.exit(1);
-	});
+	}
+	return server;
+};
+
+const stopServer = async () => {
+	if (server) {
+		await new Promise((resolve) => server.close(resolve));
+		logger.info("Server closed");
+	}
+};
 
 const exitHandler = () => {
-	if (server) {
-		server.close(() => {
-			logger.info("Server closed");
-			process.exit(1);
-		});
-	} else {
-		process.exit(1);
-	}
+	stopServer().then(() => process.exit(1));
 };
 
 const unexpectedErrorHandler = (error) => {
@@ -43,38 +44,17 @@ process.on("unhandledRejection", unexpectedErrorHandler);
 
 process.on("SIGTERM", () => {
 	logger.info("SIGTERM received");
-	if (server) {
-		server.close();
-	}
+	stopServer();
 });
 
 process.on("SIGINT", () => {
 	console.log("Received SIGINT, shutting down gracefully");
-	server.close(() => {
-		console.log("Server shut down");
-	});
+	stopServer().then(() => console.log("Server shut down"));
 });
 
-function onError(error) {
-	if (error.syscall !== "listen") {
-		throw error;
-	}
-
-	const bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
-
-	// handle specific listen errors with friendly messages
-	switch (error.code) {
-		case "EACCES":
-			console.error(bind + " requires elevated privileges");
-			process.exit(1);
-			break;
-		case "EADDRINUSE":
-			console.error(bind + " is already in use");
-			// uncomment the following line if you want to automatically try to reuse the port
-			// server.close(() => server.listen(config.port));
-			process.exit(1);
-			break;
-		default:
-			throw error;
-	}
+// Only start the server if this script is run directly (not imported in tests)
+if (require.main === module) {
+	startServer();
 }
+
+module.exports = { startServer, stopServer, server };
