@@ -5,7 +5,9 @@
       v-if="!showOptions"
     >
       You have {{ players.length }} players in this bracket. Click below to
-      generate the bracket with these players.
+      generate the bracket with these {{ $teamPlayer }}s. The size of the
+      bracket will be determined by the number of players you have, inserting
+      byes where necessary.
     </p>
 
     <button
@@ -97,7 +99,7 @@ export default {
         {
           name: "Strength",
           value: "strength",
-          tip: "Standard 'seeding' technique where the strongest players are matched against the weakest players in the first round to avoid early eliminations of strong players.",
+          tip: "Standard 'seeding' technique where the strongest players are matched against the weakest players in the first round to avoid early eliminations of strong players.  Strength can be determined by the players game history, or manually by re-arranging the players in order of strength",
           info: "Seeding based on strength",
         },
         // {

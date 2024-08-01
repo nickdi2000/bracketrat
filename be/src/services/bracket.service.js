@@ -1,22 +1,35 @@
 const { Bracket, Organization } = require("../models");
 const { Player } = require("../models/player.model");
 const { Game } = require("../models");
-const mongoose = require("mongoose");
 
-const generateBracket = async (bracketId, useCurrentPlayers = false) => {
+/* Generate Bracket with all players, or if bracketSize is provided, generate a fixed-size bracket with no players.  if useCurrentPlayers is true, we take the players already in the bracket and rebuild it (to fix blanks/errorenous byes etc) */
+const generateBracket = async ({
+	bracketId,
+	useCurrentPlayers = false,
+	bracketSize = null,
+}) => {
 	try {
 		const bracket = await Bracket.findById(bracketId);
 		if (!bracket) {
 			throw new Error("Bracket not found.");
 		}
 
-		let players;
-		if (useCurrentPlayers) {
+		console.log("---bracketSize", bracketSize);
+
+		let players = [];
+		if (bracketSize) {
+			// Fixed bracket size for starting the tournament without initial player data
+			players = new Array(bracketSize).fill(null);
+		} else if (useCurrentPlayers) {
+			// Load current players from existing games (if any)
 			players =
 				bracket.rounds[0]?.games
-					.flatMap((game) => [game.player1, game.player2])
-					.filter((player) => player && player.player) || [];
+					.flatMap((game) =>
+						game.participants.map((participant) => participant.player)
+					)
+					.filter((player) => player) || [];
 		} else {
+			// Optionally load players based on another criterion, e.g., from an organization
 			const organization = await Organization.findById(bracket.organization);
 			if (!organization) {
 				throw new Error("Organization not found.");
@@ -24,110 +37,83 @@ const generateBracket = async (bracketId, useCurrentPlayers = false) => {
 			players = await Player.find({ organization: organization._id });
 		}
 
-		// Ensure there are at least 4 players
-		while (players.length < 4) {
-			players.push(null); // Push null to represent a blank spot
-		}
-
 		const totalPlayers = players.length;
-		const nextPowerOfTwo = Math.pow(2, Math.ceil(Math.log2(totalPlayers)));
-		const numberOfByes = nextPowerOfTwo - totalPlayers;
+		const nextPowerOfTwo = Math.pow(2, Math.ceil(Math.log2(totalPlayers || 1)));
+		const numberOfGames = nextPowerOfTwo / 2;
 		const totalRoundsNeeded = Math.log2(nextPowerOfTwo);
 
-		bracket.rounds = [];
+		bracket.rounds = []; // Reset rounds
+		let allGames = []; // Store all games for later nextGameId linking
 
-		const initialGames = [];
-		const autoAdvancePlayers = [];
-
-		let playersAssigned = 0;
-		let byesAssigned = 0;
-
-		while (playersAssigned < totalPlayers) {
-			const player1 = players[playersAssigned++];
-			let player2 = null;
-			let gameStatus = "pending";
-
-			if (byesAssigned < numberOfByes) {
-				byesAssigned++;
-				gameStatus = "completed";
-				if (player1) {
-					autoAdvancePlayers.push(player1);
-				}
-			} else {
-				player2 = players[playersAssigned++];
-			}
-
-			const newGame = new Game({
-				status: gameStatus,
-				player1: {
-					player: player1 ? player1._id : null,
-					name: player1 ? player1.name : "",
-					winner: gameStatus === "completed" ? true : null,
-					bye: gameStatus === "completed",
-				},
-				player2: {
-					player: player2 ? player2._id : null,
-					name: player2 ? player2.name : "",
-					winner: null,
-				},
-				bracketId, // Set the bracketId
+		// Generate the initial round with actual players or placeholders
+		const firstRoundGames = [];
+		for (let i = 0; i < numberOfGames; i++) {
+			const game = new Game({
+				bracketId: bracket._id,
+				participants: [
+					{
+						player: players[2 * i] ? players[2 * i]._id : null,
+						bye: !players[2 * i],
+					},
+					{
+						player: players[2 * i + 1] ? players[2 * i + 1]._id : null,
+						bye: !players[2 * i + 1],
+					},
+				],
+				status: "pending",
+				nextGameId: null,
 			});
-			await newGame.save();
-
-			initialGames.push(newGame);
+			await game.save();
+			firstRoundGames.push(game);
 		}
+		bracket.rounds.push({
+			games: firstRoundGames.map((game) => game._id),
+			roundNumber: 1,
+		});
+		allGames.push(...firstRoundGames);
 
-		bracket.rounds.push({ games: initialGames, roundNumber: 1 });
-
-		let nextRoundGames = autoAdvancePlayers;
-
+		// Generate subsequent rounds with empty games for future winners
 		for (let roundNumber = 2; roundNumber <= totalRoundsNeeded; roundNumber++) {
-			const gamesInThisRound = Math.pow(2, totalRoundsNeeded - roundNumber);
-			const games = Array.from({ length: gamesInThisRound }).map((_, index) => {
-				const player1 =
-					nextRoundGames.length > index * 2 ? nextRoundGames[index * 2] : null;
-				const player2 =
-					nextRoundGames.length > index * 2 + 1
-						? nextRoundGames[index * 2 + 1]
-						: null;
-
-				const newGame = new Game({
+			const gamesThisRound = [];
+			for (let i = 0; i < numberOfGames / Math.pow(2, roundNumber - 1); i++) {
+				const game = new Game({
+					bracketId: bracket._id,
+					participants: [{}, {}],
 					status: "pending",
-					player1: {
-						player: player1 ? player1._id : null,
-						name: player1 ? player1.name : "",
-						winner: null,
-					},
-					player2: {
-						player: player2 ? player2._id : null,
-						name: player2 ? player2.name : "",
-						winner: null,
-					},
-					bracketId, // Set the bracketId
+					nextGameId: null,
 				});
-				newGame.save();
-
-				return newGame;
-			});
-
-			nextRoundGames = [];
-			bracket.rounds.push({ games, roundNumber });
-		}
-
-		for (let i = 0; i < bracket.rounds.length - 1; i++) {
-			const currentRound = bracket.rounds[i];
-			const nextRound = bracket.rounds[i + 1];
-			for (let j = 0; j < currentRound.games.length; j++) {
-				const currentGame = currentRound.games[j];
-				const nextGame = nextRound.games[Math.floor(j / 2)];
-				currentGame.nextGameId = nextGame._id;
-				await currentGame.save();
+				await game.save();
+				gamesThisRound.push(game);
 			}
+			bracket.rounds.push({
+				games: gamesThisRound.map((game) => game._id),
+				roundNumber,
+			});
+			allGames.push(...gamesThisRound);
 		}
 
-		bracket.markModified("rounds");
+		// Link games with nextGameId
+		for (
+			let roundIndex = 0;
+			roundIndex < bracket.rounds.length - 1;
+			roundIndex++
+		) {
+			const currentRoundGames = allGames.filter(
+				(game) => game.roundNumber === roundIndex + 1
+			);
+			const nextRoundGames = allGames.filter(
+				(game) => game.roundNumber === roundIndex + 2
+			);
+			currentRoundGames.forEach((game, index) => {
+				if (nextRoundGames.length > index / 2) {
+					game.nextGameId = nextRoundGames[Math.floor(index / 2)]._id;
+					game.save();
+				}
+			});
+		}
+
 		await bracket.save();
-		return populateRoundsWithPlayers(bracket);
+		return populateRoundsWithPlayers(bracket); // Assuming this function populates and returns full bracket details
 	} catch (error) {
 		console.error("Error generating bracket:", error.message);
 		throw new Error("Failed to generate bracket.");
@@ -137,89 +123,60 @@ const generateBracket = async (bracketId, useCurrentPlayers = false) => {
 /*
 update winner 
 */
-
 const updateGameWinner = async (gameId, winnerId) => {
 	try {
 		console.log(
 			`Updating game winner for gameId: ${gameId}, winnerId: ${winnerId}`
 		);
 
-		const game = await Game.findById(gameId).populate(
-			"player1.player player2.player"
-		);
+		const game = await Game.findById(gameId).populate("participants.player");
 		if (!game) {
 			throw new Error("Game not found.");
 		}
 
-		console.log(`Game Found: ${JSON.stringify(game, null, 2)}`);
-
+		// Initialize variables to track the winner
 		let winnerAssigned = false;
 		let winnerName = "";
-		let winnerPlayerId = null;
 
-		if (game.player1 && game.player1._id.toString() === winnerId) {
-			game.player1.winner = true;
-			if (game.player2) {
-				game.player2.winner = false;
+		// Update participants to mark the winner and losers
+		game.participants.forEach((participant) => {
+			if (
+				participant.player &&
+				participant.player._id.toString() === winnerId
+			) {
+				participant.winner = true;
+				winnerName = participant.player.name;
+				winnerAssigned = true;
+			} else {
+				participant.winner = false; // Mark other participants as not winners
 			}
-			winnerAssigned = true;
-			winnerName = game.player1.player.name;
-			winnerPlayerId = game.player1.player._id;
-		} else if (game.player2 && game.player2._id.toString() === winnerId) {
-			game.player2.winner = true;
-			if (game.player1) {
-				game.player1.winner = false;
-			}
-			winnerAssigned = true;
-			winnerName = game.player2.player.name;
-			winnerPlayerId = game.player2.player._id;
-		}
+		});
 
 		if (!winnerAssigned) {
 			throw new Error("Player not found in the game.");
 		}
 
-		game.status = "completed";
-		game.winner = mongoose.Types.ObjectId(winnerPlayerId); // Set the game winner to the actual player ID
-
+		game.status = "completed"; // Update game status to completed
 		await game.save();
 
 		console.log(`Game updated with winner. Now finding the next game...`);
 
+		// Handle progression to the next game if applicable
 		if (game.nextGameId) {
 			const nextGame = await Game.findById(game.nextGameId);
 			if (nextGame) {
 				console.log(`Next game found: ${nextGame._id}`);
-
-				if (!nextGame.player1 || !nextGame.player1.player) {
-					nextGame.player1 = {
-						player: mongoose.Types.ObjectId(winnerPlayerId),
-						name: winnerName,
-						winner: null,
-						score: 0,
-						bye: false,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					};
-					console.log(`Assigned winner to next game player1 slot.`);
-				} else if (!nextGame.player2 || !nextGame.player2.player) {
-					nextGame.player2 = {
-						player: mongoose.Types.ObjectId(winnerPlayerId),
-						name: winnerName,
-						winner: null,
-						score: 0,
-						bye: false,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					};
-					console.log(`Assigned winner to next game player2 slot.`);
+				// Assign winner to the next game's first empty participant slot
+				const emptyParticipant = nextGame.participants.find((p) => !p.player);
+				if (emptyParticipant) {
+					emptyParticipant.player = winnerId;
+					emptyParticipant.name = winnerName;
+					await nextGame.save();
+					console.log(`Assigned winner to next game: ${nextGame._id}`);
 				} else {
 					console.error("Next game slots are already filled.");
 					throw new Error("Next game slots are already filled.");
 				}
-
-				await nextGame.save();
-				console.log(`Winner assigned to next game: ${nextGame._id}`);
 			} else {
 				console.log(`No next game found for current game: ${gameId}`);
 			}
@@ -243,15 +200,13 @@ const getFullBracket = async (bracketId) => {
 	const bracket = await Bracket.findById(bracketId)
 		.populate({
 			path: "organization",
-			populate: {
-				path: "playerCount",
-			},
 		})
 		.exec();
 
 	if (!bracket) {
 		throw new Error("Bracket not found.");
 	}
+	console.log(JSON.stringify(bracket, null, 2));
 	return populateRoundsWithPlayers(bracket);
 	//return augmentPlayerData(bracket);
 };
@@ -260,40 +215,87 @@ const populateRoundsWithPlayers = async (bracket) => {
 	await bracket
 		.populate({
 			path: "rounds.games",
-			populate: [
-				{
-					path: "player1.player",
-					select: "name",
-				},
-				{
-					path: "player2.player",
-					select: "name",
-				},
-			],
+			populate: {
+				path: "participants.player",
+				select: "name",
+			},
 		})
 		.execPopulate();
 
-	//convert to object
 	bracket = bracket.toObject();
 
-	// Flatten the populated data to the required structure
+	// Adjusting to the new schema
 	bracket.rounds.forEach((round, roundIndex) => {
 		round.games.forEach((game) => {
-			if (game.player1 && game.player1.player) {
-				game.player1.name = game.player1.player.name;
-				game.player1.roundIndex = roundIndex;
-				delete game.player1.player;
-			}
-			if (game.player2 && game.player2.player) {
-				game.player2.name = game.player2.player.name;
-				game.player2.roundIndex = roundIndex;
-				delete game.player2.player;
-			}
+			game.participants.forEach((participant) => {
+				if (participant.player) {
+					participant.name = participant.player.name; // Transfer name
+					participant.roundIndex = roundIndex; // Add the round index to each participant
+					participant._id = participant.player._id; // Add the player ID to the participant
+				}
+				delete participant.player; // Optionally remove the player object if no longer needed
+			});
 			game.roundIndex = roundIndex; // Add the roundIndex to the game object
 		});
 	});
 
-	return bracket;
+	return formatDataForBracket(bracket);
+};
+
+const formatDataForBracket = (bracket) => {
+	// Create a new structure for rounds to avoid mutating the original bracket
+	const formattedRounds = bracket.rounds.map((round) => {
+		const formattedGames = round.games.map((game) => {
+			// Initialize default players in case there are fewer than two participants
+			const defaultPlayer = {
+				_id: null,
+				name: "",
+				winner: null,
+				bye: false,
+				score: 0,
+			};
+			const formattedGame = {
+				status: game.status,
+				_id: game._id,
+				player1: game.participants[0]
+					? {
+							...game.participants[0],
+							_id: game.participants[0]._id,
+							participantIndex: 0,
+							gameId: game._id,
+					  }
+					: { ...defaultPlayer },
+				player2: game.participants[1]
+					? {
+							...game.participants[1],
+							_id: game.participants[1]._id,
+							participantIndex: 1,
+							gameId: game._id,
+					  }
+					: { ...defaultPlayer },
+				bracketId: game.bracketId,
+				__v: game.__v,
+				roundIndex: game.roundIndex,
+			};
+
+			return formattedGame;
+		});
+
+		return {
+			games: formattedGames,
+			_id: round._id,
+			roundNumber: round.roundNumber,
+			createdAt: round.createdAt,
+			updatedAt: round.updatedAt,
+			id: round.id,
+		};
+	});
+
+	// Return the original bracket with the transformed rounds array
+	return {
+		...bracket,
+		rounds: formattedRounds,
+	};
 };
 
 //use same players (without pulling in straggler players)
@@ -305,105 +307,102 @@ const reGenerateBracket = async (bracketId) => {
 
 	return await generateBracket(bracketId, true);
 };
-//so this migh tbe the problem, if the game doesn't exist, it should create a new one and also a blank spot for the second player
 const addPlayerToFirstEmptySpot = async (bracketId, playerId) => {
-	let bracket = await Bracket.findById(bracketId);
-	if (!bracket) {
-		throw new Error("Failed to find bracket.");
-	}
-
-	const round = bracket.rounds[0];
-	const game = round.games.find((game) => !game.player1 || !game.player2);
-
-	if (!game) {
-		console.log("No game, creating new one with blank opponent");
-		const newGame = {
-			player1: {
-				_id: playerId,
-				winner: null,
-				filled: true,
-			},
-			player2: null,
-			status: "pending",
-		};
-		round.games.push(newGame);
-	} else {
-		if (!game.player1) {
-			game.player1 = {
-				_id: playerId,
-			};
-		} else if (!game.player2) {
-			game.player2 = {
-				_id: playerId,
-			};
-		}
-	}
-
-	bracket.markModified("rounds");
-	await bracket.save();
-	return populateRoundsWithPlayers(bracket);
-};
-
-const removePlayerFromGame = async (bracketId, playerId, roundIndex) => {
 	try {
 		const bracket = await Bracket.findById(bracketId);
 		if (!bracket) {
 			throw new Error("Failed to find bracket.");
 		}
 
-		const removePlayerFromRound = (round, playerId) => {
-			let gameUpdated = false;
-			round.games.forEach((game) => {
-				if (game.player1 && game.player1._id.toString() === playerId) {
-					game.player1 = null;
-					gameUpdated = true;
-				} else if (game.player2 && game.player2._id.toString() === playerId) {
-					game.player2 = null;
-					gameUpdated = true;
-				}
-			});
-			return gameUpdated;
-		};
+		// Get the first round games
+		const firstRoundGames = await Game.find({
+			_id: { $in: bracket.rounds[0].games },
+		});
 
-		let playerFound = false;
-		for (let i = roundIndex; i < bracket.rounds.length; i++) {
-			const round = bracket.rounds[i];
-			const gameUpdated = removePlayerFromRound(round, playerId);
-			if (gameUpdated) {
-				playerFound = true;
+		let foundEmptySpot = false;
+		let updatedGame = null;
+
+		// Search for an empty spot in existing games
+		for (let game of firstRoundGames) {
+			const emptyIndex = game.participants.findIndex(
+				(part) => part.player === null
+			);
+			if (emptyIndex !== -1) {
+				game.participants[emptyIndex] = {
+					player: playerId,
+					name: "", // Optionally pull this from player data
+					winner: null,
+					bye: false,
+					filled: true,
+				};
+				await game.save();
+				updatedGame = game;
+				foundEmptySpot = true;
+				break;
 			}
 		}
 
-		if (!playerFound) {
+		// If no empty spot is found, create a new game
+		if (!foundEmptySpot) {
+			const newGame = new Game({
+				participants: [
+					{
+						player: playerId,
+						name: "", // Optionally pull this from player data
+						winner: null,
+						bye: false,
+						filled: true,
+					},
+					{
+						player: null,
+						name: "",
+						winner: null,
+						bye: false,
+						filled: false,
+					},
+				],
+				bracketId: bracketId,
+				status: "pending",
+			});
+			await newGame.save();
+			bracket.rounds[0].games.push(newGame._id);
+			await bracket.save();
+			updatedGame = newGame;
+		}
+
+		return populateRoundsWithPlayers(bracket); // Update the bracket with populated player details
+	} catch (error) {
+		console.error("Error adding player to the first empty spot:", error);
+		throw new Error("Failed to add player to the first empty spot.");
+	}
+};
+
+const removePlayerFromGame = async ({ gameId, playerId }) => {
+	try {
+		// Use the update operation directly to remove the player by setting fields to null
+		const updateResult = await Game.updateOne(
+			{ _id: gameId, "participants.player": playerId },
+			{
+				$set: {
+					"participants.$.player": null,
+					"participants.$.name": "",
+					"participants.$.winner": null,
+					"participants.$.bye": false,
+				},
+			}
+		);
+
+		if (updateResult.modifiedCount === 0) {
 			throw new Error(
-				"Player not found in any games in or after the specified round."
+				"Player not found in the specified game or no changes were made."
 			);
 		}
 
-		//remove outcomes from previous games
-		for (let i = 0; i < roundIndex; i++) {
-			const round = bracket.rounds[i];
-			round.games.forEach((game) => {
-				if (game.player1 && game.player1._id.toString() === playerId) {
-					game.player1.winner = null;
-					game.player2.winner = null;
-				}
-				if (game.player2 && game.player2._id.toString() === playerId) {
-					game.player2.winner = null;
-					game.player1.winner = null;
-				}
-				game.winner = null;
-				game.status = "pending";
-			});
-		}
-
-		bracket.markModified("rounds"); // Necessary because rounds is an array of subdocuments
-
-		await bracket.save();
-
-		return populateRoundsWithPlayers(bracket);
+		// Optionally, fetch and return the updated game
+		const updatedGame = await Game.findById(gameId);
+		return updatedGame;
 	} catch (error) {
-		console.error("error", error);
+		console.error("Error removing player from game:", error);
 		throw new Error("Failed to remove player from game.");
 	}
 };

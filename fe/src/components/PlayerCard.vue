@@ -127,10 +127,33 @@
             Nothing to see here. Waiting on previous round...
           </p>
           <span v-else>
-            <p class="p-3 subtitle my-2">Blank Spot. (BYE)</p>
-            <button @click="addPlayer" class="btn btn-primary mr-2">
-              + Add {{ $teamPlayer }} Here
-            </button>
+            <div v-if="showAllPlayersToSelect">
+              <PlayerButtonList
+                @select="addPlayer"
+                @close="showAllPlayersToSelect = false"
+                @fullClose="$emit('update', false)"
+              />
+            </div>
+
+            <div v-else>
+              <p class="px-3 text-lg uppercase font-bold mt-2 mb-0 py-0">
+                Blank Spot.
+              </p>
+              <p class="px-3 mb-4 text-sm text-gray-400 uppercase mt-0 py-0">
+                Add a {{ $teamPlayer }}, or leave it blank to act as a BYE.
+              </p>
+              <button @click="addPlayer" class="btn btn-primary btn-block mb-2">
+                + Create New {{ $teamPlayer }} Here
+              </button>
+
+              <button
+                @click="showAllPlayersToSelect = true"
+                class="btn bg-slate-900 btn-block mb-6 text-gray-300 hover:bg-slate-800"
+              >
+                <UsersIcon class="h-6 mr-2 inline" /> Add Existing
+                {{ $teamPlayer }}
+              </button>
+            </div>
           </span>
           <button @click="$emit('update', false)" class="btn btn-secondary">
             Close
@@ -143,11 +166,13 @@
 
 <script>
 import { bracketMixin } from "@/mixins/bracketMixin";
+import PlayerButtonList from "@/components/PlayerButtonList.vue";
 
 export default {
   data() {
     return {
       dev: false,
+      showAllPlayersToSelect: false,
     };
   },
   mixins: [bracketMixin],
@@ -161,10 +186,13 @@ export default {
       default: () => ({}),
     },
   },
+  components: {
+    PlayerButtonList,
+  },
   emits: ["update", "addNew", "generate"],
   computed: {
     rounds() {
-      return this.$store.getRounds;
+      return this.bracket?.rounds;
     },
     bracket() {
       return this.$store.getBracket;
@@ -211,7 +239,9 @@ export default {
   methods: {
     addPlayer() {
       this.$emit("update", false);
-      this.$showAddPlayerModal({ slotId: this.player._id });
+      const participantIndex = this.player?.participantIndex;
+      const gameId = this.game._id;
+      this.$showAddPlayerModal({ participantIndex, gameId });
     },
     getParams() {
       return {
@@ -220,6 +250,9 @@ export default {
         bracketId: this.$store.getBracket?._id,
         roundIndex: this.player.roundIndex,
       };
+    },
+    handleClose() {
+      this.$emit("update", false);
     },
     getOpponent(player) {
       return this.rounds[player.roundIndex].games.find(

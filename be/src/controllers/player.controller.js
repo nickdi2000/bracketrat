@@ -11,8 +11,10 @@ const insertPlayer = async (req, res) => {
 	const { organization } = req.user;
 
 	try {
-		const player = await playerService.addPlayer(name, organization);
-		const bracket = await Bracket.findOne({ organization: organization._id });
+		const player = await playerService.addPlayer(name, organization._id);
+		const bracket = await bracketService.getFullBracket(
+			organization.defaultBracket
+		);
 
 		res.status(201).json({ player, bracket });
 	} catch (error) {
@@ -21,12 +23,34 @@ const insertPlayer = async (req, res) => {
 	}
 };
 
-const createToSlot = async (req, res) => {
-	const { slotId, name, bracketId } = req.body;
+const createPlayer = async (req, res) => {
+	const { name, bracketId, gameId, participantIndex } = req.body;
+	const { organization, defaultBracket } = req.user;
 
+	if (isNaN(participantIndex) || !gameId) {
+		console.log("----no participantIndex, create player for org");
+		try {
+			const player = await playerService.addPlayer(name, organization._id);
+			const bracket = await bracketService.getFullBracket(defaultBracket);
+
+			const players = await playerService.getPlayersByOrganization(
+				organization._id
+			);
+
+			res.status(201).json({ player, players, bracket });
+		} catch (error) {
+			console.error("Error creating player:", error);
+			res.status(500).json({ message: error.message });
+		}
+
+		return;
+	}
+
+	//if participantIndex, insert it into bracket directly
 	try {
 		const player = await playerService.createPlayerToSlot({
-			slotId,
+			gameId,
+			participantIndex,
 			name,
 			bracketId,
 		});
@@ -58,11 +82,19 @@ const getByBracketId = catchAsync(async (req, res) => {
 
 const destroy = catchAsync(async (req, res) => {
 	const { playerId } = req.query;
+	const { organization } = req.user;
 
 	try {
 		await playerService.destroyPlayer(playerId);
+
+		//get new player list
+		const players = await playerService.getPlayersByOrganization(
+			organization._id
+		);
+
 		res.status(200).send({
 			message: "Player removed successfully.",
+			players,
 		});
 	} catch (error) {
 		console.error("Error removing player from bracket:", error);
@@ -153,7 +185,8 @@ const batchUpdate = catchAsync(async (req, res) => {
 const list = async (req, res) => {
 	const orgId = req.user.organization._id;
 	try {
-		const players = await Player.find({ organization: orgId });
+		//const players = await Player.find({ organization: orgId });
+		const players = await playerService.getPlayersByOrganization(orgId);
 		res.status(200).json(players);
 	} catch (error) {
 		console.error("Error getting players:", error);
@@ -170,5 +203,5 @@ module.exports = {
 	login,
 	batchUpdate,
 	list,
-	createToSlot,
+	createPlayer,
 };

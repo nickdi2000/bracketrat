@@ -48,6 +48,10 @@ const organizationSchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Bracket",
 		},
+		playerCount: {
+			type: Number,
+			default: 0,
+		},
 		// Additional fields like website, social media links, etc.
 		website: String,
 		// Timestamps
@@ -62,13 +66,6 @@ const organizationSchema = new mongoose.Schema(
 		toJSON: { virtuals: true },
 	}
 );
-
-organizationSchema.virtual("playerCount", {
-	ref: "Player", // The model to use
-	localField: "_id", // Find players where `localField`
-	foreignField: "organization", // is equal to `foreignField`
-	count: true, // And only get the number of docs
-});
 
 organizationSchema.set("toObject", { virtuals: true });
 organizationSchema.set("toJSON", { virtuals: true });

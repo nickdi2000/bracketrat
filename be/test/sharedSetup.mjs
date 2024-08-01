@@ -4,6 +4,7 @@ import {
 	closeTestServer,
 	disconnectTestDatabase,
 } from "./testSetup.mjs"; // Adjust the path as necessary
+import getPort from "get-port"; // Ensure you have this dependency installed
 
 let server;
 
@@ -13,7 +14,8 @@ export const setupTestEnvironment = () => {
 
 		try {
 			await connectToTestDatabase();
-			server = await startTestServer();
+			const port = await getPort(); // Get a free port dynamically
+			server = await startTestServer(port);
 		} catch (error) {
 			console.error("Failed to setup test environment:", error);
 			throw error;
@@ -30,6 +32,8 @@ export const setupTestEnvironment = () => {
 			console.error("Failed to teardown test environment:", error);
 		}
 	});
+
+	return server;
 };
 
 export const getServerInstance = () => server;

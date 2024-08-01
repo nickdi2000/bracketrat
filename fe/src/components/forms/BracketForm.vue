@@ -225,6 +225,13 @@
       </button>
     </div>
     <Loader3 v-if="loading" class="fadein" />
+    <pre v-if="dev" class="text-sm">{{ form }}</pre>
+    <div
+      class="my-5 text-gray-500 text-xs text-center"
+      v-on:dblclick="dev = !dev"
+    >
+      ID: {{ form._id }}
+    </div>
   </span>
 </template>
 
@@ -236,6 +243,7 @@ export default {
   emits: ["save"],
   data() {
     return {
+      dev: false,
       loading: false,
       BracketNames,
       teamSports,
@@ -439,8 +447,8 @@ export default {
       }
 
       //check if its longer than 10 characters
-      if (this.form.code.length > 10) {
-        this.$toast.error("Code cannot be longer than 10 characters");
+      if (this.form.code.length > 20) {
+        this.$toast.error("Code cannot be longer than 20 characters");
         return false;
       }
 

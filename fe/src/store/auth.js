@@ -13,7 +13,6 @@ export const authStore = defineStore({
       : null,
     utm_source: localStorage.getItem("utm_source") || null,
     players: [],
-    rounds: [],
     organization: null,
     selected_bracket:
       localStorage.getItem("selected_bracket") != "undefined"
@@ -46,6 +45,34 @@ export const authStore = defineStore({
       }
       return await this.fetchBracket(this.user.defaultBracket);
     },
+
+    async generateBracket(bracketId) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const rec = await api.post(`brackets/${bracketId}/generate`);
+          console.log("rec generated", rec.data?.bracket);
+          this.setSelectedBracket(rec.data.bracket);
+          resolve(rec);
+        } catch (err) {
+          reject(err);
+        }
+      });
+    },
+    async generateFixedBracket(bracketId, size) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const rec = await api.post(`brackets/${bracketId}/generate-fixed`, {
+            size,
+          });
+          console.log("rec fixed generated", rec.data?.bracket);
+          this.setSelectedBracket(rec.data.bracket);
+          resolve(rec);
+        } catch (err) {
+          reject(err);
+        }
+      });
+    },
+
     //to make th fetchBracket a promisebased on we could do it like this:
     async fetchBracket(bracket_id) {
       if (!bracket_id) {
@@ -94,17 +121,36 @@ export const authStore = defineStore({
       });
     },
 
-    async createPlayerToSlot({ name, slotId }) {
+    async createPlayer({ name, participantIndex, gameId }) {
+      if (isNaN(participantIndex)) {
+        console.info("!participantIndex, creating new", participantIndex);
+      }
       const bracketId = this.selected_bracket._id;
+
+      if (!bracketId) {
+        console.error("No bracket selected");
+        return;
+      }
+
       return new Promise(async (resolve, reject) => {
         try {
-          const rec = await api.post("/players/create-to-slot", {
-            name: name,
-            slotId: slotId,
-            bracketId: bracketId,
+          const rec = await api.post("/players/create-player", {
+            name,
+            participantIndex,
+            gameId,
+            bracketId,
           });
           const bracket = rec.data.bracket;
           this.setSelectedBracket(bracket);
+
+          //check if rec.data.players exists
+          if (rec.data.players) {
+            const players = rec.data.players;
+            this.setPlayers(players);
+          } else if (rec.data.player) {
+            this.addPlayer(rec.data.player);
+          }
+
           resolve(rec);
         } catch (err) {
           reject(err);
@@ -118,10 +164,7 @@ export const authStore = defineStore({
           const rec = await api.post(
             `/brackets/${this.selected_bracket._id}/player/${player._id}`
           );
-
-          //set selected Bracket
           await this.setSelectedBracket(rec.data.bracket);
-
           resolve(rec);
         } catch (err) {
           console.log("error", err);
@@ -159,12 +202,9 @@ export const authStore = defineStore({
       return new Promise(async (resolve, reject) => {
         try {
           const rec = await api.delete(`players?playerId=${id}`, {});
-          console.log("rec", rec);
 
-          //this.players = this.players.filter((player) => player._id !== id);
-
-          const newPlayers = this.players.filter((player) => player._id != id);
-          this.setPlayers(newPlayers);
+          const players = rec.data.players;
+          this.setPlayers(players);
 
           resolve(rec);
         } catch (err) {
@@ -227,7 +267,8 @@ export const authStore = defineStore({
         try {
           const rec = api.post(`brackets/${bracketId}/clear`);
           console.log("rec cleared");
-          this.setRounds([]);
+          //clear bracket
+          this.selected_bracket.rounds = [];
           resolve(rec);
         } catch (err) {
           reject(err);
@@ -238,6 +279,10 @@ export const authStore = defineStore({
       if (!userData.data.user) {
         return;
       }
+      //clear selected bracket
+      this.selected_bracket = null;
+      localStorage.removeItem("selected_bracket");
+
       this.user = userData.data.user;
       this.tokens = userData.data.tokens;
       localStorage.setItem("user", JSON.stringify(this.user));
@@ -247,14 +292,13 @@ export const authStore = defineStore({
       await this.fetchBracket(this.user.defaultBracket);
     },
     setPlayers(players) {
-      this.players = players; //JSON.parse(JSON.stringify(players));
+      this.players = JSON.parse(JSON.stringify(players));
+      //this.players = new Map(players.map((player) => [player._id, player]));
     },
     addPlayer(player) {
       this.players.push(player);
     },
-    setRounds(rounds) {
-      this.rounds = rounds;
-    },
+
     patchUser(partialData) {
       Object.assign(this.user, partialData);
       localStorage.setItem("user", JSON.stringify(this.user));
@@ -278,7 +322,6 @@ export const authStore = defineStore({
     setSelectedBracket(bracket) {
       console.log("SEtting bracket", bracket);
       this.selected_bracket = bracket;
-      this.rounds = bracket.rounds;
 
       localStorage.setItem(
         "selected_bracket",
@@ -318,9 +361,7 @@ export const authStore = defineStore({
     checkIfPlayer() {
       return localStorage.getItem("player") !== null;
     },
-    getRounds() {
-      return this.rounds ?? [];
-    },
+
     getToken() {
       return this.tokens?.access?.token || null;
     },

@@ -103,7 +103,8 @@ export default {
       isVisible: false,
       form: {
         name: "",
-        slotId: "",
+        participantIndex: null,
+        gameId: null,
       },
       loading: false,
       teamPlayer: "Player",
@@ -117,7 +118,8 @@ export default {
     showModal(data) {
       this.isVisible = true;
       console.log("showModal recieve", data);
-      this.form.slotId = data?.slotId;
+      this.form.participantIndex = data?.participantIndex;
+      this.form.gameId = data?.gameId;
     },
     closeModal() {
       this.isVisible = false;
@@ -125,10 +127,16 @@ export default {
     },
     save() {
       this.loading = true;
-      this.$store.createPlayerToSlot(this.form).then(() => {
-        this.loading = false;
-        this.closeModal();
-      });
+      this.$store
+        .createPlayer({
+          name: this.form.name,
+          participantIndex: this.form.participantIndex,
+          gameId: this.form.gameId,
+        })
+        .then(() => {
+          this.loading = false;
+          this.closeModal();
+        });
     },
   },
   mounted() {

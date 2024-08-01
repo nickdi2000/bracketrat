@@ -96,8 +96,8 @@ export default {
 
 <style scoped>
 .small-svg {
-  width: 30px;
-  height: 30px;
+  width: 36px;
+  height: 36px;
   display: inline;
 }
 </style>

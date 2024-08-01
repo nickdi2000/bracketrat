@@ -98,9 +98,55 @@
         ></template>
       </draggable>
     </table>
+    <div
+      class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 w-full trans fadeOut"
+      v-show="showQuickAdd"
+    >
+      <div
+        class="p-2 bg-gray-800 text-white text-center rounded-md flex justify-between"
+      >
+        <input
+          type="text"
+          ref="quickAddInput"
+          class="w-full p-2 rounded-md bg-gray-800 text-white font-bold uppercase mr-2"
+          placeholder="Player Name.."
+          v-model="quickAddForm.name"
+          v-on:keyup.enter="quickAddPlayer"
+        />
+        <button
+          class="btn btn-sm p-2 opacity-9 bg-blue-900 hover:bg-blue-800 mr-2"
+          @click="quickAddPlayer"
+        >
+          Save
+        </button>
+        <button
+          class="btn btn-sm p-2 opacity-9 bg-gray-900 hover:bg-blue-900"
+          @click="toggleQuickShow"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
     <div class="table-footer">
-      <div v-if="records.length > 4" class="subheader py-2 flex justify-start">
-        Total: {{ records.length }}
+      <div
+        v-if="records.length > 4"
+        class="subheader px-1 py-2 flex flex-row justify-between"
+      >
+        <div>Total: {{ records.length }}</div>
+
+        <div class="group">
+          <span
+            class="opacity-0 group-hover:opacity-100 text-gray-200 fadein p-2 rounded-md"
+            >Quick Add</span
+          >
+          <button
+            class="btn btn-sm p-2 opacity-9 bg-gray-900 hover:bg-blue-800"
+            title="Quick Add"
+            @click="toggleQuickShow"
+          >
+            <PlusCircleIcon class="h-4 inline" />
+          </button>
+        </div>
       </div>
     </div>
     <div class="py-3 flex flex-col items-center">
@@ -131,6 +177,10 @@ export default {
       pendingSave: false,
       rows: this.records,
       canDrag: true,
+      showQuickAdd: false,
+      quickAddForm: {
+        name: "",
+      },
     };
   },
   emits: ["updated"],
@@ -141,6 +191,24 @@ export default {
     }
   },
   methods: {
+    toggleQuickShow() {
+      console.log("toggline");
+
+      this.showQuickAdd = !this.showQuickAdd;
+
+      if (this.showQuickAdd) {
+        this.$nextTick(() => {
+          this.$refs.quickAddInput.focus();
+        });
+      }
+    },
+    async quickAddPlayer() {
+      const name = this.quickAddForm.name;
+      const rec = await this.$store.createPlayer({ name });
+      this.rows = this.records;
+      this.quickAddForm = { name: "" };
+    },
+
     async saveChanges() {
       console.log("Save changes");
       const players = this.rows.map((v) => {
@@ -168,7 +236,7 @@ export default {
       const ask = await this.$openDialog("Delete Player?");
 
       try {
-        this.$store.removePlayer(record._id);
+        await this.$store.removePlayer(record._id);
         //this.$emit("updated");
         this.rows = this.records;
       } catch (error) {
@@ -192,8 +260,8 @@ export default {
     },
     async removeAll() {
       const ask = await this.$openDialog(
-        "Remove All Players from this bracket?",
-        "Note: Users associated with this bracket will not be deleted. They will be available for other brackets, and still be active in the system."
+        `Delete all ${this.$teamPlayer}s?`,
+        `Note: If real users/devices are associated with these ${this.$teamPlayer}'s, they will be removed from this organization.`
       );
 
       if (!ask) return;
@@ -210,6 +278,14 @@ export default {
         console.error("Error", error);
         this.$toast.error("Error deleting record");
       }
+    },
+  },
+  watch: {
+    records: {
+      handler(v) {
+        this.rows = v;
+      },
+      deep: true,
     },
   },
 };

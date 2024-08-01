@@ -76,22 +76,21 @@ class BracketController extends BaseController {
 
 	async removeAllPlayers(req, res) {
 		const { id } = req.params;
+		const organization = req.user.organization;
 
 		try {
+			//we should delete just delete all players associated with organization
+			await Player.deleteMany({ organization: organization._id });
+
+			//then clear bracket
 			const bracket = await Bracket.findById(id);
-			if (!bracket) {
-				return res.status(404).json({ message: "Bracket not found" });
-			}
-
-			// Clear both players and rounds arrays
-			bracket.players = [];
 			bracket.rounds = [];
-
 			await bracket.save();
 
 			res.json({
 				message: "All players and rounds removed from bracket",
 				bracket,
+				players: [],
 			});
 		} catch (error) {
 			console.error("Failed to remove all players and rounds:", error);
@@ -105,13 +104,50 @@ class BracketController extends BaseController {
 		const { bracketId } = req.params;
 
 		try {
-			let bracket = await bracketService.generateBracket(bracketId);
+			let generatedBracket = await bracketService.generateBracket({
+				bracketId,
+			});
+
+			let bracket = await bracketService.getFullBracket(bracketId);
+
 			if (!bracket) {
 				return res.status(404).json({ message: "Bracket not found." });
 			}
 
 			res.json({
-				message: "Bracket generated successfully with blank rounds.",
+				message:
+					"Bracket generated successfully with blank rounds and player seeds.",
+				bracket: bracket,
+			});
+		} catch (error) {
+			console.error("Error generating bracket:", error);
+			res.status(500).json({ message: "Failed to generate bracket." });
+		}
+	}
+
+	async generateFixed(req, res) {
+		const { bracketId } = req.params;
+		const { size } = req.body;
+
+		if (!size) {
+			return res.status(400).json({ message: "Bracket size is required." });
+		}
+
+		try {
+			let generatedBracket = await bracketService.generateBracket({
+				bracketId,
+				bracketSize: size,
+			});
+
+			let bracket = await bracketService.getFullBracket(bracketId);
+
+			if (!bracket) {
+				return res.status(404).json({ message: "Bracket not found." });
+			}
+
+			res.json({
+				message:
+					"Bracket generated successfully with blank rounds and player seeds.",
 				bracket: bracket,
 			});
 		} catch (error) {
@@ -177,14 +213,17 @@ class BracketController extends BaseController {
 
 	async removePlayerFromGame(req, res) {
 		const { bracketId } = req.params;
-		const { playerId, roundIndex } = req.body;
+		const { playerId, roundIndex, gameId } = req.body;
 
 		try {
-			let bracket = await bracketService.removePlayerFromGame(
+			let removedPlayerBracket = await bracketService.removePlayerFromGame({
 				bracketId,
 				playerId,
-				roundIndex
-			);
+				roundIndex,
+				gameId,
+			});
+
+			const bracket = await bracketService.getFullBracket(bracketId);
 			if (!bracket) {
 				return res.status(404).json({ message: "Bracket not found." });
 			}

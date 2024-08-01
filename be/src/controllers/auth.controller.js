@@ -32,7 +32,6 @@ const login = catchAsync(async (req, res) => {
 			console.log(err);
 			return next(err);
 		}
-		console.log("saving sesssion..");
 		res.send({ user, tokens });
 	});
 });

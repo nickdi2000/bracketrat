@@ -34,6 +34,8 @@
     <div class="mt-12">
       <button class="btn btn-success" @click="save()">Save</button>
     </div>
+
+    <div class="my-5 text-gray-500 text-xs text-center">ID: {{ org._id }}</div>
   </div>
 </template>
 

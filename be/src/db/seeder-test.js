@@ -24,9 +24,9 @@ const addPasswords = (users) => {
 	});
 };
 
-//const testDbUrl = "mongodb://127.0.0.1:27017/bracket-test";
+const testDbUrl = "mongodb://127.0.0.1:27017/bracket-test";
 
-db.connectToDatabase()
+db.connectToDatabase(testDbUrl)
 	.then(async () => {
 		console.log("Connected to the database");
 
@@ -45,9 +45,12 @@ db.connectToDatabase()
 					//await User.create(user);
 
 					let user = await userService.createUser(userData);
+					const org = await userService.createOrganization(user);
 
+					user = await userService.updateUserById(user._id, {
+						organization: org._id,
+					});
 					console.log("Created user: ", user.email);
-					console.log("orgID: ", user.organization);
 				})
 			);
 

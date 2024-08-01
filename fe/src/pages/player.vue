@@ -1,9 +1,12 @@
 <template>
   <span>
+    <pre v-if="dev" class="text-white text-sm">{{ record }}</pre>
     <div class="mid text-white">
       <div class="">
         <div class="card @apply sm:w-full md:w-full lg:w-1/2 xl:w-1/2;">
-          <div class="subheader">{{ $teamPlayer }}</div>
+          <div class="subheader" v-on:dblclick="dev = !dev">
+            {{ $teamPlayer }}
+          </div>
           <div class="text-3xl font-bold uppercase">{{ record.name }}</div>
           <hr />
           <div class="mt-4 pt-4 subheader">Stats</div>
@@ -46,6 +49,7 @@ export default {
   data() {
     return {
       record: {},
+      dev: false,
       brackets: [],
       record_id: this.$route.params.id,
       stats: [

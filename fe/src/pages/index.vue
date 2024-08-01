@@ -15,7 +15,7 @@
         @click="dev = !dev"
         v-if="$isLocal"
       >
-        OBJ
+        OBJ ({{ shouldShowBracket ? "y" : "x" }})
       </button>
       <button
         class="btn btn-secondary btn-sm ml-3"
@@ -108,23 +108,26 @@
           :key="p._id"
           @click="
             $bottomAlert(
-              `This ${$teamPlayer} will be included in the bracket. `
+              `This ${$teamPlayer} will be included in the bracket when you build it. `
             )
           "
-          :style="{ '--delay': index * 0.1 + 's' }"
+          :style="{ 'transition-delay': index * 0.1 + 's' }"
           class="badge badge-primary opacity-0 fade-in"
         >
           {{ p.name }}
         </span>
       </div>
-    </div>
 
-    <PlayerForm
-      v-if="$store.getBracket"
-      @update="handlePlayerAdded()"
-      @invite="showShareLink = !showShareLink"
-      ref="playerForm"
-    />
+      <div class="my-8 text-center">
+        <div class="uppercase text-xs font-bold text-gray-500">- OR -</div>
+        <button
+          class="btn p-2 btn-sm opacity-8 bg-gray-700 hover:bg-gray-800 mt-4"
+          @click="showFixedOptions"
+        >
+          Build Fixed Size
+        </button>
+      </div>
+    </div>
 
     <PlayerCard
       :player="selectedPlayer"
@@ -138,7 +141,6 @@
       :bracket="currentBracket"
       @generate="generateBracket"
       @toggleView="toggleView"
-      @new-player="$refs.playerForm.showModal()"
       ref="bottomMenu"
     />
   </span>
@@ -154,7 +156,6 @@ import BracketBottomMenu from "@/components/BracketBottomMenu.vue";
 import BracketList from "@/components/BracketList.vue";
 import PlayerBadges from "@/components/PlayerBadges.vue";
 import BracketGenerator from "@/components/BracketGenerator.vue";
-import PlayerForm from "@/components/forms/PlayerForm.vue";
 import RoundsDetails from "@/components/RoundsDetails.vue";
 
 export default {
@@ -166,7 +167,6 @@ export default {
     BracketList,
     PlayerBadges,
     BracketGenerator,
-    PlayerForm,
     RoundsDetails,
   },
   mixins: [bracketMixin],
@@ -177,18 +177,12 @@ export default {
       selectedGame: {},
       compKey: 0,
       view: "bracket", // bracket, json
-      bracket: {
-        rounds: {},
-      },
+
       loading: false,
     };
   },
   async created() {
-    if (
-      !this.players?.length &&
-      !this.rounds.length &&
-      this.$store?.getBracket?._id
-    ) {
+    if (!this.players?.length && this.$store?.getBracket?._id) {
       await this.$store.fetchBracket(this.$store.getBracket._id);
     }
 
@@ -197,7 +191,7 @@ export default {
     }
 
     if (Object.keys(this.currentBracket)?.length) {
-      console.log("currentBracket exists");
+      console.log("currentBracket ID", this.currentBracket?._id);
     } else {
       this.$store.fetchDefaultBracket();
     }
@@ -205,6 +199,10 @@ export default {
   methods: {
     async update() {
       this.compKey++;
+    },
+    showFixedOptions() {
+      //run showNavAndSizes in the BracketBottomMenu via ref
+      this.$refs.bottomMenu.showNavAndSizes();
     },
     async handlePlayerAdded() {
       this.loading = true;
@@ -217,24 +215,14 @@ export default {
 
     async generateBracket() {
       this.loading = true;
-      try {
-        const rec = await this.$api.post(
-          `brackets/${this.currentBracket._id}/generate`,
-          {}
-        );
-        this.bracket = rec.data.bracket;
-        this.$store.setRounds(rec.data.bracket.rounds);
-        this.loading = false;
-      } catch (error) {
-        this.loading = false;
-        console.log("error", error);
-        this.$toast.error("Failed to generate bracket. Contact Support");
-      }
+      await this.$store.generateBracket(this.currentBracket._id);
+      this.compKey++;
+      this.loading = false;
     },
     selectPlayer(player) {
-      //console.log("selected player", player);
       this.selectedPlayer = player;
-      const game = this._findGameByPlayer(player._id);
+      console.log("Selecting player", player);
+      const game = this._findGameById(player.gameId);
       console.log("GameFound", game);
       this.selectedGame = game;
     },
@@ -249,9 +237,10 @@ export default {
   },
   computed: {
     shouldShowBracket() {
-      const s = this.playerCount && this.rounds?.length && !this.dev; //rounds?.length && playerCount && !dev
+      const s =
+        this.playerCount && this.currentBracket?.rounds?.length && !this.dev; //rounds?.length && playerCount && !dev
       console.log("shouldShowBracket", s);
-      console.log("rounds", this.rounds?.length);
+      console.log("rounds", this.currentBracket?.rounds?.length);
       console.log("playerCount", this.playerCount);
       return s;
     },
@@ -259,10 +248,19 @@ export default {
       return this.$store.players;
     },
     playerCount() {
-      return this.$store.selected_bracket?.organization?.playerCount;
+      const storeCount =
+        this.$store.selected_bracket?.organization?.playerCount;
+      if (storeCount) {
+        return storeCount;
+      }
+      return this.players?.length;
     },
     playersNotInBracket() {
+      return [];
       if (!this.rounds?.length) {
+        return [];
+      }
+      if (!this.players?.length) {
         return [];
       }
       const playersArray = JSON.parse(JSON.stringify(this.players));
@@ -279,15 +277,11 @@ export default {
       return this.$store.getBracket;
     },
     rounds() {
-      if (this.$store?.rounds?.length) {
-        return this.$store.rounds;
-      }
-
-      return this.bracket?.rounds || {};
+      return this.currentBracket?.rounds || [];
     },
     formattedJSON() {
-      if (!this.bracket?.rounds) return {};
-      return JSON.stringify(this.rounds, null, 2);
+      if (!this.bracket?.currentBracket?.rounds) return {};
+      return JSON.stringify(this.currentBracket?.rounds, null, 2);
     },
   },
 };
@@ -354,6 +348,10 @@ export default {
     opacity: 1;
     transform: translateX(0);
   }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
 .vtb-item {

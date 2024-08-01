@@ -5,20 +5,20 @@ import config from "../src/config/config.js"; // Adjust the path as necessary
 let server;
 
 const connectToTestDatabase = async () => {
-	const testDbUrl = config.mongoose.url; // Adjust as necessary
+	const testDbUrl = "mongodb://localhost:27017/bracket-test"; // Adjust as necessary
 	const mongooseOptions = config.mongoose.options; // Assuming this exists in your config
 
 	await mongoose.connect(testDbUrl, mongooseOptions);
 	console.log("Connected to test MongoDB");
 };
 
-const startTestServer = () => {
+const startTestServer = (port) => {
 	return new Promise((resolve, reject) => {
-		server = app.listen(3000, (err) => {
+		server = app.listen(port, (err) => {
 			if (err) {
 				reject(err);
 			} else {
-				console.log("Test server running on port 3000");
+				console.log(`Test server running on port ${port}`);
 				resolve(server);
 			}
 		});

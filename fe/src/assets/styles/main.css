@@ -41,6 +41,14 @@ body {
   animation: fadeInDown 0.3s ease-in-out;
 }
 
+.fadeOut {
+  animation: fadeOut 0.3s ease-in-out;
+}
+
+.fadeOutSlow {
+  animation: fadeOut 1.6s ease-in-out;
+}
+
 .tiny {
   font-size: 0.8rem;
   opacity: 0.6;
@@ -182,6 +190,14 @@ body {
   }
 }
 
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 @keyframes fadeInUp {
   0% {
     opacity: 0;

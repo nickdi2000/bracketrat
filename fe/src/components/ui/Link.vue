@@ -2,7 +2,7 @@
   <div>
     <div
       v-if="!editing"
-      class="text-2xl font-bold pb-4"
+      class="text-lg font-bold pb-4"
       :class="!darkMode ? 'text-black' : 'text-white'"
       @click="editing = true"
     >

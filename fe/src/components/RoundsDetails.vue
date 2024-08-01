@@ -14,7 +14,10 @@
       >
         <h2 class="text-2xl font-bold pt-3 mt-1">Round {{ rIndex + 1 }}</h2>
 
-        <div class="mt-3" v-for="(game, gIndex) in round.games">
+        <div
+          class="mt-3 bg-slate-800 p-3 shadow-2xl rounded-md"
+          v-for="(game, gIndex) in round.games"
+        >
           <div class="col-12 uppercase text-md text-gray-200 py-2">
             Game {{ gIndex + 1 }}
           </div>

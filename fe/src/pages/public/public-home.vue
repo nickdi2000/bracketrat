@@ -153,7 +153,7 @@
               ]"
             >
               {{ player.name }}
-              <div class="text-xs" v-if="false">F:{{ player.filled }}</div>
+              <div class="text-xs" v-if="false">F:{{ player.name }}</div>
             </div>
           </template>
           <template #player-extension-bottom="{ match }">

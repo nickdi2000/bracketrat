@@ -25,9 +25,7 @@ const getOrganizations = async () => {
 const getOrganization = async (org) => {
 	try {
 		// Fetch the organization
-		const organization = await Organization.findOne(org)
-			.populate("brackets")
-			.populate("playerCount");
+		const organization = await Organization.findOne(org).populate("brackets");
 
 		if (!organization) {
 			throw new Error("Organization not found");

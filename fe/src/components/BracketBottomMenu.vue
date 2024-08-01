@@ -82,7 +82,8 @@
               <QuestionMarkCircleIcon class="w-4 h-4" />
             </button>
           </div>
-          <div class="flex flex-col space-y-4">
+
+          <div class="flex flex-col space-y-4" v-if="!displaySizeOptions">
             <button
               v-for="(button, index) in filteredButtons"
               :key="index"
@@ -105,9 +106,29 @@
               </div>
             </button>
           </div>
+
+          <div class="flex flex-col space-y-4" v-else>
+            <button
+              class="wide-button fadeInUp"
+              v-for="(size, index) in [4, 8, 16, 32, 64]"
+              :key="index"
+              @click="generatedFixed(size)"
+            >
+              <span class="text-gray-400 text-4xl font-bold">{{ size }}</span>
+            </button>
+
+            <button
+              class="btn btn-block mt-5 bg-slate-900 hover:bg-blue-900"
+              @click="displaySizeOptions = false"
+            >
+              <ArrowLeftCircleIcon class="w-6 h-6 mr-3 mt-1 inline-block" />
+              Back
+            </button>
+          </div>
+
           <button
             @click="show = false"
-            class="p-4 text-2xl font-bold uppercase text-gray-500 bg-slate-900 w-full rounded-md mt-8"
+            class="p-4 text-2xl font-bold uppercase text-gray-500 bg-slate-900 hover:bg-blue-900 w-full rounded-md mt-8"
           >
             Close
           </button>
@@ -118,6 +139,8 @@
 </template>
 
 <script>
+import BracketIcon from "./icons/BracketIcon.vue";
+
 export default {
   props: {
     bracket: {
@@ -129,16 +152,24 @@ export default {
     return {
       show: false,
       showHelp: true,
+      displaySizeOptions: false,
     };
   },
   emits: ["generate"],
+  components: {
+    BracketIcon,
+  },
   computed: {
     isBroken() {
+      return false;
       return (
         !this.bracket.isReady &&
         this.bracket.rounds?.length &&
         this.$store.playerCount > 3
       );
+    },
+    hasRounds() {
+      return this.bracket?.rounds?.length;
     },
     filteredButtons() {
       return this.buttons.filter((button) => !button.hide);
@@ -149,19 +180,29 @@ export default {
           icon: "UserGroupIcon",
           text: "Generate Bracket",
           action: "generate",
-          desc: "Generate a new bracket with all players, including new players.",
+          desc: `Generate a new dynamic-sized bracket with all ${this.$teamPlayer}s.`,
         },
         {
           text: "Rebuild",
           action: "reset",
           icon: "UsersIcon",
-          desc: "Reset current bracket with the same set of players",
+          desc: `Reset current bracket with the same set of ${this.$teamPlayer}s`,
+          hide: !this.hasRounds,
         },
+        {
+          text: "Build Fixed Size",
+          action: "showSizes",
+          icon: "BracketIcon",
+          desc: "Build an empty bracket with 4,8,16,etc... slots.",
+          hide: this.hasRounds,
+        },
+
         {
           icon: "TrashIcon",
           text: "Clear",
           action: "clearBracket",
           desc: `Destroy bracket and clear out all ${this.$teamPlayer}'s.`,
+          // hide: !this.hasRounds,
         },
         {
           text: this.bracket?.locked ? "Lock" : "Unlock",
@@ -191,8 +232,24 @@ export default {
       );
       this.$emit("generate");
     },
-    async execute(action) {
+    async generatedFixed(size) {
       this.show = false;
+      const ask = await this.$openDialog(
+        `Build ${size}-player Bracket?`,
+        `This will build a fresh new bracket with ${size} empty slots.`
+      );
+      const bracketId = this.bracket._id;
+      if (!bracketId) {
+        this.$toast.error("No bracket found. Please Refresh.");
+        return;
+      }
+      this.$store.generateFixedBracket(bracketId, size);
+    },
+    async execute(action) {
+      const dontClose = ["showSizes"];
+      if (!dontClose.includes(action)) {
+        this.show = false;
+      }
       await this[action]();
     },
     helpMustBuildBracket() {
@@ -206,6 +263,9 @@ export default {
     toggle() {
       this.show = !this.show;
     },
+    showSizes() {
+      this.displaySizeOptions = true;
+    },
     async reset() {
       const ask = await this.$openDialog(
         "Reset Bracket?",
@@ -216,6 +276,10 @@ export default {
     showNav() {
       this.show = true;
     },
+    showNavAndSizes() {
+      this.show = true;
+      this.displaySizeOptions = true;
+    },
     lock() {
       const shouldLock = !this.bracket.locked;
       this.$store.patchBracket({ locked: shouldLock });
@@ -223,7 +287,7 @@ export default {
       this.$toast.success(msg);
     },
     newPlayer() {
-      this.$emit("new-player");
+      this.$showAddPlayerModal();
     },
     async clearBracket() {
       let message = "Clear Bracket?";

@@ -19,11 +19,11 @@ const destroyPlayer = async (playerId) => {
 	await Player.findByIdAndDelete(playerId);
 };
 
-const addPlayer = async (name, organization) => {
+const addPlayer = async (name, organization_id) => {
 	//check if player already exists
 	const existingPlayer = await Player.findOne({
 		name,
-		organization: organization._id,
+		organization: organization_id,
 	});
 	if (existingPlayer) {
 		throw new Error("Player already exists with this name");
@@ -31,39 +31,55 @@ const addPlayer = async (name, organization) => {
 
 	const player = await Player.create({
 		name,
-		organization: organization._id,
+		organization: organization_id,
 	});
 
 	return player;
 };
 
-const createPlayerToSlot = async ({ slotId, name, bracketId }) => {
+const createPlayerToSlot = async ({
+	gameId,
+	participantIndex,
+	name,
+	bracketId,
+}) => {
+	//console log all arguments
+	console.log("createPlayerToSlopt player service.js - gameId", gameId);
+	console.log("participantIndex", participantIndex);
+	console.log("name", name);
+	console.log("bracketId", bracketId);
+
 	try {
-		// Create the new player
-		const player = new Player({ name, organization: bracketId });
+		// First, retrieve the bracket to get the associated organization
+		const bracket = await Bracket.findById(bracketId);
+		if (!bracket) {
+			throw new Error("Bracket not found.");
+		}
+
+		// Create the new player with the correct organization ID
+		const player = new Player({ name, organization: bracket.organization });
 		await player.save();
 
-		// Find the game that has the player1 or player2 with the given slotId
-		const game = await Game.findOne({
-			$or: [{ "player1._id": slotId }, { "player2._id": slotId }],
-		});
-
+		// Find the game using the provided gameId
+		const game = await Game.findById(gameId);
 		if (!game) {
 			throw new Error("Game not found.");
 		}
 
-		// Update the respective player slot
-		if (game.player1._id.toString() === slotId) {
-			game.player1.player = player._id;
-			game.player1.name = player.name;
-			game.player1.filled = true;
-		} else if (game.player2._id.toString() === slotId) {
-			game.player2.player = player._id;
-			game.player2.name = player.name;
-			game.player2.filled = true;
-		} else {
-			throw new Error("Slot ID does not match any player in the game.");
+		// Check if the participant index is within range
+		if (participantIndex < 0 || participantIndex >= game.participants.length) {
+			throw new Error("Invalid participant index.");
 		}
+
+		// Update the respective participant slot
+		game.participants[participantIndex] = {
+			...game.participants[participantIndex],
+			player: player._id,
+			name: player.name,
+			filled: true,
+		};
+
+		console.log("new playerIndex value", game.participants[participantIndex]);
 
 		// Save the updated game
 		await game.save();
@@ -81,6 +97,13 @@ const createPlayer = async (name, organization) => {
 	return player._id;
 };
 
+const getPlayersByOrganization = async (organization) => {
+	const players = await Player.find({
+		organization,
+	}).populate("brackets");
+	return players;
+};
+
 module.exports = {
 	incrementPlayerWins,
 	addPlayerToBracket,
@@ -88,4 +111,5 @@ module.exports = {
 	destroyPlayer,
 	addPlayer,
 	createPlayerToSlot,
+	getPlayersByOrganization,
 };

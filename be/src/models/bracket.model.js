@@ -82,12 +82,15 @@ const bracketSchema = new mongoose.Schema(
 );
 
 bracketSchema.virtual("isReady").get(function () {
-	if (this.rounds.length === 0) {
-		return false;
-	}
-
-	const firstRound = this.rounds[0];
-	return !firstRound.games.some((game) => !game.player1 && !game.player2);
+	//check if there are any rounds with games that have no participants
+	let result = true;
+	this.rounds.forEach((round) => {
+		round.games.forEach((game) => {
+			if (!game.participants || game.participants?.length === 0) {
+				result = false;
+			}
+		});
+	});
 });
 
 function _generateRandomCode(length = 10) {
@@ -171,7 +174,6 @@ function generateRandomCode() {
 		"strawberry",
 		"blueberry",
 		"raspberry",
-		"blackberry",
 		"kiwi",
 		"watermelon",
 		"melon",
@@ -185,7 +187,6 @@ function generateRandomCode() {
 		"coconut",
 		"papaya",
 		"guava",
-		"passionfruit",
 		"fig",
 		"date",
 		"lemon",

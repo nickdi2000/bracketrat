@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const autopopulate = require("mongoose-autopopulate");
+const { Player } = require("./player.model");
 
 const { toJSON, paginate } = require("./plugins");
 
@@ -27,8 +27,22 @@ playerGameDetailsSchema.virtual("filled").get(function () {
 
 const gameSchema = new mongoose.Schema(
 	{
-		player1: playerGameDetailsSchema,
-		player2: playerGameDetailsSchema,
+		// player1: playerGameDetailsSchema,
+		// player2: playerGameDetailsSchema,
+		//switching from player1/player2 to participants array
+		participants: [
+			{
+				player: {
+					type: mongoose.Schema.Types.ObjectId,
+					ref: "Player",
+					default: null,
+				},
+				name: String,
+				winner: Boolean,
+				bye: Boolean,
+				score: Number,
+			},
+		],
 		winner: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Player",

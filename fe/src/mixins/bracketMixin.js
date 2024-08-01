@@ -19,6 +19,22 @@ export const bracketMixin = {
 
       return foundGame; // Returns the last found game involving the player or null if not found
     },
+    _findGameById(gameId) {
+      let foundGame = null;
+
+      // Iterate through each round
+      this.rounds.forEach((round) => {
+        // Within each round, iterate through each game
+        round.games.forEach((game) => {
+          // Check both player1 and player2 for a match with the playerId
+          if (game._id === gameId) {
+            foundGame = game; // Update foundGame each time the player is found
+          }
+        });
+      });
+
+      return foundGame; // Returns the last found game involving the player or null if not found
+    },
 
     _findGameByGameId(gameId) {
       let foundGame = null;
