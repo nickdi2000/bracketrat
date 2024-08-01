@@ -162,11 +162,15 @@ const batchUpdate = catchAsync(async (req, res) => {
 	const { players } = req.body;
 	const { bracketId } = req.params;
 
+	if (!players || players.length === 0) {
+		return res.status(400).json({ message: "No players provided" });
+	}
+
 	try {
-		const updatedBracket = await bracketService.batchUpdatePlayers(
+		const updatedBracket = await bracketService.batchUpdatePlayers({
 			bracketId,
-			players
-		);
+			players,
+		});
 
 		if (!updatedBracket) {
 			return res.status(404).json({ message: "Bracket not found." });

@@ -580,26 +580,31 @@ findPlayerInBracket = async ({ name, bracketId }) => {
 	return player;
 };
 
-batchUpdatePlayers = async (bracketId, players) => {
-	let bracket = await Bracket.findById(bracketId).populate("players");
-	if (!bracket) {
-		throw new Error("Bracket not found.");
+async function batchUpdatePlayers({ players }) {
+	try {
+		// Construct the bulk update operations
+		const operations = players.map((player) => ({
+			updateOne: {
+				filter: { _id: player._id },
+				update: { $set: player },
+			},
+		}));
+
+		// Perform the bulk operation
+		await Player.bulkWrite(operations);
+
+		// Fetch and populate the updated players
+		const updatedPlayerIds = players.map((player) => player._id);
+		const updatedPlayers = await Player.find({
+			_id: { $in: updatedPlayerIds },
+		}).populate("brackets"); // Assuming 'brackets' needs to be populated
+
+		return updatedPlayers;
+	} catch (error) {
+		console.error("Failed to batch update players:", error);
+		throw error; // Or handle this more gracefully
 	}
-
-	// Update players
-	players.forEach((player) => {
-		let playerToUpdate = bracket.players.find(
-			(p) => p._id.toString() === player._id
-		);
-		if (playerToUpdate) {
-			Object.assign(playerToUpdate, player);
-		}
-	});
-
-	await bracket.save();
-
-	return populateRoundsWithPlayers(bracket);
-};
+}
 
 module.exports = {
 	generateBracket,
