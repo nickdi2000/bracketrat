@@ -52,8 +52,9 @@ export default {
 .scroll-box {
   max-height: 60vh;
   overflow-y: scroll;
+  overflow-x: hidden;
   margin-bottom: 40px;
-  min-width: 80vw;
+  min-width: 300px;
   /* blurred edge at top and bottom */
 }
 </style>

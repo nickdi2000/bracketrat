@@ -237,8 +237,7 @@ export default {
   },
   computed: {
     shouldShowBracket() {
-      const s =
-        this.playerCount && this.currentBracket?.rounds?.length && !this.dev; //rounds?.length && playerCount && !dev
+      const s = this.currentBracket?.rounds?.length && !this.dev; //rounds?.length && playerCount && !dev
       console.log("shouldShowBracket", s);
       console.log("rounds", this.currentBracket?.rounds?.length);
       console.log("playerCount", this.playerCount);
@@ -513,7 +512,7 @@ p {
 
 /* smaller screens @ media */
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 1090px) {
   .bracket-container {
     position: fixed;
     width: 100vw;

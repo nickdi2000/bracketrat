@@ -36,7 +36,7 @@ async function sendNewUser(user) {
 		return;
 	}
 
-	let msg = `NEW User: ${user.email}`;
+	let msg = `NEW BF User: ${user.email}`;
 	if (user.location) {
 		msg += `\n from ${user.location.city}, ${user.location.state}, ${user.location.country}`;
 	}

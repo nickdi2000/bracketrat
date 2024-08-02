@@ -7,10 +7,46 @@ const list = async (req, res) => {
 };
 
 const listusers = async (req, res) => {
-	const records = await User.find({});
-	//const records = await User.find({ deleted_at: null }).populate("campaigns");
+	// const records = await User.find({ deleted_at: null }).populate(
+	// 	"organization.brackets"
+	// );
+	const records = await getUsersAndBracketCountByOrganization(
+		req.user.organization
+	);
 	res.send(records);
 };
+
+async function getUsersAndBracketCountByOrganization(organizationId) {
+	try {
+		const results = await User.aggregate([
+			// Match users based on organization ID
+			{ $match: { organization: mongoose.Types.ObjectId(organizationId) } },
+
+			// Assuming 'brackets' field in User model contains the Bracket IDs
+			{
+				$lookup: {
+					from: "brackets", // the collection to join
+					localField: "brackets", // field from the input documents
+					foreignField: "_id", // field from the documents of the "from" collection
+					as: "bracketDetails", // output array field
+				},
+			},
+
+			// Project necessary fields
+			{
+				$project: {
+					username: 1, // Assume we have a username field
+					numberOfBrackets: { $size: "$bracketDetails" }, // Count of brackets
+				},
+			},
+		]);
+
+		return results;
+	} catch (error) {
+		console.error("Error retrieving users and bracket count:", error);
+		throw error;
+	}
+}
 
 const getuser = async (req, res) => {
 	const { id } = req.params;

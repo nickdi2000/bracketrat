@@ -147,6 +147,7 @@
               </button>
 
               <button
+                v-if="$store.players.length"
                 @click="showAllPlayersToSelect = true"
                 class="btn bg-slate-900 btn-block mb-6 text-gray-300 hover:bg-slate-800"
               >

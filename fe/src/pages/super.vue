@@ -12,16 +12,26 @@
         <button @click="authenticate" class="p-2 mt-4">Authenticate</button>
       </div>
 
-      <div v-for="rec in records" class="card mb-4 w-full">
-        <div class="flex justify-between">
-          <div>
+      <table class="p-3 tr-table">
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Created</th>
+          <th>SSO?</th>
+          <th>Location</th>
+        </tr>
+        <tr v-for="rec in records" class="m-2 w-full">
+          <td>
             {{ rec.name }}
-            <br />
+          </td>
+          <td>
             {{ rec.email }}
-          </div>
-          <div>{{ rec.location }}</div>
-        </div>
-      </div>
+          </td>
+          <td>{{ rec.createdAt }}</td>
+          <td>{{ rec.sso_info?.name ?? "-" }}</td>
+          <td>{{ rec.location }}</td>
+        </tr>
+      </table>
     </div>
   </div>
 </template>
@@ -62,3 +72,33 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.tr-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #2d3748;
+  page-break-after: auto;
+  margin-bottom: 40px;
+}
+
+.tr-table tr {
+  border: 1px solid #2d3748;
+  page-break-inside: avoid;
+  page-break-after: auto;
+}
+
+/* alternating row colors */
+
+.tr-table tr:nth-child(even) {
+  background-color: #2d3748;
+}
+
+.tr-table td {
+  border: 1px solid #2d3748;
+  padding: 0.5rem;
+  text-align: left;
+  page-break-inside: avoid;
+  page-break-after: auto;
+}
+</style>

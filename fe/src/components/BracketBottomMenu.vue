@@ -110,7 +110,7 @@
           <div class="flex flex-col space-y-4" v-else>
             <button
               class="wide-button fadeInUp"
-              v-for="(size, index) in [4, 8, 16, 32, 64]"
+              v-for="(size, index) in [4, 8, 16, 32]"
               :key="index"
               @click="generatedFixed(size)"
             >

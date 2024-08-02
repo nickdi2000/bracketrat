@@ -1,5 +1,5 @@
 <template>
-  <div class="text-white mt-5 center-vertical">
+  <div class="text-white mt-5 center-vertical-">
     <!-- <fwb-modal v-show="isVisible" @close="closeModal" class="mid-center"> -->
     <div
       id="static-modal"

@@ -179,9 +179,11 @@
 
 <script>
 import SocialLogin from "@/components/SocialLogin.vue";
+import { apiHandler } from "@/mixins/apiHandler";
 
 export default {
   name: "Login",
+  mixins: [apiHandler],
   components: {
     SocialLogin,
   },
@@ -250,8 +252,7 @@ export default {
         this.$store.setUser(rec);
         this.$router.push("/admin/dashboard");
       } catch (error) {
-        console.log("ERROR", error);
-        this.$toast.error("Error registering");
+        this._handleResponse(error);
       }
       this.loading = false;
     },
@@ -263,7 +264,8 @@ export default {
         this.$router.push("/admin/dashboard");
       } catch (error) {
         console.log("ERROR", error);
-        this.$toast.error("Error registering");
+        //this.$toast.error("Error registering");
+        this._handleResponse(error);
         if (error.message) {
           this.error = error.message;
         }
