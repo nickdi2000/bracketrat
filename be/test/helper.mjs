@@ -27,12 +27,11 @@ export const deleteDocumentById = async (collectionName) => {
  * @returns {Promise<{user: Object, bracketId: string}>}
  */
 export const createTestUser = async () => {
-    const num = Math.random().toString(36).substring(7);
     const randomEmail = "tester@email.com";
     const testUser = {
         email: randomEmail,
         password: "password123",
-        name: "Test User " + num,
+        name: "Test User ",
     };
     const user = await createUser(testUser);
     const defaultBracketId = user.defaultBracket;
