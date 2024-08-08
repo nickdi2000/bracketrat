@@ -2,18 +2,17 @@ import mongoose from "mongoose";
 import { createUser } from "../src/services/user.service.js";
 
 /**
- * Deletes a user from the database by their user ID.
+ * Deletes a collection from the database.
  *
- * @param {string} userId - The ID of the user to delete. This ID must be a valid MongoDB ObjectId string.
+ * @param {string} collectionName - The collection name to delete.
  * 
  * @returns {Promise<void>} A promise that resolves when the deletion operation is complete.
  * 
  * @throws {Error} Throws an error if the deletion operation fails. Errors are logged to the console.
  * 
- * This function accesses the "users" collection in the MongoDB database and attempts to delete the user document
- * corresponding to the provided user ID.
+ * This function accesses the  delete collection in the MongoDB database.
  */
-export const deleteDocumentById = async (collectionName) => {
+export const deleteCollectionByName = async (collectionName) => {
   const collection = mongoose.connection.collection(collectionName);
   try {
     await collection.drop();

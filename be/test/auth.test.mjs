@@ -1,7 +1,7 @@
 import request from "supertest";
 import { expect } from "chai";
 import { setupTestEnvironment, getServerInstance } from "./sharedSetup.mjs"; // Adjust the path as necessary
-import { deleteDocumentById } from "./helper.mjs";
+import { deleteCollectionByName } from "./helper.mjs";
 import * as mock from "./constants.mjs"
 
 setupTestEnvironment();
@@ -66,8 +66,7 @@ describe(`POST ${mock.baseUri}/auth/login`, function () {
 		// Cleanup
     after(async function () {
         if (userId) {
-            await deleteDocumentById("users");
-            userId = null;
+            await deleteCollectionByName("users");
         }
     });
 });

@@ -2,7 +2,7 @@ import request from "supertest";
 import { expect } from "chai";
 import { setupTestEnvironment, getServerInstance } from "./sharedSetup.mjs"; 
 import * as mock from "./constants.mjs";
-import { createTestUser, deleteDocumentById } from "./helper.mjs";
+import { createTestUser, deleteCollectionByName } from "./helper.mjs";
 import { generateBracket } from "../src/services/bracket.service.js";
 
 setupTestEnvironment();
@@ -44,8 +44,8 @@ describe(`POST ${mock.baseUri}/brackets/:bracketId/generate`, function () {
   // Clean up test data
   after(async function () {
     if (bracketId) {
-      await deleteDocumentById("brackets");
-      await deleteDocumentById("users");
+      await deleteCollectionByName("brackets");
+      await deleteCollectionByName("users");
     }
   });
 
@@ -109,14 +109,14 @@ describe(`POST ${mock.baseUri}/brackets/:bracketId/generate-fixed`, function () 
   // Clean up test data
   after(async function () {
     if (bracketId) {
-      await deleteDocumentById("users");
-      await deleteDocumentById("brackets");
+      await deleteCollectionByName("users");
+      await deleteCollectionByName("brackets");
     }
   });
 });
 
 // Test for Generate Method with different parameters.
-describe('generateBracket', function () {
+describe("generateBracket Method", function () {
 
   before(async function () {
     server = getServerInstance();
@@ -124,7 +124,7 @@ describe('generateBracket', function () {
     bracketId = defaultBracketId;
   });
 
-  it('should generate fixed size bracket', async function () {
+  it("should generate fixed size bracket", async function () {
     const result = await generateBracket({
       bracketId,
       bracketSize: mock.bracketSize_8,
@@ -134,47 +134,45 @@ describe('generateBracket', function () {
     const thirdRound = result.rounds[2];
 
     // Validate that the bracket has the expected structure
-    expect(result).to.be.an('object');
+    expect(result).to.be.an("object");
     expect(firstRound).to.have.property("roundNumber", 1);
     expect(secondRound).to.have.property("roundNumber", 2);
     expect(thirdRound).to.have.property("roundNumber", 3);
-    expect(result.rounds).to.be.an('array').with.lengthOf(3);
-    expect(firstRound).to.have.property('games').that.is.an('array').with.lengthOf(4);
-    expect(secondRound).to.have.property('games').that.is.an('array').with.lengthOf(2);
-    expect(thirdRound).to.have.property('games').that.is.an('array').with.lengthOf(1);
-
+    expect(result.rounds).to.be.an("array").with.lengthOf(3);
+    expect(firstRound).to.have.property("games").that.is.an("array").with.lengthOf(4);
+    expect(secondRound).to.have.property("games").that.is.an("array").with.lengthOf(2);
+    expect(thirdRound).to.have.property("games").that.is.an("array").with.lengthOf(1);
   });
 
-  it('should generate bracket', async function () {    
+// Test Case should Fail when no bracket size is provided
+  it("should not generate rounds when there are no players", async function () {    
       const result = await generateBracket({ bracketId });
-      expect(result).to.be.an('object');
-      // TODO add more validations for this use case.
-    
+      expect(result).to.be.an("object");
+      expect(result).to.have.property("rounds").that.is.an("array").with.lengthOf(0);
   });
 
-  // TODO generate Method not working when useCurrentPlayers Set to true.
-  //   it('should generate bracket', async function () {    
-  //     const result = await generateBracket({ bracketId, useCurrentPlayers: true });
-  //     const firstRound = result.rounds[0];
-  //     const secondRound = result.rounds[1];
-  //     const thirdRound = result.rounds[2];
-  //     expect(firstRound).to.have.property("roundNumber", 1);
-  //     expect(secondRound).to.have.property("roundNumber", 2);
-  //     expect(thirdRound).to.have.property("roundNumber", 3);
-  //     expect(result.rounds).to.be.an('array').with.lengthOf(3);
-  //     expect(firstRound).to.have.property('games').that.is.an('array').with.lengthOf(4);
-  //     expect(secondRound).to.have.property('games').that.is.an('array').with.lengthOf(2);
-  //     expect(thirdRound).to.have.property('games').that.is.an('array').with.lengthOf(1);
-  //     expect(result).to.be.an('object');
-  //     // TODO add more validations for this use case.
-    
-  // });
+  // Test Case should Fail
+  // TODO generate Method not working when useCurrentPlayers set to true.
+    it("should use the currentPlayers to generate bracket", async function () {    
+      const result = await generateBracket({ bracketId, useCurrentPlayers: true });
+      const firstRound = result.rounds[0];
+      const secondRound = result.rounds[1];
+      const thirdRound = result.rounds[2];
+      expect(firstRound).to.have.property("roundNumber", 1);
+      expect(secondRound).to.have.property("roundNumber", 2);
+      expect(thirdRound).to.have.property("roundNumber", 3);
+      expect(result.rounds).to.be.an('array').with.lengthOf(3);
+      expect(firstRound).to.have.property("games").that.is.an("array").with.lengthOf(4);
+      expect(secondRound).to.have.property("games").that.is.an("array").with.lengthOf(2);
+      expect(thirdRound).to.have.property("games").that.is.an("array").with.lengthOf(1);
+      expect(result).to.be.an("object");
+  });
 
     // Clean up test data
   after(async function () {
     if (bracketId) {
-      await deleteDocumentById("users");
-      await deleteDocumentById("brackets");
+      await deleteCollectionByName("users");
+      await deleteCollectionByName("brackets");
     }
   });
 });
