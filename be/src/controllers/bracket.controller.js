@@ -273,13 +273,15 @@ class BracketController extends BaseController {
 	async findByCode(req, res) {
 		const { code } = req.params;
 		try {
-			const bracket = await Bracket.findOne({ code: code }).populate(
-				"players.player"
-			);
+			const bracket = await Bracket.findOne({ code: code });
+
+			//find players via organization of bracket
+			const players = await Player.find({ organization: bracket.organization });
+
 			if (!bracket) {
 				return res.status(404).send("Bracket not found");
 			}
-			res.send(bracket);
+			res.send({bracket, players});
 		} catch (error) {
 			console.log("error", error);
 			res.status(400).send("BracketController error" + JSON.stringify(error));

@@ -309,6 +309,7 @@ const reGenerateBracket = async (bracketId) => {
 
 	return await generateBracket(bracketId, true);
 };
+
 const addPlayerToFirstEmptySpot = async (bracketId, playerId) => {
 	try {
 		const bracket = await Bracket.findById(bracketId);

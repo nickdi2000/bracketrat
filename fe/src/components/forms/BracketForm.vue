@@ -46,6 +46,7 @@
             :class="form.type === type.value ? 'bg-blue-500 	' : 'bg-blue-900'"
             v-for="type in types"
             :key="type.value"
+            :disabled="type.disabled"
             @click="makeSelection(type.value)"
           >
             {{ type.name }}
@@ -299,12 +300,14 @@ export default {
         {
           value: "swiss",
           name: "Swiss",
+          disabled: true,
           description:
             "A non-elimination tournament.  You play someone with the same record as you.  The person with the best record at the end wins. Very European.",
         },
         {
           value: "playoffs",
           name: "Playoffs",
+          disabled: true,
           description:
             "You play in a group stage and then the top teams advance to a single elimination bracket.  It's great for pretending you're in the big leagues.",
         },

@@ -14,7 +14,7 @@
     <main class="px-4 w-full" v-if="bracket">
       <router-view v-slot="{ Component }" :key="$route.fullPath">
         <transition
-          ><component :is="Component" :code="code" :bracket="bracket" />
+          ><component :is="Component" :code="code" :bracket="bracket" :players="players" />
         </transition>
       </router-view>
     </main>
@@ -86,7 +86,8 @@ export default {
       this.loading = true;
       try {
         const rec = await this.$api.get(`/brackets/code/${this.code}`);
-        this.bracket = rec.data;
+        this.bracket = rec.data?.bracket;
+        this.players = rec.data?.players;
         this.loading = false;
       } catch (error) {
         this.error = error.message ?? "Error fetching Bracket data"; //error;
@@ -103,7 +104,7 @@ export default {
       code: null,
       loading: false,
       bracket: null,
-
+      players: [],
       error: "",
       showNewCodeInput: false,
       newCode: "",

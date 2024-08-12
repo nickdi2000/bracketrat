@@ -31,12 +31,13 @@
             class="block w-full p-4 uppercase text-3xl font-bold border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
           />
 
+
           <button
             v-if="!foundMatch"
             @click="joinBracket"
-            :disabled="name.length < 3"
+            :disabled="shouldDisable"
             :class="
-              name.length < 3
+            shouldDisable
                 ? 'opacity-50 bg-gray-800'
                 : 'bg-blue-500 hover:bg-blue-600'
             "
@@ -97,6 +98,10 @@ export default {
       type: Object,
       required: true,
     },
+    players: {
+      type: Array,
+      required: true,
+    },
   },
   data() {
     return {
@@ -107,6 +112,11 @@ export default {
   },
   mounted() {
     console.log("PublicIndex mounted");
+  },
+  computed: {
+    shouldDisable() {
+      return !this.name || this.loading;
+    },
   },
   methods: {
     async joinBracket() {
@@ -124,10 +134,20 @@ export default {
           bracketId: this.bracket._id,
           name: this.name,
         });
-        console.log("res", res.data?.player);
+        console.log("res", res.data?.players);
+        //toast
+        if (res.data.player) {
+         this.$toast.success("Added player to bracket");
+        } else {
+          this.$toast.error("Error adding player to bracket");
+        }
+
+        return;
+
         await store.setPlayer(res.data.player);
         await nextTick();
         window.location = "/player";
+
       } catch (e) {
         console.error(e);
       } finally {
@@ -142,6 +162,19 @@ export default {
           name: this.name,
         });
         console.log("res", res.data?.player);
+
+        if (res.data.player) {
+         this.$toast.success("Added player to bracket");
+        } else {
+          this.$toast.error("Error adding player to bracket");
+        }
+
+        return;
+
+        if(!res.data.player){
+          this.$toast.error("Error adding player to bracket");
+          return;
+        }
         await store.setPlayer(res.data.player);
         await nextTick();
         window.location = "/player";
@@ -157,8 +190,7 @@ export default {
       handler(v) {
         //check if name matches a 'name' from the bracket.players array
         this.foundMatch =
-          this.bracket.players.some((p) => p.name === v) &&
-          this.name.length > 2;
+          this.players.some((p) => p.name === v);
       },
     },
   },

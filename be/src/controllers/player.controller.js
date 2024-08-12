@@ -125,14 +125,14 @@ const register = catchAsync(async (req, res) => {
 	const { name, bracketId } = req.body;
 
 	try {
-		const result = await bracketService.addPlayerToBracket({ name, bracketId });
+		const player = await playerService.createAndAddToBracket({ name, bracketId });
 		//const playerId = result.newPlayer._id;
 
 		// Emit an event to all connected clients
-		const io = socket.getIo();
-		io.emit("player-created", { player: result.newPlayer });
+		//const io = socket.getIo();
+		//io.emit("player-created", { player: result.newPlayer });
 
-		res.status(201).json({ player: result.newPlayer });
+		res.status(201).json({ player });
 	} catch (error) {
 		console.error("Error adding player to bracket:", error);
 		res.status(500).json({ message: error.message });
