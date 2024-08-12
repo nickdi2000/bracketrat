@@ -61,6 +61,7 @@ const generateBracket = async ({
 					},
 				],
 				status: "pending",
+				roundNumber: 1,
 				nextGameId: null,
 			});
 			await game.save();
@@ -80,6 +81,7 @@ const generateBracket = async ({
 					bracketId: bracket._id,
 					participants: [{}, {}],
 					status: "pending",
+					roundNumber,
 					nextGameId: null,
 				});
 				await game.save();
@@ -89,9 +91,9 @@ const generateBracket = async ({
 				games: gamesThisRound.map((game) => game._id),
 				roundNumber,
 			});
-			allGames.push(...gamesThisRound);
+			allGames.push(...gamesThisRound,);
 		}
-
+		
 		// Link games with nextGameId
 		for (
 			let roundIndex = 0;
@@ -104,13 +106,14 @@ const generateBracket = async ({
 			const nextRoundGames = allGames.filter(
 				(game) => game.roundNumber === roundIndex + 2
 			);
-			currentRoundGames.forEach((game, index) => {
+			currentRoundGames.forEach((roundGames, index) => {
 				if (nextRoundGames.length > index / 2) {
-					game.nextGameId = nextRoundGames[Math.floor(index / 2)]._id;
-					game.save();
+					roundGames.nextGameId = nextRoundGames[Math.floor(index / 2)]._id;
+					roundGames.save();
 				}
 			});
 		}
+
 
 		await bracket.save();
 		return populateRoundsWithPlayers(bracket); // Assuming this function populates and returns full bracket details
@@ -155,7 +158,6 @@ const updateGameWinner = async (gameId, winnerId) => {
 		if (!winnerAssigned) {
 			throw new Error("Player not found in the game.");
 		}
-
 		game.status = "completed"; // Update game status to completed
 		await game.save();
 
@@ -183,7 +185,7 @@ const updateGameWinner = async (gameId, winnerId) => {
 		} else {
 			console.log(`No nextGameId set for current game: ${gameId}`);
 		}
-
+		console.log("after the console:::", game);
 		return game;
 	} catch (error) {
 		console.error("Error updating game winner:", error.message);
@@ -420,14 +422,12 @@ const undoOutcomes = async ({ gameId }) => {
 		if (!bracket) {
 			throw new Error("Bracket not found");
 		}
-
 		// Reset the winner status for player1 and player2 within the game
-		if (game.player1) {
-			game.player1.winner = null;
-		}
-		if (game.player2) {
-			game.player2.winner = null;
-		}
+
+		game.participants.forEach(e => {
+			e.winner = null;
+		})
+
 		game.status = "pending";
 		game.winner = null;
 

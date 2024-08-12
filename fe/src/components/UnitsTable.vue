@@ -234,7 +234,6 @@ export default {
     },
     async destroy(record) {
       const ask = await this.$openDialog("Delete Player?");
-
       try {
         await this.$store.removePlayer(record._id);
         //this.$emit("updated");
@@ -271,8 +270,8 @@ export default {
           `brackets/${bracketId}/delete-all-players`,
           {}
         );
+        if (rec.status === 200) this.$store.fetchPlayers();
         this.$store.setPlayers(rec.data.bracket.players);
-        console.log("Destroyed", rec.data.bracket.players);
         this.$toast.success("All players removed from this bracket");
       } catch (error) {
         console.error("Error", error);

@@ -157,7 +157,6 @@ import BracketList from "@/components/BracketList.vue";
 import PlayerBadges from "@/components/PlayerBadges.vue";
 import BracketGenerator from "@/components/BracketGenerator.vue";
 import RoundsDetails from "@/components/RoundsDetails.vue";
-
 export default {
   components: {
     Bracket,

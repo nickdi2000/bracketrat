@@ -278,9 +278,9 @@ export default {
           `/brackets/${bracketId}/set-winner`,
           params
         );
-        this.$store.setRounds(rec.data.bracket.rounds);
-        // this.$toast.success("Player marked as winner");
-        //this.$emit("update", false);
+        this.$store.setSelectedBracket(rec.data.bracket);
+        this.$toast.success("Player marked as winner");
+        this.$emit("update", false);
         this.closeModal();
       } catch (error) {
         console.error(error);
@@ -306,12 +306,16 @@ export default {
 
     async undoOutcomes() {
       const params = this.getParams();
-      console.log("undoing...", params);
       const rec = await this.$api.post(
         `/brackets/${params.bracketId}/undo-outcomes`,
         params
       );
-      this.$store.setRounds(rec.data.bracket.rounds);
+      if( rec.status === 200 ) {
+        const req = await this.$api.get(
+          `/brackets/${params.bracketId}`,
+        )
+        this.$store.setSelectedBracket(req.data);
+      }
       this.closeModal();
     },
     closeModal() {
