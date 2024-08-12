@@ -26,6 +26,14 @@
     </div>
 
     <div class="bracket-container fadein" v-if="shouldShowBracket">
+      <div v-if="renderError" class="flex justify-center w-full m-auto">
+        <div class="alert alert-danger">
+          <div class="font-bold">Error rendering bracket</div>
+          <div class="subtitle">
+            Please try again or contact support if the issue persists.
+          </div>
+        </div>
+      </div>
       <bracket
         :rounds="rounds"
         class="bracket z-40-"
@@ -176,7 +184,7 @@ export default {
       selectedGame: {},
       compKey: 0,
       view: "bracket", // bracket, json
-
+      renderError: false,
       loading: false,
     };
   },
@@ -233,6 +241,14 @@ export default {
       this.refresh();
       this.$refs.playerForm.showModal();
     },
+  },
+  errorCaptured(err, vm, info) {
+    console.error('Error captured:', err);
+    this.renderError = true;
+
+    // Return false to propagate the error to other error handlers,
+    // or return true to stop further error propagation.
+    return false;
   },
   computed: {
     shouldShowBracket() {

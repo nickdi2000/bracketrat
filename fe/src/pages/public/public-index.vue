@@ -137,16 +137,16 @@ export default {
         console.log("res", res.data?.players);
         //toast
         if (res.data.player) {
-         this.$toast.success("Added player to bracket");
+         this.$toast.success("Added to bracket");
+
+          await store.setPlayer(res.data.player);
+          await nextTick();
+          window.location = "/player";
+
         } else {
           this.$toast.error("Error adding player to bracket");
+
         }
-
-        return;
-
-        await store.setPlayer(res.data.player);
-        await nextTick();
-        window.location = "/player";
 
       } catch (e) {
         console.error(e);
@@ -163,13 +163,7 @@ export default {
         });
         console.log("res", res.data?.player);
 
-        if (res.data.player) {
-         this.$toast.success("Added player to bracket");
-        } else {
-          this.$toast.error("Error adding player to bracket");
-        }
-
-        return;
+        //return;
 
         if(!res.data.player){
           this.$toast.error("Error adding player to bracket");
