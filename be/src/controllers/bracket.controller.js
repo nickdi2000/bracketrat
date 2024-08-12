@@ -104,7 +104,7 @@ class BracketController extends BaseController {
 		const { bracketId } = req.params;
 
 		try {
-			let generatedBracket = await bracketService.generateBracket({
+			await bracketService.generateBracket({
 				bracketId,
 			});
 
@@ -134,7 +134,7 @@ class BracketController extends BaseController {
 		}
 
 		try {
-			let generatedBracket = await bracketService.generateBracket({
+			 	await bracketService.generateBracket({
 				bracketId,
 				bracketSize: size,
 			});

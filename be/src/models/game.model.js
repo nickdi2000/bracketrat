@@ -53,6 +53,7 @@ const gameSchema = new mongoose.Schema(
 			enum: ["active", "completed", "cancelled", "pending", "paused", "bye"],
 			default: "pending",
 		},
+		roundNumber: { type: Number, default: 0 },
 		scheduledDate: { type: Date, required: false },
 		nextGameId: { type: mongoose.Schema.Types.ObjectId, ref: "Game" },
 		bracketId: { type: mongoose.Schema.Types.ObjectId, ref: "Bracket" },
