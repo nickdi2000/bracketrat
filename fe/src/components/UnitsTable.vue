@@ -260,18 +260,18 @@ export default {
     async removeAll() {
       const ask = await this.$openDialog(
         `Delete all ${this.$teamPlayer}s?`,
-        `Note: If real users/devices are associated with these ${this.$teamPlayer}'s, they will be removed from this organization.`
+        `Warning: This will only remove all players that are in limbo.To delete players from a bracket, you will need to destroy the bracket first.`
       );
 
       if (!ask) return;
       try {
+        const playersObj = this.$store.players;
         const bracketId = this.$store.getBracket._id;
         const rec = await this.$api.post(
-          `brackets/${bracketId}/delete-all-players`,
-          {}
+          `brackets/${bracketId}/delete-all-players`, 
+          {playersObj}
         );
-        if (rec.status === 200) this.$store.fetchPlayers();
-        this.$store.setPlayers(rec.data.bracket.players);
+        this.$store.setPlayers(rec.data.players);
         this.$toast.success("All players removed from this bracket");
       } catch (error) {
         console.error("Error", error);

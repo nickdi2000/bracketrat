@@ -262,10 +262,12 @@ export const authStore = defineStore({
         }
       });
     },
-    async clearBracket(bracketId) {
+    async clearBracket(bracketId, players) {
       return new Promise((resolve, reject) => {
         try {
-          const rec = api.post(`brackets/${bracketId}/clear`);
+          const rec = api.post(`brackets/${bracketId}/clear`,
+            {players}
+          );
           console.log("rec cleared");
           //clear bracket
           this.selected_bracket.rounds = [];

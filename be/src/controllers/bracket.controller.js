@@ -2,7 +2,7 @@
 const BaseController = require("./baseController");
 const { Bracket } = require("../models");
 const { Player } = require("../models/player.model");
-const { bracketService, organizationService } = require("../services");
+const { bracketService, playerService } = require("../services");
 const mongoose = require("mongoose");
 class BracketController extends BaseController {
 	constructor() {
@@ -75,28 +75,33 @@ class BracketController extends BaseController {
 	}
 
 	async removeAllPlayers(req, res) {
-		const { id } = req.params;
+		const { playersObj } = req.body;
 		const organization = req.user.organization;
-
 		try {
-			//we should delete just delete all players associated with organization
-			await Player.deleteMany({ organization: organization._id });
+			console.log("playersObj::", playersObj);
+			const filteredIds = playersObj
+				.filter( e => e.stateLabel === "Limbo")
+				.map( p  => p._id);
+			console.log("filteredIds", filteredIds);
 
-			//then clear bracket
-			const bracket = await Bracket.findById(id);
-			bracket.rounds = [];
-			await bracket.save();
+			await Player.deleteMany({
+				_id: { $in: filteredIds },
+				organization: organization._id,
+			});
+
+			const players = await playerService.getPlayersByOrganization(
+				organization._id
+			);
 
 			res.json({
-				message: "All players and rounds removed from bracket",
-				bracket,
-				players: [],
+				message: "Removed all players who are not in the bracket.",
+				players,
 			});
 		} catch (error) {
-			console.error("Failed to remove all players and rounds:", error);
+			console.error("Failed to remove all players:", error);
 			res
 				.status(500)
-				.json({ message: "Failed to remove all players and rounds" });
+				.json({ message: "Failed to remove all players" });
 		}
 	}
 
@@ -176,17 +181,17 @@ class BracketController extends BaseController {
 	}
 
 	async clearBracket(req, res) {
-		const { bracketId } = req.params;
+    const { bracketId } = req.params;
 
-		try {
-			let bracket = await bracketService.clearRounds(bracketId);
+    try {
+      let bracket = await bracketService.clearRounds(bracketId);
 
-			res.json({ message: "Bracket rounds cleared successfully.", bracket });
-		} catch (error) {
-			console.error("Error clearing bracket:", error);
-			res.status(500).json({ message: "Failed to clear bracket." });
-		}
-	}
+    	res.json({ message: "Bracket rounds cleared successfully.", bracket });
+    } catch (error) {
+        console.error("Error clearing bracket:", error);
+        res.status(500).json({ message: "Failed to clear bracket." });
+    }
+}
 
 	async updateGameWinner(req, res) {
 		const { bracketId } = req.params;
