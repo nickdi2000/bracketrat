@@ -42,7 +42,9 @@ export default {
   },
   computed: {
     players() {
-      return this.$store.players;
+      const allPlayers = this.$store.players;
+      const filteredPlayers = allPlayers.filter(e => e.stateLabel === "Limbo");
+      return filteredPlayers; 
     },
   },
 };
