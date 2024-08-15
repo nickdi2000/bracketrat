@@ -301,8 +301,10 @@ export default {
 
       try {
         const bracketId = this.$store.getBracket?._id;
-        const rec = await this.$store.clearBracket(bracketId);
-      } catch (error) {
+        const players = this.$store.players;
+        const rec = await this.$store.clearBracket(bracketId, players);
+        localStorage.removeItem("selected_bracket");
+      } catch (error) { 
         console.log("error", error);
         this.$toast.error("Failed to clear bracket. Contact Support");
       }

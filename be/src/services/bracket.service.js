@@ -42,6 +42,10 @@ const generateBracket = async ({
 		const numberOfGames = nextPowerOfTwo / 2;
 		const totalRoundsNeeded = Math.log2(nextPowerOfTwo);
 
+		if (totalRoundsNeeded <= 0 || numberOfGames < 1) {
+			throw new Error("Invalid player count to generate a bracket.");
+		}
+
 		bracket.rounds = []; // Reset rounds
 		let allGames = []; // Store all games for later nextGameId linking
 
@@ -119,7 +123,7 @@ const generateBracket = async ({
 		return populateRoundsWithPlayers(bracket); // Assuming this function populates and returns full bracket details
 	} catch (error) {
 		console.error("Error generating bracket:", error.message);
-		throw new Error("Failed to generate bracket.");
+		throw new Error(error.message);
 	}
 };
 
@@ -549,14 +553,18 @@ undoOutcomes_ = async (bracketId, roundIndex, gameId) => {
 };
 
 clearRounds = async (bracketId) => {
-	let bracket = await Bracket.findById(bracketId);
-	if (!bracket) {
-		return res.status(404).json({ message: "Bracket not found." });
-	}
-
-	bracket.rounds = [];
-	await bracket.save();
-	return bracket;
+	try {
+		let bracket = await Bracket.findById(bracketId);
+		if (!bracket) {
+			return res.status(404).json({ message: "Bracket not found." });
+		}
+		bracket.rounds = [];
+		await bracket.save();
+		return bracket;
+	} catch (error) {
+	console.error("Error deleting bracket:", error);
+	return res.status(500).json({ message: "An error occurred while deleting the bracket." });
+}
 };
 
 validateBracket = (bracketId) => {

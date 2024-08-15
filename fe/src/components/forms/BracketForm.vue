@@ -465,8 +465,12 @@ export default {
       }, 5000);
     },
     async getRecord(id) {
+      try {
       const { data } = await this.$api.get(`/brackets/${id}`);
       this.form = data;
+      } catch (error){
+      this.$toast.error('Failed to load bracket. Please try again.');
+      }
     },
     makeSelection(type) {
       this.setShowTip();

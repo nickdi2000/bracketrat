@@ -1,6 +1,6 @@
 // controllers/BracketController.js
 const BaseController = require("./baseController");
-const { Bracket } = require("../models");
+const { Bracket, Game } = require("../models");
 const { Player } = require("../models/player.model");
 const { bracketService, playerService } = require("../services");
 const mongoose = require("mongoose");
@@ -126,7 +126,7 @@ class BracketController extends BaseController {
 			});
 		} catch (error) {
 			console.error("Error generating bracket:", error);
-			res.status(500).json({ message: "Failed to generate bracket." });
+			res.status(500).json({ message: error.message });
 		}
 	}
 
@@ -182,11 +182,14 @@ class BracketController extends BaseController {
 
 	async clearBracket(req, res) {
     const { bracketId } = req.params;
-
+		
     try {
+			await Game.deleteMany({ bracketId: bracketId });
       let bracket = await bracketService.clearRounds(bracketId);
-
-    	res.json({ message: "Bracket rounds cleared successfully.", bracket });
+    	res.json({ 
+				message: "Bracket rounds have been cleared and players have been set to 'Limbo' successfully.",
+			 	bracket 
+			});
     } catch (error) {
         console.error("Error clearing bracket:", error);
         res.status(500).json({ message: "Failed to clear bracket." });
