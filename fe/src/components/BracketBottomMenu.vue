@@ -6,6 +6,7 @@
           class="w-4 h-4 inline mr-2 text-orange-200 opacity-50"
           @click="helpMustBuildBracket"
         />
+
         <button class="btn btn-warning mr-2 fadeIn" @click="reset()">
           <!-- <BoltIcon class="h-6 w-6 inline-block" /> -->
 
@@ -76,14 +77,25 @@
         >
           <div class="floating-action-button">
             <button
-              @click="showHelp = !showHelp"
               class="p-2 bg-slate-900 text-gray-500 rounded-full hover:bg-slate-800"
+              @click="$router.push('/admin/settings')"
+            >
+              <Cog6ToothIcon class="w-4 h-4" />
+            </button>
+            <button
+              @click="showHelp = !showHelp"
+              class="ml-2 p-2 bg-slate-900 text-gray-500 rounded-full hover:bg-slate-800"
             >
               <QuestionMarkCircleIcon class="w-4 h-4" />
             </button>
           </div>
-
-          <div class="flex flex-col space-y-4" v-if="!displaySizeOptions">
+          <h3 class="text-gray-300 my-2 text-center m-auto uppercase font-bold">
+            {{ titlize(bracket?.type) }}
+          </h3>
+          <div
+            class="flex flex-col space-y-4"
+            v-if="!displaySizeOptions && filteredButtons"
+          >
             <button
               v-for="(button, index) in filteredButtons"
               :key="index"
@@ -107,7 +119,7 @@
             </button>
           </div>
 
-          <div class="flex flex-col space-y-4" v-else>
+          <div class="flex flex-col space-y-4" v-else-if="displaySizeOptions">
             <button
               class="wide-button fadeInUp"
               v-for="(size, index) in [4, 8, 16, 32]"
@@ -162,11 +174,6 @@ export default {
   computed: {
     isBroken() {
       return false;
-      return (
-        !this.bracket.isReady &&
-        this.bracket.rounds?.length &&
-        this.$store.playerCount > 3
-      );
     },
     hasRounds() {
       return this.bracket?.rounds?.length;
@@ -175,53 +182,72 @@ export default {
       return this.buttons.filter((button) => !button.hide);
     },
     buttons() {
-      return [
-        {
-          icon: "UserGroupIcon",
-          text: "Generate Bracket",
-          action: "generate",
-          desc: `Generate a new dynamic-sized bracket with all ${this.$teamPlayer}s.`,
-        },
-        {
-          text: "Rebuild",
-          action: "reset",
-          icon: "UsersIcon",
-          desc: `Reset current bracket with the same set of ${this.$teamPlayer}s`,
-          hide: !this.hasRounds,
-        },
-        {
-          text: "Build Fixed Size",
-          action: "showSizes",
-          icon: "BracketIcon",
-          desc: "Build an empty bracket with 4,8,16,etc... slots.",
-          hide: this.hasRounds,
-        },
+      const obj = {
+        "single-elimination": [
+          {
+            icon: "UserGroupIcon",
+            text: "Generate Bracket",
+            action: "generate",
+            desc: `Generate a new dynamic-sized bracket with all ${this.$teamPlayer}s.`,
+          },
+          {
+            text: "Rebuild",
+            action: "reset",
+            icon: "UsersIcon",
+            desc: `Reset current bracket with the same set of ${this.$teamPlayer}s`,
+            hide: !this.hasRounds,
+          },
+          {
+            text: "Build Fixed Size",
+            action: "showSizes",
+            icon: "BracketIcon",
+            desc: "Build an empty bracket with 4,8,16,etc... slots.",
+            hide: this.hasRounds,
+          },
 
-        {
-          icon: "TrashIcon",
-          text: "Clear",
-          action: "clearBracket",
-          desc: `Destroy bracket and clear out all ${this.$teamPlayer}'s.`,
-          // hide: !this.hasRounds,
-        },
-        {
-          text: this.bracket?.locked ? "Lock" : "Unlock",
-          action: "lock",
-          icon: !this.bracket?.locked ? "LockClosedIcon" : "LockOpenIcon",
-          desc: !this.bracket?.locked
-            ? `Unlock the bracket to allow ${this.$teamPlayer}'s to enter the bracket`
-            : `Lock the bracket to prevent more ${this.$teamPlayer}'s from being added.`,
-          hide: true, // to add computed logic later
-        },
-        {
-          icon: "eye",
-          text: "Toggle View",
-          action: "toggleView",
-          icon: "TableCellsIcon",
-          desc: "Toggle between bracket view and table view.",
-          hide: true,
-        },
-      ];
+          {
+            icon: "TrashIcon",
+            text: "Clear",
+            action: "clearBracket",
+            desc: `Destroy bracket and clear out all ${this.$teamPlayer}'s.`,
+            // hide: !this.hasRounds,
+          },
+          {
+            text: this.bracket?.locked ? "Lock" : "Unlock",
+            action: "lock",
+            icon: !this.bracket?.locked ? "LockClosedIcon" : "LockOpenIcon",
+            desc: !this.bracket?.locked
+              ? `Unlock the bracket to allow ${this.$teamPlayer}'s to enter the bracket`
+              : `Lock the bracket to prevent more ${this.$teamPlayer}'s from being added.`,
+            hide: true, // to add computed logic later
+          },
+          {
+            icon: "eye",
+            text: "Toggle View",
+            action: "toggleView",
+            icon: "TableCellsIcon",
+            desc: "Toggle between bracket view and table view.",
+            hide: true,
+          },
+        ],
+        "round-robin": [
+          {
+            icon: "UserGroupIcon",
+            text: "Generate Round",
+            action: "generateRobin",
+            desc: `Generate a new round-robin bracket with all ${this.$teamPlayer}s.`,
+          },
+          {
+            icon: "TrashIcon",
+            text: "Clear",
+            action: "clearBracket",
+            desc: `Destroy all rounds in the round-robin.`,
+            // hide: !this.hasRounds,
+          },
+        ],
+      };
+      const type = this.bracket?.type || "single-elimination";
+      return obj[type];
     },
   },
   methods: {
@@ -231,6 +257,17 @@ export default {
         `This will build a fresh new bracket with any new ${this.$teamPlayer}s added since the last generation.`
       );
       this.$emit("generate");
+    },
+    async generateRobin() {
+      const ask = await this.$openDialog(
+        "Build Round-Robin Tournament?",
+        `This will build a fresh new set of rounds with any new ${this.$teamPlayer}s added since the last generation. It will pit each ${this.$teamPlayer} against every other ${this.$teamPlayer} in a round-robin format.`
+      );
+      await this.$store.generateRobinBracket(this.bracket._id);
+    },
+    titlize(str) {
+      //remove hyphens and capitalize
+      return str.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
     },
     async generatedFixed(size) {
       this.show = false;
@@ -304,7 +341,7 @@ export default {
         const players = this.$store.players;
         const rec = await this.$store.clearBracket(bracketId, players);
         localStorage.removeItem("selected_bracket");
-      } catch (error) { 
+      } catch (error) {
         console.log("error", error);
         this.$toast.error("Failed to clear bracket. Contact Support");
       }

@@ -66,6 +66,23 @@
                 required
               />
             </div>
+
+            <div>
+              <!-- add switch -->
+              <div class="flex items-center mb-4">
+                <input
+                  id="default-checkbox"
+                  type="checkbox"
+                  v-model="form.autoAdd"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                />
+                <label
+                  for="default-checkbox"
+                  class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  >Add directly to bracket</label
+                >
+              </div>
+            </div>
           </div>
           <!-- Modal footer -->
           <div
@@ -106,6 +123,7 @@ export default {
         name: "",
         participantIndex: null,
         gameId: null,
+        autoAdd: false,
       },
       loading: false,
       teamPlayer: "Player",
@@ -119,6 +137,10 @@ export default {
     showModal(data) {
       this.isVisible = true;
       console.log("showModal recieve", data);
+
+      const bracket = this.$store.getBracket;
+      this.form.autoAdd = bracket?.auto_bracket;
+
       this.form.participantIndex = data?.participantIndex;
       this.form.gameId = data?.gameId;
     },
@@ -142,6 +164,7 @@ export default {
   },
   mounted() {
     // Listen to the global event to show the modal
+
     eventBus.on("show-add-player-modal", this.showModal);
   },
   beforeUnmount() {

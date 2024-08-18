@@ -68,6 +68,11 @@ gameSchema.plugin(toJSON);
 // Add indexes
 gameSchema.index({ status: 1 });
 
+//add a hasBye virtual, which searches participants for a bye
+gameSchema.virtual("hasBye").get(function () {
+	return this.participants.some((p) => p.bye);
+});
+
 const Game = mongoose.model("Game", gameSchema);
 
 module.exports = Game;

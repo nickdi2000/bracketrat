@@ -58,6 +58,20 @@ export const authStore = defineStore({
         }
       });
     },
+
+    async generateRobinBracket(bracketId) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const rec = await api.post(`brackets/${bracketId}/generate-robin`);
+          console.log("rec generated", rec.data?.bracket);
+          this.setSelectedBracket(rec.data.bracket);
+          resolve(rec);
+        } catch (err) {
+          reject(err);
+        }
+      });
+    },
+
     async generateFixedBracket(bracketId, size) {
       return new Promise(async (resolve, reject) => {
         try {
@@ -79,13 +93,15 @@ export const authStore = defineStore({
         console.error("No bracket bracket_id provided to authStore");
         return;
       }
+      let url = `/brackets/${bracket_id}`;
+
       return new Promise((resolve, reject) => {
         if (!bracket_id) {
           console.warn("No bracket bracket_id provided to authStore");
           reject("No bracket bracket_id provided to authStore");
         }
         api
-          .get(`/brackets/${bracket_id}`)
+          .get(url)
           .then(async (rec) => {
             this.setSelectedBracket(rec.data);
 
@@ -94,6 +110,47 @@ export const authStore = defineStore({
           .catch((err) => {
             reject(err);
           });
+      });
+    },
+
+    async fetchRobinBracket(bracket_id) {
+      if (!bracket_id) {
+        console.error("No bracket bracket_id provided to authStore");
+        return;
+      }
+      return new Promise((resolve, reject) => {
+        if (!bracket_id) {
+          console.warn("No bracket bracket_id provided to authStore");
+          reject("No bracket bracket_id provided to authStore");
+        }
+        api
+          .get(`/brackets/robin/${bracket_id}`)
+          .then(async (rec) => {
+            this.setSelectedBracket(rec.data);
+
+            resolve(rec);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    },
+
+    async markWinner({ playerId, gameId, bracketId }) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const rec = await api.post(
+            `/brackets/robin/${bracketId}/set-winner`,
+            {
+              playerId,
+              gameId,
+            }
+          );
+          this.setSelectedBracket(rec.data.bracket);
+          resolve(rec);
+        } catch (err) {
+          reject(err);
+        }
       });
     },
 
@@ -265,9 +322,7 @@ export const authStore = defineStore({
     async clearBracket(bracketId, players) {
       return new Promise((resolve, reject) => {
         try {
-          const rec = api.post(`brackets/${bracketId}/clear`,
-            {players}
-          );
+          const rec = api.post(`brackets/${bracketId}/clear`, { players });
           console.log("rec cleared");
           //clear bracket
           this.selected_bracket.rounds = [];
@@ -322,7 +377,7 @@ export const authStore = defineStore({
       }
     },
     setSelectedBracket(bracket) {
-      console.log("SEtting bracket", bracket);
+      console.log("Setting bracket", bracket);
       this.selected_bracket = bracket;
 
       localStorage.setItem(
@@ -372,6 +427,9 @@ export const authStore = defineStore({
     },
     playerCount() {
       return this.players?.length || 0;
+    },
+    limboPlayers() {
+      return this.players.filter((player) => player.stateLabel == "Limbo");
     },
   },
 });

@@ -85,7 +85,7 @@ body {
 }
 
 .card {
-  @apply bg-gray-800 shadow-lg rounded-lg p-4 min-w-96;
+  @apply bg-gray-800 shadow-lg rounded-lg p-4 w-max;
 }
 
 .btn {
@@ -146,6 +146,14 @@ body {
 
 .badge-danger {
   @apply bg-red-900 text-red-200 border-2 border-red-800;
+}
+
+.badge-warning {
+  @apply bg-yellow-900 text-yellow-200 border-2 border-yellow-800;
+}
+
+.badge-warning:hover {
+  @apply bg-yellow-800 text-yellow-200 border-2 border-yellow-700;
 }
 
 .alert {

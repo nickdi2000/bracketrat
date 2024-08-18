@@ -23,6 +23,19 @@ class BracketController extends BaseController {
 		}
 	}
 
+	async showRobin(req, res) {
+		const bracketId = req.params.id;
+
+		try {
+			const bracket = await bracketService.showRobin(bracketId);
+
+			res.send(bracket);
+		} catch (error) {
+			console.log("error", error);
+			res.status(400).send("BracketController error" + JSON.stringify(error));
+		}
+	}
+
 	async addPlayer(req, res) {
 		const { bracketId, playerId } = req.params;
 
@@ -80,8 +93,8 @@ class BracketController extends BaseController {
 		try {
 			console.log("playersObj::", playersObj);
 			const filteredIds = playersObj
-				.filter( e => e.stateLabel === "Limbo")
-				.map( p  => p._id);
+				.filter((e) => e.stateLabel === "Limbo")
+				.map((p) => p._id);
 			console.log("filteredIds", filteredIds);
 
 			await Player.deleteMany({
@@ -99,9 +112,7 @@ class BracketController extends BaseController {
 			});
 		} catch (error) {
 			console.error("Failed to remove all players:", error);
-			res
-				.status(500)
-				.json({ message: "Failed to remove all players" });
+			res.status(500).json({ message: "Failed to remove all players" });
 		}
 	}
 
@@ -130,6 +141,25 @@ class BracketController extends BaseController {
 		}
 	}
 
+	async generateRobin(req, res) {
+		const { bracketId } = req.params;
+
+		try {
+			const bracket = await bracketService.generateRobinBracket({
+				bracketId,
+			});
+
+			res.json({
+				message:
+					"Bracket generated successfully with blank rounds and player seeds.",
+				bracket: bracket,
+			});
+		} catch (error) {
+			console.error("Error generating robin bracket:", error);
+			res.status(500).json({ message: error.message });
+		}
+	}
+
 	async generateFixed(req, res) {
 		const { bracketId } = req.params;
 		const { size } = req.body;
@@ -139,7 +169,7 @@ class BracketController extends BaseController {
 		}
 
 		try {
-			 	await bracketService.generateBracket({
+			await bracketService.generateBracket({
 				bracketId,
 				bracketSize: size,
 			});
@@ -181,20 +211,21 @@ class BracketController extends BaseController {
 	}
 
 	async clearBracket(req, res) {
-    const { bracketId } = req.params;
-		
-    try {
+		const { bracketId } = req.params;
+
+		try {
 			await Game.deleteMany({ bracketId: bracketId });
-      let bracket = await bracketService.clearRounds(bracketId);
-    	res.json({ 
-				message: "Bracket rounds have been cleared and players have been set to 'Limbo' successfully.",
-			 	bracket 
+			let bracket = await bracketService.clearRounds(bracketId);
+			res.json({
+				message:
+					"Bracket rounds have been cleared and players have been set to 'Limbo' successfully.",
+				bracket,
 			});
-    } catch (error) {
-        console.error("Error clearing bracket:", error);
-        res.status(500).json({ message: "Failed to clear bracket." });
-    }
-}
+		} catch (error) {
+			console.error("Error clearing bracket:", error);
+			res.status(500).json({ message: "Failed to clear bracket." });
+		}
+	}
 
 	async updateGameWinner(req, res) {
 		const { bracketId } = req.params;
@@ -213,6 +244,27 @@ class BracketController extends BaseController {
 				console.error("Error updating winner of match:", error);
 				res.status(500).json({ message: "Failed to update winner." });
 			}
+		} catch (error) {
+			console.error("Error updating winner of match:", error);
+			res.status(500).json({ message: "Failed to update winner." });
+		}
+	}
+
+	async updateGameWinnerRobin(req, res) {
+		const { bracketId } = req.params;
+		const { playerId, gameId } = req.body;
+
+		try {
+			let bracket = await bracketService.updateGameWinnerRobin(
+				gameId,
+				playerId
+			);
+
+			if (!bracket) {
+				return res.status(404).json({ message: "Bracket not found." });
+			}
+
+			res.json({ message: "Updated Winner", bracket });
 		} catch (error) {
 			console.error("Error updating winner of match:", error);
 			res.status(500).json({ message: "Failed to update winner." });
@@ -289,7 +341,7 @@ class BracketController extends BaseController {
 			if (!bracket) {
 				return res.status(404).send("Bracket not found");
 			}
-			res.send({bracket, players});
+			res.send({ bracket, players });
 		} catch (error) {
 			console.log("error", error);
 			res.status(400).send("BracketController error" + JSON.stringify(error));

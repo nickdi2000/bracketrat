@@ -17,6 +17,7 @@ const bracketSchema = new mongoose.Schema(
 
 		//players: [playerSchema],
 		rounds: [roundSchema],
+		robinRounds: [ roundSchema ],
 		organization: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Organization",

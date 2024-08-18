@@ -39,6 +39,8 @@ import {
   ArrowLongRightIcon,
   ArrowLongLeftIcon,
   ArrowUturnDownIcon,
+  ArrowUturnRightIcon,
+  ArrowUturnLeftIcon,
   PencilSquareIcon,
   ExclamationTriangleIcon,
   QuestionMarkCircleIcon,
@@ -54,6 +56,7 @@ import {
   TrophyIcon,
   QrCodeIcon,
   ListBulletIcon,
+  Cog6ToothIcon,
 } from "@heroicons/vue/24/solid";
 
 import piniaPlugin from "./plugins/pinia";
@@ -122,11 +125,14 @@ app.component("ArrowLongRightIcon", ArrowLongRightIcon);
 app.component("ArrowLeftCircleIcon", ArrowLeftCircleIcon);
 app.component("ArrowLongLeftIcon", ArrowLongLeftIcon);
 app.component("ArrowUturnDownIcon", ArrowUturnDownIcon);
+app.component("ArrowUturnRightIcon", ArrowUturnRightIcon);
+app.component("ArrowUturnLeftIcon", ArrowUturnLeftIcon);
 app.component("PencilSquareIcon", PencilSquareIcon);
 app.component("ExclamationTriangleIcon", ExclamationTriangleIcon);
 app.component("ArrowPathIcon", ArrowPathIcon);
 app.component("QrCodeIcon", QrCodeIcon);
 app.component("TrophyIcon", TrophyIcon);
+app.component("Cog6ToothIcon", Cog6ToothIcon);
 
 app.use(router);
 

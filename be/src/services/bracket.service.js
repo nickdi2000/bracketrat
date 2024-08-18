@@ -1,6 +1,7 @@
 const { Bracket, Organization } = require("../models");
 const { Player } = require("../models/player.model");
 const { Game } = require("../models");
+const { populate } = require("../models/token.model");
 
 /* Generate Bracket with all players, or if bracketSize is provided, generate a fixed-size bracket with no players.  if useCurrentPlayers is true, we take the players already in the bracket and rebuild it (to fix blanks/errorenous byes etc) */
 const generateBracket = async ({
@@ -95,9 +96,9 @@ const generateBracket = async ({
 				games: gamesThisRound.map((game) => game._id),
 				roundNumber,
 			});
-			allGames.push(...gamesThisRound,);
+			allGames.push(...gamesThisRound);
 		}
-		
+
 		// Link games with nextGameId
 		for (
 			let roundIndex = 0;
@@ -117,7 +118,6 @@ const generateBracket = async ({
 				}
 			});
 		}
-
 
 		await bracket.save();
 		return populateRoundsWithPlayers(bracket); // Assuming this function populates and returns full bracket details
@@ -198,10 +198,62 @@ const updateGameWinner = async (gameId, winnerId) => {
 };
 
 /*
+Update winner for round robin 
+*/
+
+const updateGameWinnerRobin = async (gameId, winnerId) => {
+	try {
+		const game = await Game.findById(gameId).populate("participants.player");
+		if (!game) {
+			throw new Error("Game not found.");
+		}
+
+		// Initialize variables to track the winner
+		let winnerAssigned = false;
+		let winnerName = "";
+
+		// Update participants to mark the winner and losers
+		game.participants.forEach((participant) => {
+			if (
+				participant.player &&
+				participant.player._id.toString() === winnerId
+			) {
+				participant.winner = true;
+				winnerName = participant.player.name;
+				winnerAssigned = true;
+			} else {
+				participant.winner = false; // Mark other participants as not winners
+			}
+		});
+
+		if (!winnerAssigned) {
+			throw new Error("Player not found in the game.");
+		}
+		game.status = "completed"; // Update game status to completed
+		await game.save();
+
+		console.log(`Game updated with winner. Now finding the next game...`);
+
+		//get bracketId from game so we can return the full bracket
+		const bracketId = game.bracketId;
+
+		//augmentRobinRounds
+		const bracket = await augmentRobinRounds(bracketId);
+
+		return bracket;
+	} catch (error) {
+		console.error("Error updating game winner:", error.message);
+		throw new Error("Failed to update game winner.");
+	}
+};
+
+//find round and game in round
+
+/*
  *
  */
 
-//still doesn't seem to fill the player1 and player2 with the names...this is my bracket.service.js
+//get full bracket, depending on bracket type currently set
 const getFullBracket = async (bracketId) => {
 	const bracket = await Bracket.findById(bracketId)
 		.populate({
@@ -213,6 +265,13 @@ const getFullBracket = async (bracketId) => {
 		throw new Error("Bracket not found.");
 	}
 	console.log(JSON.stringify(bracket, null, 2));
+
+	if (bracket.type === "round-robin") {
+		const augmentedBracket = await augmentRobinRounds(bracketId);
+		return augmentedBracket;
+	}
+
+	//normal single/double elim bracket style
 	return populateRoundsWithPlayers(bracket);
 	//return augmentPlayerData(bracket);
 };
@@ -429,9 +488,9 @@ const undoOutcomes = async ({ gameId }) => {
 		}
 		// Reset the winner status for player1 and player2 within the game
 
-		game.participants.forEach(e => {
+		game.participants.forEach((e) => {
 			e.winner = null;
-		})
+		});
 
 		game.status = "pending";
 		game.winner = null;
@@ -478,7 +537,7 @@ const undoOutcomes = async ({ gameId }) => {
 	}
 };
 
-module.exports = { undoOutcomes };
+//module.exports = { undoOutcomes };
 
 undoOutcomes_ = async (bracketId, roundIndex, gameId) => {
 	let bracket;
@@ -562,9 +621,11 @@ clearRounds = async (bracketId) => {
 		await bracket.save();
 		return bracket;
 	} catch (error) {
-	console.error("Error deleting bracket:", error);
-	return res.status(500).json({ message: "An error occurred while deleting the bracket." });
-}
+		console.error("Error deleting bracket:", error);
+		return res
+			.status(500)
+			.json({ message: "An error occurred while deleting the bracket." });
+	}
 };
 
 validateBracket = (bracketId) => {
@@ -615,12 +676,142 @@ async function batchUpdatePlayers({ players }) {
 	}
 }
 
+/* ROUND ROBIN FUNCTIONS */
+
+generateRobinBracket = async ({ bracketId }) => {
+	try {
+		const bracket = await Bracket.findById(bracketId)
+			.populate("players")
+			.exec();
+
+		if (!bracket) {
+			throw new Error("Bracket not found.");
+		}
+
+		const organization = await Organization.findById(bracket.organization);
+		if (!organization) {
+			throw new Error("Organization not found.");
+		}
+		const players = await Player.find({ organization: organization._id });
+
+		let totalPlayers = players.length;
+
+		if (totalPlayers < 2) {
+			throw new Error("Not enough players to generate a round-robin bracket.");
+		}
+
+		// If odd number of players, add a 'bye' player
+		const hasBye = totalPlayers % 2 !== 0;
+		if (hasBye) {
+			players.push({ _id: null }); // Adding a null player to represent the "bye"
+			totalPlayers += 1;
+		}
+
+		const totalRounds = totalPlayers - 1;
+		const totalGamesPerRound = totalPlayers / 2;
+
+		console.log(`player size ${totalPlayers}`);
+
+		bracket.robinRounds = [];
+		let allGames = [];
+
+		// Generate rounds
+		for (let round = 0; round < totalRounds; round++) {
+			const roundGames = [];
+
+			for (let i = 0; i < totalGamesPerRound; i++) {
+				const home = players[i];
+				const away = players[totalPlayers - i - 1];
+
+				const game = new Game({
+					bracketId: bracket._id,
+					participants: [
+						{
+							player: home._id,
+							bye: !home._id, // True if home is a "bye" player
+						},
+						{
+							player: away._id,
+							bye: !away._id, // True if away is a "bye" player
+						},
+					],
+					status: "pending",
+					roundNumber: round + 1,
+					nextGameId: null,
+				});
+				await game.save();
+				roundGames.push(game);
+			}
+
+			bracket.robinRounds.push({
+				games: roundGames.map((game) => game._id),
+				roundNumber: round + 1,
+			});
+
+			allGames.push(...roundGames);
+
+			// Rotate players (except the first one)
+			players.splice(1, 0, players.pop());
+		}
+
+		// Save the bracket with the updated rounds
+		await bracket.save();
+
+		return augmentRobinRounds(bracket._id);
+	} catch (error) {
+		console.error("Error generating robin bracket:", error.message);
+		throw new Error(error.message);
+	}
+};
+
+showRobin = async (bracketId) => {
+	try {
+		const bracket = await augmentRobinRounds(bracketId);
+		return bracket;
+	} catch (error) {
+		console.error("Error showing robin bracket:", error.message);
+		throw new Error(error.message);
+	}
+};
+
+async function augmentRobinRounds(bracketId) {
+	// Populate the bracket with player names
+	const bracket = await Bracket.findById(bracketId)
+		.populate({
+			path: "robinRounds.games",
+			model: "Game", // Ensure this is the correct model name for your games
+			populate: {
+				path: "participants",
+				model: "Player", // Ensure this is the correct model name for your players
+				populate: {
+					path: "player",
+					model: "Player", // Ensure this is the correct model name for your players
+				},
+			},
+		})
+		.exec();
+
+	//sort by BYES last
+	bracket.robinRounds.forEach((round) => {
+		round.games.sort((a, b) => {
+			const aNulls = a.participants.filter((p) => !p.player);
+			const bNulls = b.participants.filter((p) => !p.player);
+			return aNulls.length - bNulls.length;
+		});
+	});
+
+	return bracket;
+}
+
 module.exports = {
 	generateBracket,
+	generateRobinBracket,
 	clearRounds,
+	showRobin,
 	validateBracket,
 	removePlayerFromGame,
 	updateGameWinner,
+	updateGameWinnerRobin,
 	undoOutcomes,
 	addPlayerToFirstEmptySpot,
 	reGenerateBracket,

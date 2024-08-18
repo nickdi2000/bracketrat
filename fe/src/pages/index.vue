@@ -9,13 +9,16 @@
       <PlayerBadges :players="playersNotInBracket" @update="update" />
     </div>
 
-    <div style="position: fixed; left: 43px; top: 90px; z-index: 999">
+    <div
+      style="position: fixed; left: 43px; top: 90px; z-index: 999"
+      v-if="bracketType != 'round-robin'"
+    >
       <button
         class="btn btn-secondary btn-sm z-100"
         @click="dev = !dev"
         v-if="$isLocal"
       >
-        OBJ ({{ shouldShowBracket ? "y" : "x" }})
+        OBJ
       </button>
       <button
         class="btn btn-secondary btn-sm ml-3"
@@ -25,7 +28,15 @@
       </button>
     </div>
 
-    <div class="bracket-container fadein" v-if="shouldShowBracket">
+    <!-- START BRACKET CONTAINER -->
+    <div v-if="bracketType == 'round-robin'">
+      <RoundRobin :bracket="currentBracket" />
+    </div>
+
+    <div
+      class="bracket-container fadein"
+      v-if="shouldShowBracket && bracketType != 'round-robin'"
+    >
       <div v-if="renderError" class="flex justify-center w-full m-auto">
         <div class="alert alert-danger">
           <div class="font-bold">Error rendering bracket</div>
@@ -38,7 +49,7 @@
         :rounds="rounds"
         class="bracket z-40-"
         :key="'bracket-' + compKey"
-        v-if="view == 'bracket'"
+        v-if="view == 'bracket' && bracketType != 'round-robin' && !renderError"
       >
         <template #player="{ player }">
           <div
@@ -62,6 +73,9 @@
         </template>
       </bracket>
     </div>
+
+    <!-- END BRACKET CONTAINER -->
+
     <pre v-if="dev" class="text-xs z-50" style="">{{ rounds }}</pre>
 
     <div
@@ -165,6 +179,8 @@ import BracketList from "@/components/BracketList.vue";
 import PlayerBadges from "@/components/PlayerBadges.vue";
 import BracketGenerator from "@/components/BracketGenerator.vue";
 import RoundsDetails from "@/components/RoundsDetails.vue";
+import RoundRobin from "@/components/RoundRobin.vue";
+
 export default {
   components: {
     Bracket,
@@ -175,6 +191,7 @@ export default {
     PlayerBadges,
     BracketGenerator,
     RoundsDetails,
+    RoundRobin,
   },
   mixins: [bracketMixin],
   data() {
@@ -243,7 +260,7 @@ export default {
     },
   },
   errorCaptured(err, vm, info) {
-    console.error('Error captured:', err);
+    console.error("Error captured:", err);
     this.renderError = true;
 
     // Return false to propagate the error to other error handlers,
@@ -257,6 +274,9 @@ export default {
       console.log("rounds", this.currentBracket?.rounds?.length);
       console.log("playerCount", this.playerCount);
       return s;
+    },
+    bracketType() {
+      return this.currentBracket?.type;
     },
     players() {
       return this.$store.players;
@@ -316,7 +336,6 @@ export default {
   align-items: center;
   padding: 6rem;
   margin-top: 10%;
-
   height: 90vh;
   overflow: auto;
 }
@@ -535,7 +554,7 @@ p {
     top: 10px;
     left: 0;
     padding-top: 90px;
-    padding-left: 20px;
+    padding-left: 0px;
     padding-right: 0px;
     padding-bottom: 0px;
     overflow: scroll;
