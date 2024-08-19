@@ -13,11 +13,11 @@
     </div>
 
     <div v-if="bracket?.robinRounds" class="my-8">
-      <div class="m-auto">
+      <div class="m-auto grid md:grid-cols-1 lg:grid-cols-2">
         <div
           v-for="(round, index) in bracket.robinRounds"
           :key="index"
-          class="w-full backdrop-saturate-100 bg-slate-600/30 rounded-lg p-3"
+          class="w-full backdrop-saturate-100 bg-slate-600/30 rounded-lg p-3 lg:p-4"
         >
           <div class="my-2 py-3 drop-shadow-lg w-full px-3">
             <h3 class="uppercase font-bold my-2 text-gray-200">

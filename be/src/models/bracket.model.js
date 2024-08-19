@@ -17,7 +17,7 @@ const bracketSchema = new mongoose.Schema(
 
 		//players: [playerSchema],
 		rounds: [roundSchema],
-		robinRounds: [ roundSchema ],
+		robinRounds: [roundSchema],
 		organization: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Organization",
@@ -74,6 +74,11 @@ const bracketSchema = new mongoose.Schema(
 		auto_bracket: {
 			type: Boolean,
 			default: true,
+		},
+		mark_method: {
+			type: String,
+			enum: ["binary", "points"],
+			default: "binary",
 		},
 	},
 	{

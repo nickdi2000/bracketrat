@@ -52,6 +52,10 @@ router.post("/robin/:bracketId/set-winner", (req, res, next) => {
 	bracketController.updateGameWinnerRobin(req, res, next);
 });
 
+router.post("/robin/:bracketId/undo-winner", (req, res, next) => {
+	bracketController.undoWinner(req, res, next);
+});
+
 router.post("/:id/delete-all-players", (req, res, next) => {
 	bracketController.removeAllPlayers(req, res, next);
 });

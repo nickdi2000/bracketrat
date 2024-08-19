@@ -154,6 +154,24 @@ export const authStore = defineStore({
       });
     },
 
+    async undoWinner({ playerId, gameId, bracketId }) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const rec = await api.post(
+            `/brackets/robin/${bracketId}/undo-winner`,
+            {
+              playerId,
+              gameId,
+            }
+          );
+          this.setSelectedBracket(rec.data.bracket);
+          resolve(rec);
+        } catch (err) {
+          reject(err);
+        }
+      });
+    },
+
     async saveOrg(data) {
       return new Promise(async (resolve, reject) => {
         try {

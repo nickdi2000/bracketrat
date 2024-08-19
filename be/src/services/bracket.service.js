@@ -247,6 +247,32 @@ const updateGameWinnerRobin = async (gameId, winnerId) => {
 	}
 };
 
+const undoWinner = async ({ gameId }) => {
+	try {
+		const game = await Game.findById(gameId).populate("participants.player");
+		if (!game) {
+			throw new Error("Game not found.");
+		}
+
+		// Reset the winner status for player1 and player2 within the game
+		game.participants.forEach((participant) => {
+			participant.winner = null;
+		});
+
+		game.status = "pending";
+		game.winner = null;
+
+		// Save the updated game
+		await game.save();
+
+		return game;
+	} catch (error) {
+		console.error("Error undoing outcomes:", error);
+
+		throw new Error("Failed to undo outcomes.");
+	}
+};
+
 //find round and game in round
 
 /*
@@ -806,12 +832,14 @@ async function augmentRobinRounds(bracketId) {
 module.exports = {
 	generateBracket,
 	generateRobinBracket,
+	augmentRobinRounds,
 	clearRounds,
 	showRobin,
 	validateBracket,
 	removePlayerFromGame,
 	updateGameWinner,
 	updateGameWinnerRobin,
+	undoWinner,
 	undoOutcomes,
 	addPlayerToFirstEmptySpot,
 	reGenerateBracket,

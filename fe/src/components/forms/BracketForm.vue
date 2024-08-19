@@ -91,9 +91,10 @@
           </div>
         </div> -->
 
+        <!-- PLAYER OPTIONs -->
         <div>
           <label class="block text-sm font-medium text-white"
-            >Player Options</label
+            >{{ $teamPlayer }} Options</label
           >
           <table class="w-full" v-if="options">
             <tr
@@ -107,6 +108,31 @@
               </td>
             </tr>
           </table>
+        </div>
+
+        <!-- MATCH OPTIONS -->
+        <div class="pb-4">
+          <label class="block text-sm font-medium text-white mb-3"
+            >Marking Method
+            <QuestionMarkCircleIcon class="w-4 h-4 inline" @click="markHelp" />
+          </label>
+          <div class="">
+            <span v-for="type in markTypes">
+              <button
+                class="text-white p-2 rounded-md hover:bg-blue-500 m-2"
+                :class="
+                  form.mark_method === type.value
+                    ? 'bg-blue-500 	'
+                    : 'bg-blue-900'
+                "
+                :key="type.value"
+                :disabled="type.disabled"
+                @click="form.mark_method = type.value"
+              >
+                {{ type.name }}
+              </button>
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -267,6 +293,7 @@ export default {
         require_auth: false,
         require_password: false,
         auto_bracket: true,
+        mark_method: "binary",
       },
       units: [
         {
@@ -310,6 +337,20 @@ export default {
           disabled: true,
           description:
             "You play in a group stage and then the top teams advance to a single elimination bracket.  It's great for pretending you're in the big leagues.",
+        },
+      ],
+      markTypes: [
+        {
+          value: "binary",
+          name: "Binary",
+          description:
+            "Either you win or you lose. No points, just wins and losses.",
+        },
+        {
+          value: "points",
+          name: "Points",
+          description:
+            "Enter points for each game.  The 'Winner' and 'Loser' are calculated from these values.",
         },
       ],
 
@@ -426,15 +467,22 @@ export default {
       let data = JSON.parse(JSON.stringify(this.form));
       delete data.players;
       delete data.rounds;
+      delete data.robinRounds;
 
       try {
-        const rec = await this.$api.post("brackets", data);
-        this.$store.fetchBracket(this.form._id);
+        // const rec = await this.$api.post("brackets", data);
+        //this.$store.fetchBracket(this.form._id);
+        await this.$store.patchBracket(data);
         this.stopLoading();
       } catch (e) {
         console.log("error saving bracket", e);
         this.stopLoading();
       }
+    },
+    markHelp() {
+      this.$bottomAlert(
+        "There are two methods for marking matches.  Binary is the simplist, allowing only wins or losses. The 'Points' method requires that points are entered, and the 'Winner' and 'Loser' are calculated from these values."
+      );
     },
     validate() {
       //check if form code has spaces in it
@@ -466,10 +514,10 @@ export default {
     },
     async getRecord(id) {
       try {
-      const { data } = await this.$api.get(`/brackets/${id}`);
-      this.form = data;
-      } catch (error){
-      this.$toast.error('Failed to load bracket. Please try again.');
+        const { data } = await this.$api.get(`/brackets/${id}`);
+        this.form = data;
+      } catch (error) {
+        this.$toast.error("Failed to load bracket. Please try again.");
       }
     },
     makeSelection(type) {

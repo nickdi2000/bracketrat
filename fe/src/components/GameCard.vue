@@ -19,7 +19,7 @@
       </div>
       <div
         v-else
-        class="grid grid-cols-3 items-center font-bold uppercase text-lg md:text-3xl lg:text-5xl mb-2 bg-slate-800/50 rounded-lg p-4 mb-2"
+        class="grid grid-cols-3 items-center font-bold uppercase text-lg md:text-xl lg:text-2xl mb-2 bg-slate-800/50 rounded-lg p-4 mb-2"
       >
         <div
           class="text-left"
@@ -30,7 +30,7 @@
         <div class="text-center text-gray-400">vs</div>
         <div
           class="text-right"
-          :class="game.participants[0]?.winner ? 'text-green-400' : ''"
+          :class="game.participants[1]?.winner ? 'text-green-400' : ''"
         >
           {{ game.participants[1]?.player?.name || "TBA" }}
         </div>
@@ -45,7 +45,11 @@
         </button>
       </div>
 
-      <div v-if="hasBye" class="p-3 m-auto text-center">
+      <div
+        v-if="hasBye"
+        class="p-3 m-auto text-center"
+        @click="isFlipped = !isFlipped"
+      >
         No actions available.
       </div>
       <!-- PARTICIPANTS LOOP -->
@@ -55,12 +59,24 @@
           class="px-3 mt-2 grid grid-cols-2 backdrop-opacity-10 backdrop-invert bg-slate-800/30 rounded-md"
           v-for="(p, i) in [0, 1]"
         >
-          <div class="p-3 font-bold uppercase text-lg md:text-3xl lg:text-5xl">
+          <div
+            class="p-3 font-bold uppercase text-lg md:text-xl lg:text-2xl"
+            :class="game.participants[i]?.winner ? 'text-green-400' : ''"
+          >
             {{ game.participants[i]?.player?.name || "TBA" }}
           </div>
           <div class="px-1 py-2">
             <button
-              class="btn btn-success"
+              class="btn btn-secondary"
+              v-if="winnerIsSet && game.participants[i]?.winner"
+              @click="undoWinner(game.participants[i]?.player)"
+            >
+              Undo
+            </button>
+            <button
+              v-else
+              class="btn btn-success fadein"
+              :disabled="loading"
               @click="markAsWinner(game.participants[i]?.player)"
             >
               Mark Winner
@@ -70,16 +86,22 @@
         <!-- END PARTICIPANTS -->
       </div>
     </div>
+    <Loader2 v-if="loading" />
   </div>
 </template>
 
 <script>
+import Loader2 from "./Loader2.vue";
+
 export default {
   props: {
     game: {
       type: Object,
       required: true,
     },
+  },
+  components: {
+    Loader2,
   },
   computed: {
     winnerIsSet() {
@@ -93,6 +115,7 @@ export default {
   },
   methods: {
     async markAsWinner(player) {
+      this.loading = true;
       console.log("marking winner", player);
       console.log("Game", this.game);
       try {
@@ -101,16 +124,40 @@ export default {
           gameId: this.game.id,
           bracketId: this.game.bracketId,
         });
-        this.isFlipped = false;
+        this.toggleFlip();
       } catch (e) {
         console.log("error marking winner", e);
         this.$toast.error("Error marking winner");
       }
+      this.loading = false;
+    },
+    async undoWinner(player) {
+      this.loading = true;
+      console.log("undoing winner", player);
+      console.log("Game", this.game);
+      try {
+        await this.$store.undoWinner({
+          playerId: player._id,
+          gameId: this.game.id,
+          bracketId: this.game.bracketId,
+        });
+        this.toggleFlip();
+      } catch (e) {
+        console.log("error undoing winner", e);
+        this.$toast.error("Error undoing winner");
+      }
+      this.loading = false;
+    },
+    toggleFlip() {
+      setTimeout(() => {
+        this.isFlipped = false;
+      }, 300);
     },
   },
   data() {
     return {
       isFlipped: false,
+      loading: false,
     };
   },
 };

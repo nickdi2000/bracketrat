@@ -330,6 +330,33 @@ class BracketController extends BaseController {
 		}
 	}
 
+	/* robin undoOutcomes */
+
+	async undoWinner(req, res) {
+		const { bracketId } = req.params;
+		const { gameId, roundIndex } = req.body;
+
+		try {
+			let game = await bracketService.undoWinner({ gameId });
+			if (!game) {
+				return res.status(404).json({ message: "game not found." });
+			}
+
+			const bracket = await bracketService.augmentRobinRounds(bracketId);
+			if (!bracket) {
+				return res.status(404).json({ message: "Bracket not found" });
+			}
+
+			res.json({
+				message: "Winner undone successfully.",
+				bracket: bracket,
+			});
+		} catch (error) {
+			console.error("Error undoing winner:", error);
+			res.status(500).json({ message: "Failed to undo winner." });
+		}
+	}
+
 	async findByCode(req, res) {
 		const { code } = req.params;
 		try {

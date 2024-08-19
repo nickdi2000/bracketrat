@@ -1,6 +1,6 @@
 <template>
   <div class="p-4 flex flex-col m-auto text-center" style="z-index: 99999">
-    <div class="subheader mb-2" @click="alert('clicked')">
+    <div class="subheader mb-2" v-if="players.length">
       Stragglers
       <button
         class="hover:bg-gray-800 p-1 rounded-full"
