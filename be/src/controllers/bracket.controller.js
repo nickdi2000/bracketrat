@@ -12,7 +12,6 @@ class BracketController extends BaseController {
 	//so how would i update this show method to include that function?
 	async show(req, res) {
 		const bracketId = req.params.id;
-
 		try {
 			const bracket = await bracketService.getFullBracket(bracketId);
 

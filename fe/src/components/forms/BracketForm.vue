@@ -31,9 +31,20 @@
             class="uppercase font-bold text-3xl"
             placeholder="MYCODE"
           />
-          <div class="text-xs text-gray-300 m-2">
+          <div class="text-red-400 py-2" v-if="!form.code">
+            Code cannot be blank.
+          </div>
+          <div class="text-gray-300 my-2">
             This is the link that players will use to join your tournament.
             <span class="text-lg font-bold text-slate">{{ link }}</span>
+          </div>
+          <div>
+            <router-link
+              class="p-2 bg-slate-800 hover:bg-slate-700"
+              :to="'/admin/players/invite'"
+            >
+              View QR Code <QrCodeIcon class="w-4 h-4 inline" />
+            </router-link>
           </div>
         </div>
 
@@ -470,13 +481,12 @@ export default {
       delete data.robinRounds;
 
       try {
-        // const rec = await this.$api.post("brackets", data);
-        //this.$store.fetchBracket(this.form._id);
         await this.$store.patchBracket(data);
         this.stopLoading();
       } catch (e) {
         console.log("error saving bracket", e);
-        this.stopLoading();
+        this.loading = false;
+        this.$toast.error("Failed to save bracket. Please try again.");
       }
     },
     markHelp() {

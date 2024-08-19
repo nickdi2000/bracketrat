@@ -379,20 +379,24 @@ export const authStore = defineStore({
       localStorage.setItem("user", JSON.stringify(this.user));
     },
     patchBracket(partialData) {
-      try {
-        const rec = api.patch(
-          "brackets/" + this.selected_bracket._id,
-          partialData
-        );
-        //set selected_bracket details from partiaLData
-        Object.assign(this.selected_bracket, partialData);
-        localStorage.setItem(
-          "selected_bracket",
-          JSON.stringify(this.selected_bracket)
-        );
-      } catch (err) {
-        console.log(err);
-      }
+      return new Promise((resolve) => {
+        try {
+          const rec = api.patch(
+            "brackets/" + this.selected_bracket._id,
+            partialData
+          );
+          //set selected_bracket details from partiaLData
+          Object.assign(this.selected_bracket, partialData);
+          localStorage.setItem(
+            "selected_bracket",
+            JSON.stringify(this.selected_bracket)
+          );
+          resolve(rec);
+        } catch (err) {
+          console.log(err);
+          reject(err);
+        }
+      });
     },
     setSelectedBracket(bracket) {
       console.log("Setting bracket", bracket);

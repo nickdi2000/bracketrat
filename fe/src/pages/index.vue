@@ -11,13 +11,9 @@
 
     <div
       style="position: fixed; left: 43px; top: 90px; z-index: 999"
-      v-if="bracketType != 'round-robin'"
+      v-if="bracketType != 'round-robin' && $isLocal"
     >
-      <button
-        class="btn btn-secondary btn-sm z-100"
-        @click="dev = !dev"
-        v-if="$isLocal"
-      >
+      <button class="btn btn-secondary btn-sm z-100" @click="dev = !dev">
         OBJ
       </button>
       <button

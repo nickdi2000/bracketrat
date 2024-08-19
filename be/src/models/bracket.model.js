@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 //const { toJSON } = require("./plugins");
 
 const { roundSchema } = require("./round.model");
+const { required } = require("joi");
 //const { playerSchema } = require("./player.model");
 
 const bracketSchema = new mongoose.Schema(
@@ -14,8 +15,6 @@ const bracketSchema = new mongoose.Schema(
 			type: String,
 			required: false,
 		},
-
-		//players: [playerSchema],
 		rounds: [roundSchema],
 		robinRounds: [roundSchema],
 		organization: {
@@ -47,6 +46,7 @@ const bracketSchema = new mongoose.Schema(
 		},
 		code: {
 			type: String,
+			required: true,
 			default: () => generateRandomCode(6), // Use the function to generate a default code
 		},
 		type: {
@@ -98,19 +98,6 @@ bracketSchema.virtual("isReady").get(function () {
 		});
 	});
 });
-
-function _generateRandomCode(length = 10) {
-	let result = "";
-	const characters =
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-	const charactersLength = characters.length;
-	for (let i = 0; i < length; i++) {
-		result += characters.charAt(Math.floor(Math.random() * charactersLength));
-	}
-	return result;
-}
-
-//create another generateRandomCode function, but use a random animal + random word + random number
 
 function generateRandomCode() {
 	let animalsArray = [

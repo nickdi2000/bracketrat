@@ -43,7 +43,7 @@
           z-index: 98;
         "
     >
-      <LimboPlayers />
+      <LimboPlayers :bracket="bracket" />
     </div>
   </div>
 </template>

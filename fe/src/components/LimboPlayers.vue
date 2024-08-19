@@ -34,6 +34,10 @@ export default {
   methods: {
     async add(player) {
       console.log("adding player to bracket", player);
+      //bottom alert
+      this.$bottomAlert(
+        `${player.name} is not currently in the tournament.  You can't add them directly because the bracket is already locked and ready to go.  To include this and other players, you must re-generate the bracket.`
+      );
       //await this.$store.addPlayerToBracket(player);
       //this.$emit("update");
     },
