@@ -57,7 +57,16 @@
             >
               Go
             </button>
+
+            <div>
+            <router-link to="/landing" class="btn btn-secondary mt-4">
+              Back to Homepage
+            </router-link>
           </div>
+
+          </div>
+
+         
         </div>
       </div>
     </main>

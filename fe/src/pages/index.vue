@@ -11,7 +11,7 @@
 
     <div
       style="position: fixed; left: 43px; top: 90px; z-index: 999"
-      v-if="bracketType != 'round-robin' && $isLocal"
+      v-if="bracketType != 'round-robin' && $isLocal && false"
     >
       <button class="btn btn-secondary btn-sm z-100" @click="dev = !dev">
         OBJ
@@ -560,6 +560,7 @@ p {
   .bracket {
     padding-bottom: 100px;
     padding-top: 100px;
+    padding-left: 12px;
     min-height: 100vh;
     z-index: 0;
   }

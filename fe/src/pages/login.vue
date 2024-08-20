@@ -162,7 +162,7 @@
       </div>
 
       <div class="my-12">
-        <router-link :to="'/find'" class="btn">Join as Player</router-link>
+        <router-link :to="'/find'" class="btn hover:text-blue-100 hover:bg-slate-800">Join Existing Bracket</router-link>
       </div>
       <div class="footer">
         <p class="text-sm text-gray-500 dark:text-gray-400 text-center">

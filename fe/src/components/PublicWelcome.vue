@@ -1,8 +1,9 @@
 <template>
   <div
-    class="h-screen flex flex-col items-center justify-center sm:px-10 md:px-2"
+    class="h-screen flex flex-col items-center justify-center sm:px-10 md:px-2 pt-12"
   >
-    <Logo />
+    <Logo @click="$router.push('/landing')" />
+
     <div
       class="mt-5 mb-0 pb-0 text-3xl font-bold leading-tight text-gray-900 dark:text-gray-100"
     >
@@ -28,21 +29,24 @@
               selection ? '' : 'bg-blue-500',
               selection && selection != option.action ? 'opacity-0' : '',
             ]"
-            class="fadeinUp big-button"
+            class="fadeinUp big-button py-4"
             :key="index"
           >
-            <div>{{ option.label }}</div>
-            <!-- <div
+            <div>
+              {{ option.label }}
+            </div>
+            <div
               v-if="option.tip"
               class="text-sm text-gray-900 opacity-50 dark:text-gray-100"
             >
               {{ option.tip }}
-            </div> -->
+            </div>
           </button>
         </div>
-        <div class="footnote text-center m-auto mt-12 opacity-30">
-          <router-link :to="'/landing'" class="btn btn-secondary fadein mt-12">
-            Go Home
+        <div class="footnote text-center m-auto mt-12 opacity-70">
+          <p class="mb-0 pb-0">Already have an account?</p>
+          <router-link :to="'/login'" class="underline fadein mt-0 hover:text-blue-200">
+            Login
           </router-link>
         </div>
       </div>
@@ -129,11 +133,13 @@ export default {
           label: "Join",
           action: "join",
           tip: "With a room code",
+          component: "UserGroupIcon",
         },
         {
           label: "Create",
           action: "create",
-          tip: "..then create a tournament.",
+          tip: "then generate a tournament.",
+          component: "PlusCircleIcon",
         },
       ],
     };
@@ -143,7 +149,7 @@ export default {
 
 <style scoped lang="scss">
 .big-button {
-  @apply text-center ease-in-out px-10 py-8 mt-3 w-full text-3xl uppercase font-semibold text-white rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50;
+  @apply text-center ease-in-out px-8 sm:py-8 md:py-6 lg:py-12 mt-3 w-full text-3xl uppercase font-semibold text-white rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50;
 }
 
 .text-animation {
