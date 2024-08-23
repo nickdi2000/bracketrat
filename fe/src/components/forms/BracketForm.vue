@@ -128,7 +128,7 @@
             <QuestionMarkCircleIcon class="w-4 h-4 inline" @click="markHelp" />
           </label>
           <div class="">
-            <span v-for="type in markTypes">
+            <span v-for="type in markTypes" :key="type.value">
               <button
                 class="text-white p-2 rounded-md hover:bg-blue-500 m-2"
                 :class="
@@ -156,10 +156,10 @@
           :style="`animation-duration: ${(index + 1) / 4 + 0.2}s`"
           :class="
             form.unit === unit.value
-              ? 'bg-sky-500 border border-4 border-white'
+              ? 'bg-sky-500 border-4 border-white'
               : 'bg-sky-800'
           "
-          class="fadeinUp ease-in-out w-full py-3 px-10 rounded-md flex flex-row active:bg-sky-500 justify-between mb-3 shadow-2xl hover:bg-teal-700 transition-all duration-300 ease-in-out"
+          class="fadeinUp w-full py-3 px-10 rounded-md flex flex-row active:bg-sky-500 justify-between mb-3 shadow-2xl hover:bg-teal-700 transition-all duration-300 ease-in-out"
         >
           <div>
             <div class="text-white text-5xl font-bold mt-3">

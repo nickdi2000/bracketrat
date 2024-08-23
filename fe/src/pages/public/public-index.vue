@@ -41,7 +41,7 @@
                 ? 'opacity-50 bg-gray-800'
                 : 'bg-blue-500 hover:bg-blue-600'
             "
-            class="mt-4 text-3xl px-6 py-3 text-lg font-bold text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            class="mt-4 text-3xl px-6 py-3 font-bold text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
           >
             JOIN!
           </button>
@@ -50,7 +50,7 @@
             <div class="text-green-500">Welcome back, {{ name }}</div>
             <button
               @click="joinBracket"
-              class="mt-4 text-3xl px-6 py-3 text-lg font-bold text-white bg-green-900 rounded-lg hover:bg-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+              class="mt-4 text-3xl px-6 py-3 font-bold text-white bg-green-900 rounded-lg hover:bg-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
             >
               Login <ArrowLongRightIcon class="inline w-6 h-6" />
             </button>
@@ -134,7 +134,6 @@ export default {
           bracketId: this.bracket._id,
           name: this.name,
         });
-        console.log("res", res.data?.players);
         //toast
         if (res.data.player) {
          this.$toast.success("Added to bracket");
@@ -162,7 +161,6 @@ export default {
           name: this.name,
         });
         console.log("res", res.data?.player);
-
         //return;
 
         if(!res.data.player){

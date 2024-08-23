@@ -48,6 +48,18 @@ const gameSchema = new mongoose.Schema(
 			ref: "Player",
 			required: false,
 		},
+		winnerMarkedById: {
+    	type: mongoose.Schema.Types.ObjectId,
+    	ref: 'Player',
+  	},
+		winnerMarkedByName: {
+    	type: String,
+    	deafult: "",
+  	},
+  	lastUpdatedAt: {
+    	type: Date,
+    	default: Date.now,
+  	},
 		status: {
 			type: String,
 			enum: ["active", "completed", "cancelled", "pending", "paused", "bye"],

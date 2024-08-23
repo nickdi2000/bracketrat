@@ -228,11 +228,16 @@ class BracketController extends BaseController {
 
 	async updateGameWinner(req, res) {
 		const { bracketId } = req.params;
-		const { playerId, gameId } = req.body;
+		const { playerId, gameId, winnerMarkedById, winnerMarkedByName } = req.body;
+		const userId = req?.user?._id ?? winnerMarkedById;
+		const userName = req?.user?.isAdmin === true ? "Admin"  : winnerMarkedByName;
 
 		try {
 			let game = await bracketService.updateGameWinner(gameId, playerId);
-
+			  game.winnerMarkedById = userId;
+				game.winnerMarkedByName = userName
+        game.lastUpdatedAt = new Date();
+				game.save();
 			try {
 				let bracket = await bracketService.getFullBracket(bracketId);
 				if (!bracket) {

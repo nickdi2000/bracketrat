@@ -143,7 +143,7 @@ const login = catchAsync(async (req, res) => {
 	const { name, bracketId } = req.body;
 
 	try {
-		const player = await bracketService.findPlayerInBracket({
+		const {player , bracket } = await bracketService.findPlayerInBracket({
 			name,
 			bracketId,
 		});
@@ -151,7 +151,7 @@ const login = catchAsync(async (req, res) => {
 		const io = socket.getIo();
 		io.emit("player-loggedin", { player: player });
 
-		res.status(201).json({ player: player });
+		res.status(201).json({ player: player , bracket: bracket });
 	} catch (error) {
 		console.error("Error finding player in bracket:", error);
 		res.status(500).json({ message: error.message });

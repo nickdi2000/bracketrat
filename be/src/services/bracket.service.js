@@ -662,18 +662,40 @@ validateBracket = (bracketId) => {
 };
 
 findPlayerInBracket = async ({ name, bracketId }) => {
-	//get bracket and player from bracket if exists
-	let bracket = await Bracket.findById(bracketId).populate("players");
-	if (!bracket) {
-		throw new Error("Bracket not found.");
-	}
+  //get bracket and player from bracket if exists
+  let bracket = await Bracket.findById(bracketId).populate({
+    path: "rounds.games",
+    populate: {
+      path: "participants.player",
+      select: "name",
+    },
+  });
 
-	let player = bracket.players.find((player) => player.name === name);
-	if (!player) {
-		throw new Error("Player not found in bracket.");
-	}
+  if (!bracket) {
+    throw new Error("Bracket not found.");
+  }
+	
+  let foundPlayer = null;
+  for (const round of bracket.rounds) {
+    for (const game of round.games) {
+      for (const participant of game.participants) {
+        if (participant.player && participant.player.name === name) {
+          foundPlayer = participant.player;
+          break;
+        }
+      }
+      if (foundPlayer) break;
+    }
+    if (foundPlayer) break;
+  }
+  if (!foundPlayer) {
+    throw new Error("Player not found in bracket.");
+  }
 
-	return player;
+	return { 
+		player: {...foundPlayer.toObject(), bracketId: bracket._id}, 
+		bracket,
+	 };
 };
 
 async function batchUpdatePlayers({ players }) {

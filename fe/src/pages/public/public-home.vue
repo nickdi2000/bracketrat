@@ -179,6 +179,7 @@ import Bracket from "vue-tournament-bracket";
 import { nextTick } from "vue";
 import { findCurrentGame, findAllMyGames } from "./playerComposite";
 import PlayerBottomNav from "./playerBottomNav.vue";
+import { findPlayerInBracketRounds } from "@/helper";
 
 //const store = playerAuthStore();
 
@@ -227,7 +228,8 @@ export default {
   },
   methods: {
     async getBracket() {
-      const bracketId = this.player?.brackets[0];
+
+      const bracketId = this.player.bracketId;
       if (!bracketId) {
         console.error("no bracketid");
         return;
@@ -249,22 +251,24 @@ export default {
       }
 
       //find player based on name
-      const player = this.bracket.players.find((p) => p.name === name);
+      const player = findPlayerInBracketRounds(this.bracket.rounds, name)
       const roundIndex = this.currentGame.roundIndex;
 
       const params = {
+        winnerMarkedById: this.player._id,
+        winnerMarkedByName: this.player.name,
         playerId: player._id,
         gameId: this.currentGame._id,
         bracketId: bracketId,
         roundIndex: roundIndex,
         winner: name,
       };
-
       try {
         const rec = await this.$api.post(
           `/brackets/${bracketId}/set-winner`,
           params
         );
+        if (rec.status === 200) this.showResultButtons = false
         this.bracket = rec.data.bracket;
         this.currentGame = findCurrentGame(this.bracket, this.player.name);
       } catch (e) {
