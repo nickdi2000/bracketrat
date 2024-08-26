@@ -16,6 +16,11 @@ const insert = catchAsync(async (req, res) => {
 	res.status(httpStatus.CREATED).send(data);
 });
 
+const show = catchAsync(async (req, res) => {
+	const data = await organizationService.getOrganization(req.params.orgId);
+	res.status(httpStatus.CREATED).send(data);
+});
+
 const getCompanies = catchAsync(async (req, res) => {
 	const data = await organizationService.getCompanies();
 	res.status(httpStatus.CREATED).send(data);
@@ -48,4 +53,5 @@ module.exports = {
 	update,
 	getByCode,
 	getMe,
+	show,
 };

@@ -1,5 +1,9 @@
 <template>
   <div class="scroll-box fadein my-4">
+    <div v-if="!players.length" class="py-2 text-gray-200">
+      ⚠ There are currently no other players. (Players will only listed here if
+      they exist and aren't in the bracket already)
+    </div>
     <div
       v-for="(player, playerIndex) in players"
       :key="playerIndex"
@@ -43,8 +47,10 @@ export default {
   computed: {
     players() {
       const allPlayers = this.$store.players;
-      const filteredPlayers = allPlayers.filter(e => e.stateLabel === "Limbo");
-      return filteredPlayers; 
+      const filteredPlayers = allPlayers.filter(
+        (e) => e.stateLabel === "Limbo"
+      );
+      return filteredPlayers;
     },
   },
 };

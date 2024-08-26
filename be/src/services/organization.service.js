@@ -23,6 +23,10 @@ const getOrganizations = async () => {
 };
 
 const getOrganization = async (org) => {
+	//if org is string, convert to object
+	if (typeof org === "string") {
+		org = { _id: org };
+	}
 	try {
 		// Fetch the organization
 		const organization = await Organization.findOne(org).populate("brackets");

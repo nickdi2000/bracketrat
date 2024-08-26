@@ -28,6 +28,13 @@
       v-if="!$store.players.length"
     >
       ⚠ No {{ $store.teamPlayer }}'s exist yet.
+      <span class="hidden md:inline"
+        ><br />Share this link/QR code with your players so they can add
+        themselves
+        <br />
+        (and update their scores). Or click "Add Manually" to do it
+        yourself!</span
+      >
     </div>
 
     <div class="fadein py-4" v-if="!$store.players.length || showShareLink">
@@ -48,7 +55,8 @@
       @click="$showAddPlayerModal()"
       class="fab-btn no-print"
     >
-      <PlusCircleIcon class="h-8 text-white" />
+      <span class="hidden md:inline mx-2">Add {{ $teamPlayer }}</span>
+      <PlusCircleIcon class="h-8 text-white inline" />
     </button>
   </div>
 </template>
@@ -129,6 +137,6 @@ export default {
   box-shadow: 0 0 10px #7b8394;
 
   z-index: 1000;
-  @apply bg-blue-800 p-4 rounded-full;
+  @apply bg-blue-800 p-4 md:p-2 rounded-full md:rounded-lg;
 }
 </style>

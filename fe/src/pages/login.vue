@@ -162,7 +162,12 @@
       </div>
 
       <div class="my-12">
-        <router-link :to="'/find'" class="btn hover:text-blue-100 hover:bg-slate-800">Join Existing Bracket</router-link>
+        <router-link
+          :to="'/find'"
+          class="btn hover:text-blue-100 hover:bg-slate-800"
+          >Join Existing Bracket
+          <ArrowLongRightIcon class="w-6 h-6 ml-2 inline" />
+        </router-link>
       </div>
       <div class="footer">
         <p class="text-sm text-gray-500 dark:text-gray-400 text-center">
@@ -309,13 +314,21 @@ export default {
 
 .bg-image {
   /* background-image: url("https://mrwallpaper.com/images/hd/play-to-your-full-potential-frvfo9ot2l8kbe6l.jpg"); */
-  background-image: url("/images/soccer-fire.jpg");
-  background-size: cover;
+  /* background-image: url("/images/soccer-fire.jpg");
+  background-color: rgba(0, 0, 0, 0.8);
+    background-size: cover;
   background-position: center;
   background-blend-mode: multiply;
-  min-height: 100vh;
+   */
+  background: rgb(14, 13, 53);
+  background: radial-gradient(
+    circle,
+    rgb(17, 16, 53) 25%,
+    rgba(9, 9, 51, 1) 57%,
+    rgb(8, 23, 25) 83%
+  );
 
-  background-color: rgba(0, 0, 0, 0.8);
+  min-height: 100vh;
 }
 
 .altered {

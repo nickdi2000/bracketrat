@@ -16,6 +16,13 @@
         </div>
       </div>
     </nav>
+    <div
+      v-if="bracket?.name"
+      class="text-gray-400 uppercase font-bold text-center w-full"
+      style="position: sticky; left: 0; top: 4rem"
+    >
+      {{ bracket?.name }}
+    </div>
 
     <div v-if="view == 'game'" class="fadein middle flex flex-col">
       <div v-if="currentGame">
@@ -136,7 +143,7 @@
       </div>
     </div>
 
-    <div v-else class="mx-4 scrollable fadein">
+    <div v-else-if="view == 'bracket'" class="mx-4 scrollable fadein">
       <div>
         <bracket
           :rounds="bracket.rounds"
@@ -191,6 +198,9 @@ export default {
       dev: false,
       compKey: 0,
       //currentGame: null,
+      orgId: null,
+      bracketId: null,
+      org: {},
       myGames: [],
       gameIndex: 0,
       showResultButtons: false,
@@ -205,7 +215,9 @@ export default {
     if (!this.player) {
       this.$router.push("/find");
     }
-    await this.getBracket();
+    await this.getOrg();
+    await this.getBracket(this.bracketId);
+
     //this.currentGame = findCurrentGame(this.bracket, this.player.name);
     this.myGames = findAllMyGames(this.bracket, this.player.name);
     this.currentGame = this.myGames[this.gameIndex];
@@ -215,7 +227,7 @@ export default {
       return playerAuthStore().getplayer;
     },
     view() {
-      return this.$route?.params?.view || "game";
+      return this.$route?.params?.view || "game"; //other options: bracket
     },
     otherPlayerName() {
       return this.currentGame.player1.name === this.player.name
@@ -227,9 +239,7 @@ export default {
     },
   },
   methods: {
-    async getBracket() {
-
-      const bracketId = this.player.bracketId;
+    async getBracket(bracketId = null) {
       if (!bracketId) {
         console.error("no bracketid");
         return;
@@ -238,6 +248,23 @@ export default {
         const res = await this.$api.get("brackets/" + bracketId);
         console.log("res", res.data);
         this.bracket = res.data;
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    async getOrg(orgId = null) {
+      if (!orgId) {
+        orgId = this.player.organization;
+      }
+      if (!orgId) {
+        console.error("no orgId");
+        return;
+      }
+      try {
+        const res = await this.$api.show("organizations", orgId);
+        console.log("defaultBracket", res.data?.defaultBracket);
+        this.bracketId = res.data?.defaultBracket;
+        this.org = res.data?.brackets[0] ?? {};
       } catch (e) {
         console.error(e);
       }
@@ -251,7 +278,7 @@ export default {
       }
 
       //find player based on name
-      const player = findPlayerInBracketRounds(this.bracket.rounds, name)
+      const player = findPlayerInBracketRounds(this.bracket.rounds, name);
       const roundIndex = this.currentGame.roundIndex;
 
       const params = {
@@ -268,7 +295,7 @@ export default {
           `/brackets/${bracketId}/set-winner`,
           params
         );
-        if (rec.status === 200) this.showResultButtons = false
+        if (rec.status === 200) this.showResultButtons = false;
         this.bracket = rec.data.bracket;
         this.currentGame = findCurrentGame(this.bracket, this.player.name);
       } catch (e) {

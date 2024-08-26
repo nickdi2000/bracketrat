@@ -1,6 +1,6 @@
 <template>
   <div
-    class="fixed bottom-0 w-full bg-gray-800 shadow-lg flex justify-around items-center py-2"
+    class="fixed-nav bg-gray-800 shadow-lg flex justify-around items-center py-2"
   >
     <div class="svg-div" @click="selectView('game')">
       <svg
@@ -93,5 +93,12 @@ export default {
 
 .svg-div {
   @apply flex flex-col items-center text-white cursor-pointer hover:bg-gray-500 rounded-md py-1 px-4;
+}
+
+.fixed-nav {
+  bottom: 0;
+  width: 100%;
+  z-index: 100;
+  position: fixed;
 }
 </style>

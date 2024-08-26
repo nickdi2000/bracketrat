@@ -31,8 +31,10 @@
 
       <button @click="newPlayer()" class="btn btn-secondary mr-2">
         <PlusCircleIcon class="h-6 w-6 inline-block" />
+        <span class="ml-2 hidden md:inline">Add {{ $teamPlayer }}</span>
       </button>
       <button class="btn btn-primary" @click="showNav">
+        <span class="ml-2 hidden md:inline">Bracket Functions</span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
