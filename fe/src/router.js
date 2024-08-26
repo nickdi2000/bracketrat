@@ -134,6 +134,7 @@ const routes = [
       },
     ],
   },
+
   {
     path: "/player/:view?",
     name: "player-home",

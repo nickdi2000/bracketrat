@@ -2,7 +2,10 @@
   <div class="mid- text-white main-public">
     <nav class="bg-gray-800 mainNav z-50" style="">
       <div class="flex flex-row justify-between">
-        <div class="p-3 font-bold text-lg uppercase text-gray-400">
+        <div
+          class="p-3 font-bold text-lg uppercase text-gray-400 hover:bg-blue-800 cursor-pointer"
+          @click="navTo('share')"
+        >
           <UserCircleIcon class="inline w-6 h-6" />
           {{ player.name }}
         </div>
@@ -175,6 +178,10 @@
       </div>
     </div>
 
+    <div v-else-if="view == 'share'" class="fadein">
+      <PublicProfile :bracket="bracket" :player="player" />
+    </div>
+
     <PlayerBottomNav />
   </div>
 </template>
@@ -187,6 +194,7 @@ import { nextTick } from "vue";
 import { findCurrentGame, findAllMyGames } from "./playerComposite";
 import PlayerBottomNav from "./playerBottomNav.vue";
 import { findPlayerInBracketRounds } from "@/helper";
+import PublicProfile from "@/components/PublicProfile.vue";
 
 //const store = playerAuthStore();
 
@@ -209,6 +217,7 @@ export default {
   components: {
     Bracket,
     PlayerBottomNav,
+    PublicProfile,
   },
   async mounted() {
     console.log("PublicHome mounted");
@@ -268,6 +277,9 @@ export default {
       } catch (e) {
         console.error(e);
       }
+    },
+    navTo(route) {
+      this.$router.push(`/player/${route}`);
     },
     async markWinner(name) {
       const bracketId = this.bracket._id;

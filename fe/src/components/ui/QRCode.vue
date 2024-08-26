@@ -13,8 +13,8 @@
     >
       <QRCodeVue3
         :key="instance + '-qr' + darkMode"
-        :width="400"
-        :height="400"
+        :width="size"
+        :height="size"
         :value="link"
         :qrOptions="{ typeNumber: 0, mode: 'Byte', errorCorrectionLevel: 'H' }"
         :imageOptions="{ hideBackgroundDots: true, imageSize: 0.4, margin: 0 }"
@@ -40,7 +40,7 @@
       />
     </div>
 
-    <div class="py-4 text-sm px-2 trans">
+    <div class="py-4 text-sm px-2 trans" v-if="learnMoreProp">
       <div class="bg-gray-800 p-3 mx-2 fadein learnMore" v-if="learnMore">
         Provide this QRcode or link to your players to join the bracket. After
         scanning this and entering their name, you should see them on the
@@ -68,7 +68,7 @@
     </div>
     <!-- :downloadOptions="{ name: 'vqr', extension: 'png' }" -->
 
-    <div class="py-5 no-print">
+    <div class="py-5 no-print" v-if="printIcon">
       <!-- <button
         class="p-3 hover:bg-gray-700 rounded-full"
         :class="darkMode ? 'bg-blue-900' : ''"
@@ -109,12 +109,30 @@ export default {
     SunIcon,
     Link,
   },
+  props: {
+    bracket: {
+      type: Object,
+      default: () => {},
+    },
+    printIcon: {
+      type: Boolean,
+      default: true,
+    },
+    learnMoreProp: {
+      type: Boolean,
+      default: false,
+    },
+    size: {
+      type: Number,
+      default: 400,
+    },
+  },
   computed: {
     color() {
       return this.darkMode ? this.dark : this.light;
     },
     bracket() {
-      return this.$store.getBracket;
+      return this.bracket ?? this.$store.getBracket;
     },
     link() {
       return "BracketForce.com/" + this.bracket?.code;
