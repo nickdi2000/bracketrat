@@ -236,7 +236,7 @@ export default {
       return playerAuthStore().getplayer;
     },
     view() {
-      return this.$route?.params?.view || "game"; //other options: bracket
+      return this.$route?.params?.view || "bracket"; //options: bracket, game, share
     },
     otherPlayerName() {
       return this.currentGame.player1.name === this.player.name
