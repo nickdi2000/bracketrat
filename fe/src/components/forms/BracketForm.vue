@@ -1,7 +1,7 @@
 <template>
   <span>
     <div v-if="!newUser">
-      <div class="space-y-4">
+      <div class="space-y-4 md:min-w-min">
         <Input label="Name" v-model="form.name" placeholder="My Tournament" />
         <!-- <div class="flex justify-end">
           <button
@@ -54,10 +54,9 @@
           >
           <button
             class="text-white p-2 rounded-md hover:bg-blue-500 m-2"
-            :class="form.type === type.value ? 'bg-blue-500 	' : 'bg-blue-900'"
+            :class="form.type === type.value ? 'bg-blue-500 ' : 'bg-blue-900'"
             v-for="type in types"
             :key="type.value"
-            :disabled="type.disabled"
             @click="makeSelection(type.value)"
           >
             {{ type.name }}
@@ -113,9 +112,23 @@
               class="p-3"
               :key="`option-${optIndex}`"
             >
-              <td class="py-3 flex flex-row">
-                <div><Toggle v-model="form[opt.key]" /></div>
-                <div class="text-gray-300 ml-2">{{ opt.label }}</div>
+              <td class="py-3 row">
+                <div class="flex flex-row">
+                  <div><Toggle v-model="form[opt.key]" /></div>
+                  <div class="text-gray-300 ml-2">{{ opt.label }}</div>
+                </div>
+                <div
+                  v-if="opt.additional_options && form[opt.key]"
+                  class="ml-16 p-2 fadein"
+                >
+                  <div>
+                    <Input
+                      label="Global Passcode"
+                      v-model="form.password"
+                      placeholder="secretsauce"
+                    />
+                  </div>
+                </div>
               </td>
             </tr>
           </table>
@@ -230,10 +243,10 @@
         </button>
       </div>
     </div>
-    <div v-if="shouldDisable">
+    <div v-show="shouldDisable">
       <div class="text-white text-sm alert alert-danger">
         <span class="font-bold">Note:</span> This feature is only available for
-        our Beta Users. Please
+        our Beta Users. <br />Please
         <router-link
           class="text-blue-300 underline hover:text-blue-100 font-bold"
           :to="'/admin/contact'"
@@ -274,7 +287,12 @@
 </template>
 
 <script>
-import { BracketNames, teamSports, options } from "@/constants/enums";
+import {
+  BracketNames,
+  teamSports,
+  options,
+  soloSports,
+} from "@/constants/enums";
 import Loader3 from "../Loader3.vue";
 
 export default {
@@ -286,6 +304,7 @@ export default {
       BracketNames,
       teamSports,
       options,
+      soloSports,
       model: {
         name: "Bracket",
         path: "brackets",
@@ -364,57 +383,6 @@ export default {
             "Enter points for each game.  The 'Winner' and 'Loser' are calculated from these values.",
         },
       ],
-
-      soloSports: [
-        {
-          value: "squash",
-          name: "Squash",
-        },
-        {
-          value: "table-tennis",
-          name: "Table Tennis",
-        },
-        {
-          value: "racquetball",
-          name: "Racquetball",
-        },
-        {
-          value: "tennis",
-          name: "Tennis",
-        },
-        {
-          value: "golf",
-          name: "Golf",
-        },
-        {
-          value: "track",
-          name: "Track",
-        },
-        {
-          value: "swimming",
-          name: "Swimming",
-        },
-        {
-          value: "cross-country",
-          name: "Cross Country",
-        },
-        {
-          value: "wrestling",
-          name: "Wrestling",
-        },
-        {
-          value: "boxing",
-          name: "Boxing",
-        },
-        {
-          value: "martial-arts",
-          name: "Martial Arts",
-        },
-        {
-          value: "other",
-          name: "Other",
-        },
-      ],
     };
   },
   props: {
@@ -442,9 +410,14 @@ export default {
       return import.meta.env.VITE_BASE_FE_URL + "" + this.form.code;
     },
     shouldDisable() {
-      return false;
+      const standardTypes = [
+        "single-elimination",
+        "double-elimination",
+        "round-robin",
+      ];
+
       return (
-        this.form.type != "single-elimination" ||
+        !standardTypes.includes(this.form.type) ||
         this.form.require_auth ||
         this.form.require_password
       );

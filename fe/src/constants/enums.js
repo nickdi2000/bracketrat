@@ -108,13 +108,65 @@ export const options = Object.freeze([
     value: false,
   },
   {
-    label: "Require a password to join",
-    key: "require_password",
-    value: false,
-  },
-  {
     label: "Automatically throw user into bracket upon signup",
     key: "auto_bracket",
     value: true,
+  },
+  {
+    label: "Require a password to join",
+    key: "require_password",
+    value: false,
+    additional_options: true
+  },
+]);
+
+export const soloSports = Object.freeze([
+  {
+    value: "squash",
+    name: "Squash",
+  },
+  {
+    value: "table-tennis",
+    name: "Table Tennis",
+  },
+  {
+    value: "racquetball",
+    name: "Racquetball",
+  },
+  {
+    value: "tennis",
+    name: "Tennis",
+  },
+  {
+    value: "golf",
+    name: "Golf",
+  },
+  {
+    value: "track",
+    name: "Track",
+  },
+  {
+    value: "swimming",
+    name: "Swimming",
+  },
+  {
+    value: "cross-country",
+    name: "Cross Country",
+  },
+  {
+    value: "wrestling",
+    name: "Wrestling",
+  },
+  {
+    value: "boxing",
+    name: "Boxing",
+  },
+  {
+    value: "martial-arts",
+    name: "Martial Arts",
+  },
+  {
+    value: "other",
+    name: "Other",
   },
 ]);
