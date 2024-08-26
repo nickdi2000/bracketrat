@@ -269,6 +269,7 @@ export default {
     },
     titlize(str) {
       //remove hyphens and capitalize
+      if (!str) return "";
       return str.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
     },
     async generatedFixed(size) {
