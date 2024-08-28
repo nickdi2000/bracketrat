@@ -161,7 +161,7 @@
         </div>
       </div>
 
-      <div class="my-12">
+      <div >
         <router-link
           :to="'/find'"
           class="btn hover:text-blue-100 hover:bg-slate-800"
@@ -169,7 +169,7 @@
           <ArrowLongRightIcon class="w-6 h-6 ml-2 inline" />
         </router-link>
       </div>
-      <div class="footer">
+      <div class="fixed-footer">
         <p class="text-sm text-gray-500 dark:text-gray-400 text-center">
           &copy; {{ new Date().getFullYear() }} All rights reserved.
           <br />
@@ -313,20 +313,16 @@ export default {
 }
 
 .bg-image {
-  /* background-image: url("https://mrwallpaper.com/images/hd/play-to-your-full-potential-frvfo9ot2l8kbe6l.jpg"); */
   /* background-image: url("/images/soccer-fire.jpg");
-  background-color: rgba(0, 0, 0, 0.8);
-    background-size: cover;
+    background-color: rgba(0, 0, 0, 0.8);
+
+    */
+  background: linear-gradient(109.6deg, rgb(19, 26, 36) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%);
+  background-size: cover;
   background-position: center;
   background-blend-mode: multiply;
-   */
-  background: rgb(14, 13, 53);
-  background: radial-gradient(
-    circle,
-    rgb(17, 16, 53) 25%,
-    rgba(9, 9, 51, 1) 57%,
-    rgb(8, 23, 25) 83%
-  );
+  
+
 
   min-height: 100vh;
 }
@@ -334,5 +330,16 @@ export default {
 .altered {
   filter: brightness(50%) sepia(100%) saturate(400%);
   transform: scale(1.1) rotate(5deg);
+}
+
+.fixed-footer {
+  position: relative;
+  width:100vw;
+  top: 200px;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.8);
+  text-align: center;
 }
 </style>

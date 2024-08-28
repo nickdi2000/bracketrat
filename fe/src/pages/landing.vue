@@ -181,11 +181,21 @@ export default {
   margin: 0;
   padding: 0;
   width: 100vw;
-  height: 100vh;
-
+  height: 60vh;
   /*background-image: linear-gradient(#434343, #282828);*/
   @apply bg-gray-900;
 }
+
+/*smaller screens */
+
+@media (max-width: 640px) {
+  .matrix-container {
+    height: 75vh;
+  }
+}
+
+
+
 .matrix {
   background-color: transparent;
   background-image: linear-gradient(

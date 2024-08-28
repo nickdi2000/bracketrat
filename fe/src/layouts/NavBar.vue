@@ -72,6 +72,7 @@
                 /> -->
 
                 <span
+                v-if="shouldShowBracketButton"
                   class="text-white rounded-md py-2 px-3 bg-blue-900 font-bold mt-2 hover:text-blue-200 truncate sm:max-w-50 md:max-w-80"
                 >
                   <BracketIcon class="h-6 w-6 inline" /> View Bracket
@@ -184,6 +185,9 @@ export default {
     },
     selectedBracket() {
       return this.$store.getBracket ?? null;
+    },
+    shouldShowBracketButton() {
+      return this.$route.name !== "Bracket" && this.$route.name !== "Dashboard"
     },
     getName() {
       if (!this.selectedBracket?.name) {
