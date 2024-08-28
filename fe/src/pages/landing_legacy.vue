@@ -2,47 +2,74 @@
   <div
     class="flex flex-col justify-center min-h-screen bg-gray-100 dark:bg-gray-900"
   >
-    <landingNav />
-
-    <section class="bg-gray-900 text-white matrix-container">
-      <div
-        class="mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center matrix"
-      >
-        <div class="mx-auto max-w-3xl text-center">
-          <h1
-            class="fadein bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 bg-clip-text text-3xl font-extrabold text-transparent sm:text-5xl"
+    <!-- Navigation -->
+    <nav class="py-4 bg-white dark:bg-gray-800 z-10">
+      <div class="container mx-auto flex justify-between items-center px-6">
+        <a
+          href="#"
+          class="text-xl font-semibold text-gray-900 dark:text-white"
+          >{{ $appName }}</a
+        >
+        <div class="flex items-center space-x-4">
+          <a
+            href="#"
+            class="text-gray-600 dark:hover:text-gray-300 dark:text-gray-400"
+            >Home</a
           >
-            Simplified Tournament
-
-            <span class="sm:block"> Bracket System. </span>
-          </h1>
-
-          <div class="flex flex-row justify-center fadeinSlow">
-            <BracketSvg />
-          </div>
-
-          <p class="mx-auto text-gray-400 py-0 max-w-xl sm:text-xl/relaxed">
-            Generate a fixed size, or build it out dynamically as players join.
-          </p>
-
-          <div class="mt-8 flex flex-wrap justify-center gap-4">
-            <router-link
-              class="fadeInUp block w-full rounded border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-white focus:outline-none focus:ring active:text-opacity-75 sm:w-auto"
-              to="/login"
-            >
-              Generate Bracket <ArrowLongRightIcon class="h-4 w-4 inline" />
-            </router-link>
-
-            <router-link
-              class="fadeInUpSlow block w-full rounded border border-blue-600 px-12 py-3 text-sm font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring active:bg-blue-500 sm:w-auto"
-              to="/pages/contact"
-            >
-              Contact
-            </router-link>
-          </div>
+          <router-link
+            to="/pages/contact"
+            class="text-gray-600 dark:hover:text-gray-300 dark:text-gray-400"
+            >Contact</router-link
+          >
+          <router-link
+            to="/find"
+            class="text-gray-600 dark:hover:text-gray-300 dark:text-gray-400"
+            >Player Access</router-link
+          >
+          <router-link
+            to="/login"
+            class="text-gray-600 dark:hover:text-gray-300 dark:text-gray-400"
+            >Login</router-link
+          >
         </div>
       </div>
-    </section>
+    </nav>
+    <div
+      style="
+        z-index: 9;
+        position: absolute;
+        top: -220px;
+        left: 10%;
+        width: 140%;
+      "
+    >
+      <landingWallpaper />
+    </div>
+    <!-- Hero Section bg-gray-50 dark:bg-blue-900  -->
+    <div
+      style="min-height: 800px"
+      class="flex-grow flex items-center justify-center text-center py-16 px-4 bg-wallpaper z-10"
+    >
+      <div class="pb-12">
+        <div
+          class="flex flex-col items-center lg:mt-0 sm:mt-5 fade fadeinUp text-2xl font-semibold text-gray-900 dark:text-white"
+        >
+          <img src="/images/logo-light.png" class="logo-image fadeInUp" />
+        </div>
+        <h1 class="text-5xl font-bold mb-1 text-gray-900 dark:text-white">
+          Welcome to {{ $appName }}
+        </h1>
+        <p class="text-lg mb-8 text-gray-600 dark:text-gray-300">
+          Simplified Tournament Brackets.
+        </p>
+        <router-link
+          :to="'/login'"
+          class="fadein bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Try it now
+        </router-link>
+      </div>
+    </div>
 
     <!-- Features Section -->
     <div class="bg-gray-800 dark:bg-bluegray-800 py-16 z-10">
@@ -52,7 +79,6 @@
         >
           Features..
         </h2> -->
-
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 z-10">
           <div class="text-center">
             <h3
@@ -118,17 +144,13 @@
 </template>
 
 <script>
-import landingWallpaper from "./landingWallpaper2.vue";
+import landingWallpaper from "./landingWallpaper.vue";
 import PricingTable from "../components/PricingTable.vue";
-import landingNav from "./landingNav.vue";
-import BracketSvg from "../components/graphics/BracketSvg.vue";
 
 export default {
   components: {
     landingWallpaper,
     PricingTable,
-    landingNav,
-    BracketSvg,
   },
   data() {
     return {};
@@ -154,12 +176,14 @@ export default {
 }
 
 .logo-image {
-  width: 4rem;
+  width: 150px;
   height: auto;
   opacity: 0.6;
   transition: all 0.6s ease;
-  /*add glowing animation */
-  animation: glow 1s infinite alternate;
+}
+
+.logo-image:hover {
+  opacity: 1;
 }
 
 .altered {
@@ -175,44 +199,5 @@ export default {
   min-height: 100vh;
 
   background-color: rgba(0, 0, 0, 0.5);
-}
-
-.matrix-container {
-  margin: 0;
-  padding: 0;
-  width: 100vw;
-  height: 100vh;
-
-  /*background-image: linear-gradient(#434343, #282828);*/
-  @apply bg-gray-900;
-}
-.matrix {
-  background-color: transparent;
-  background-image: linear-gradient(
-      0deg,
-      transparent 14%,
-      rgba(0, 166, 11, 0.05) 25%,
-      rgba(255, 255, 255, 0.05) 26%,
-      transparent 27%,
-      transparent 74%,
-      rgba(0, 220, 88, 0.05) 75%,
-      rgba(255, 255, 255, 0.05) 76%,
-      transparent 77%,
-      transparent
-    ),
-    linear-gradient(
-      90deg,
-      transparent 24%,
-      rgba(255, 255, 255, 0.05) 25%,
-      rgba(255, 255, 255, 0.05) 26%,
-      transparent 27%,
-      transparent 74%,
-      rgba(255, 255, 255, 0.05) 75%,
-      rgba(255, 255, 255, 0.05) 76%,
-      transparent 77%,
-      transparent
-    );
-  height: 100%;
-  background-size: 50px 50px;
 }
 </style>

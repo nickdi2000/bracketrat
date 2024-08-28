@@ -119,7 +119,7 @@
                 </div>
                 <div
                   v-if="opt.additional_options && form[opt.key]"
-                  class="ml-16 p-2 fadein"
+                  class="ml-12 mt-2 p-2 fadein"
                 >
                   <div>
                     <Input
@@ -416,11 +416,7 @@ export default {
         "round-robin",
       ];
 
-      return (
-        !standardTypes.includes(this.form.type) ||
-        this.form.require_auth ||
-        this.form.require_password
-      );
+      return !standardTypes.includes(this.form.type) || this.form.require_auth;
     },
   },
   components: {

@@ -362,21 +362,6 @@ export default {
   margin-bottom: 24px;
 }
 
-.fadeInUp {
-  animation: fadeInUp 0.3s ease-in-out;
-}
-
-@keyframes fadeInUp {
-  0% {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
 @media (max-width: 940px) {
   .botton-bar {
     height: 290px;

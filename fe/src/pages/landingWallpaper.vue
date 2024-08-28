@@ -35,7 +35,7 @@ export default {
 <style scoped>
 .landingContainer {
   width: 110%;
-  height: 600px;
+
   /*darken somehow*/
   filter: brightness(0.3);
 }
