@@ -1,4 +1,11 @@
+import { data } from "autoprefixer";
+
 export const apiHandler = {
+  data() {
+    return {
+      _errorMessage: '',
+    };
+  },
   methods: {
     _handleResponse(payload) {
       console.error("handling response", payload);
@@ -12,6 +19,7 @@ export const apiHandler = {
           msg = "An error occurred";
         }
         this.$toast.error(msg);
+        this._errorMessage = msg;
       }
     },
   },

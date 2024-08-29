@@ -83,6 +83,8 @@
                 >
               </div>
             </div>
+            <Error :message="_errorMessage" />
+
           </div>
           <!-- Modal footer -->
           <div
@@ -114,6 +116,7 @@
 <script>
 import eventBus from "@/plugins/eventBus";
 import { FwbButton, FwbModal } from "flowbite-vue";
+import {apiHandler} from "@/mixins/apiHandler";
 
 export default {
   data() {
@@ -129,6 +132,7 @@ export default {
       teamPlayer: "Player",
     };
   },
+  mixins: [apiHandler],
   components: {
     FwbButton,
     FwbModal,
@@ -159,6 +163,9 @@ export default {
         .then(() => {
           this.loading = false;
           this.closeModal();
+        }).catch((res) => {
+          this.loading = false;
+          this._handleResponse(res);
         });
     },
   },

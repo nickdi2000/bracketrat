@@ -16,6 +16,9 @@ import { FwbButton } from "flowbite-vue";
 import { FwbSpinner } from "flowbite-vue";
 import { FwbSelect } from "flowbite-vue";
 
+import Error from '@/components/ui/Error.vue'; // Adjust the path as necessary
+
+
 import "../node_modules/flowbite-vue/dist/index.css";
 import "vue-toast-notification/dist/theme-bootstrap.css";
 
@@ -104,6 +107,7 @@ app.component("UserCircleIcon", UserCircleIcon);
 app.component("UserGroupIcon", UserGroupIcon);
 app.component("UsersIcon", UsersIcon);
 app.component("ListBulletIcon", ListBulletIcon);
+app.component("Error", Error);
 
 //custom
 
