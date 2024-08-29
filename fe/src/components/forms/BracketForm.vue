@@ -245,8 +245,8 @@
     </div>
     <div v-show="shouldDisable">
       <div class="text-white text-sm alert alert-danger">
-        <span class="font-bold">Note:</span> This feature is only available for
-        our Beta Users. <br />Please
+        <span class="font-bold">Note:</span> One or more of your selected options is only available for
+        our upgraded Beta Users. <br />Please
         <router-link
           class="text-blue-300 underline hover:text-blue-100 font-bold"
           :to="'/admin/contact'"
@@ -410,13 +410,18 @@ export default {
       return import.meta.env.VITE_BASE_FE_URL + "" + this.form.code;
     },
     shouldDisable() {
+
       const standardTypes = [
         "single-elimination",
         "double-elimination",
         "round-robin",
       ];
 
-      return !standardTypes.includes(this.form.type) || this.form.require_auth;
+      const isProType = !standardTypes.includes(this.form.type) || this.form.require_auth;
+      const isProMark = this.form.mark_method === "points";
+
+      return isProType || isProMark;
+      
     },
   },
   components: {
