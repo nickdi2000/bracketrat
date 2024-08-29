@@ -2,7 +2,7 @@
   <div>
     <div class="header text-center">{{ bracket?.name }}</div>
     <div class="my-5 text-white">
-      <div v-if="!bracket.robinRounds">
+      <div v-if="!bracket.rounds">
         <h1>Round Robin</h1>
         <div class="subheader">Every {{ $teamPlayer }} plays once.</div>
         <button class="btn btn-primary my-2" @click="generateRobin()">
@@ -12,10 +12,10 @@
       </div>
     </div>
 
-    <div v-if="bracket?.robinRounds" class="my-8">
+    <div v-if="bracket?.rounds" class="my-8">
       <div class="m-auto grid md:grid-cols-1 lg:grid-cols-2">
         <div
-          v-for="(round, index) in bracket.robinRounds"
+          v-for="(round, index) in bracket.rounds"
           :key="index"
           class="w-full backdrop-saturate-100 bg-slate-600/30 rounded-lg p-3 lg:p-4"
         >
@@ -74,9 +74,7 @@ export default {
   computed: {},
   methods: {
     async generateRobin() {
-      console.log("generateRobinBracket...");
-      const rec = await this.$store.generateRobinBracket(this.bracket._id);
-      console.log("generateRobin rec", rec);
+      const rec = await this.$store.generateRobinBracket();
     },
   },
 };

@@ -1,5 +1,5 @@
 const httpStatus = require("http-status");
-const { User, Document, Organization, Bracket } = require("../models");
+const { User, Document, Organization, Bracket, Tournament } = require("../models");
 const ApiError = require("../utils/ApiError");
 
 /**
@@ -13,10 +13,18 @@ const createUser = async (userBody) => {
 	if (await User.isEmailTaken(userBody.email)) {
 		throw new ApiError(httpStatus.BAD_REQUEST, "Email already taken");
 	}
-	let user = await User.create(userBody);
 
+	let user = await User.create(userBody);
+	const tournamentName = getRandomTournamentName();
+	const tournament = await Tournament.create({
+		name: tournamentName,
+		admin: user._id,
+	});
 	// Create the organization
-	const org = await createOrganization(user);
+	const org = await createOrganization(user, tournament);
+	tournament.organization = org._id
+	tournament.currentBracket = org.defaultBracket;
+	await tournament.save();
 
 	// Update user's organization and defaultBracket
 	user = await User.findByIdAndUpdate(
@@ -24,6 +32,7 @@ const createUser = async (userBody) => {
 		{
 			organization: org._id,
 			defaultBracket: org.defaultBracket,
+			tournament: tournament._id,
 		},
 		{ new: true }
 	); //.populate("defaultBracket"); // Populate the defaultBracket reference
@@ -31,7 +40,7 @@ const createUser = async (userBody) => {
 	return user;
 };
 
-const createOrganization = async (user) => {
+const createOrganization = async (user, tournament) => {
 	let name;
 	if (!user.name) {
 		name = getRandomName();
@@ -45,10 +54,13 @@ const createOrganization = async (user) => {
 		owner: user._id,
 	});
 
+
 	//also create a bracket for the organization and set the defaultBracket for the org to it
 	const bracket = await Bracket.create({
 		name: "My First Bracket",
 		organization: org._id,
+		tournament: tournament._id,
+
 	});
 	org.brackets.push(bracket._id);
 	org.defaultBracket = bracket._id;
@@ -88,6 +100,38 @@ const getRandomName = () => {
 		"Monica Seles",
 	];
 	return names[Math.floor(Math.random() * names.length)];
+};
+
+const getRandomTournamentName = () => {
+	const activities = [
+		"Soccer",
+		"Basketball",
+		"Boxing",
+		"Golf",
+		"Tennis",
+		"Baseball",
+		"Cricket",
+		"Football",
+		"Chess",
+		"Table Tennis",
+		"Volleyball",
+		"Swimming",
+		"Badminton",
+		"Rugby",
+		"Martial Arts",
+		"Running",
+		"Skating",
+		"Karate",
+		"Surfing",
+		"Esports",
+		"Archery",
+		"Bowling",
+		"Fencing",
+		"Snooker",
+		"Cycling",
+	];
+	const randomActivity = activities[Math.floor(Math.random() * activities.length)];
+	return `${randomActivity} Tournament`;
 };
 /**
  * Query for users

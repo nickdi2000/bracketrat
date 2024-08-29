@@ -455,8 +455,10 @@ export default {
       delete data.robinRounds;
 
       try {
-        await this.$store.patchBracket(data);
-        this.stopLoading();
+       const res = await this.$store.patchBracket(data);
+       this.form = res.data;
+       this.$store.setSelectedBracket(res.data);
+       this.stopLoading();
       } catch (e) {
         console.log("error saving bracket", e);
         this.loading = false;

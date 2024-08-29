@@ -15,23 +15,23 @@ const addPlayerToBracket = async (playerId, bracketId) => {
 	});
 };
 
-const createAndAddToBracket = async ({name, bracketId}) => {
+const createAndAddToBracket = async ({ name, bracketId }) => {
 	try {
 		const bracket = await Bracket.findById(bracketId);//.organization;
 		const organization = bracket.organization;
-		
-		if(!organization) {
+
+		if (!organization) {
 			throw new Error("Organization not found");
 		} else {
 			console.log("Organization found! ", organization);
 		}
-	
+
 		const player = await createPlayer(name, organization);
 		/* TODO: bracket service here to add player to bracket */
 		/* await bracketService.appendPlayerToBracket(player._id, bracketId); */
 		/* this should add the user to an empty slot, if there are no empty slots it should EXPAND the bracket to allow them to join, this may mean creating bye's as the structure will be disrupted */
 		try {
-		const updatedBracket = await bracketService.addPlayerToFirstEmptySpot(bracketId, player._id);
+			const updatedBracket = await bracketService.addPlayerToFirstEmptySpot(bracketId, player._id);
 		} catch (error) {
 			console.error("Error adding player to bracket", error);
 			throw new Error("Failed to add player to bracket (playerlservice.js)");
@@ -44,7 +44,7 @@ const createAndAddToBracket = async ({name, bracketId}) => {
 		throw new Error("Failed to find organization (playerlservice.js)");
 	}
 
-	
+
 };
 
 const removePlayerFromBracket = async (playerId, bracketId) => {

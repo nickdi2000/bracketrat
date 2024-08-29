@@ -46,10 +46,11 @@ export const authStore = defineStore({
       return await this.fetchBracket(this.user.defaultBracket);
     },
 
-    async generateBracket(bracketId) {
+    async generateBracket() {
       return new Promise(async (resolve, reject) => {
         try {
-          const rec = await api.post(`brackets/${bracketId}/generate`);
+          const tournamentId = this.user.tournament;
+          const rec = await api.post(`tournament/${tournamentId}/generate`);
           console.log("rec generated", rec.data?.bracket);
           this.setSelectedBracket(rec.data.bracket);
           resolve(rec);
@@ -59,25 +60,31 @@ export const authStore = defineStore({
       });
     },
 
-    async generateRobinBracket(bracketId) {
-      return new Promise(async (resolve, reject) => {
-        try {
-          const rec = await api.post(`brackets/${bracketId}/generate-robin`);
-          console.log("rec generated", rec.data?.bracket);
-          this.setSelectedBracket(rec.data.bracket);
-          resolve(rec);
-        } catch (err) {
-          reject(err);
-        }
-      });
+    async generateRobinBracket() {
+      try {
+        const tournamentId = this.user.tournament;
+        const rec = await api.post(
+          `tournament/${tournamentId}/generate-robin`
+        );
+        this.setSelectedBracket(rec.data.bracket);
+      } catch (err) {
+        console.error("Error generating Robin bracket:", err)
+        throw err;
+      }
     },
 
-    async generateFixedBracket(bracketId, size) {
+    async generateFixedBracket(size) {
       return new Promise(async (resolve, reject) => {
         try {
-          const rec = await api.post(`brackets/${bracketId}/generate-fixed`, {
-            size,
-          });
+          const tournamentId = this.user.tournament;
+          const bracketType = this.selected_bracket.type;
+          const rec = await api.post(
+            `tournament/${tournamentId}/generate-fixed`,
+            {
+              size,
+              bracketType,
+            }
+          );
           console.log("rec fixed generated", rec.data?.bracket);
           this.setSelectedBracket(rec.data.bracket);
           resolve(rec);
@@ -378,25 +385,23 @@ export const authStore = defineStore({
       Object.assign(this.user, partialData);
       localStorage.setItem("user", JSON.stringify(this.user));
     },
-    patchBracket(partialData) {
-      return new Promise((resolve) => {
-        try {
-          const rec = api.patch(
-            "brackets/" + this.selected_bracket._id,
-            partialData
-          );
-          //set selected_bracket details from partiaLData
-          Object.assign(this.selected_bracket, partialData);
-          localStorage.setItem(
-            "selected_bracket",
-            JSON.stringify(this.selected_bracket)
-          );
-          resolve(rec);
-        } catch (err) {
-          console.log(err);
-          reject(err);
-        }
-      });
+    async patchBracket(partialData) {
+      try {
+        const rec = await api.patch(
+          "brackets/" + this.user.tournament,
+          partialData
+        );
+        this.selected_bracket = rec.data;
+        // Store the updated selected_bracket in local storage
+        localStorage.setItem(
+          "selected_bracket",
+          JSON.stringify(this.selected_bracket)
+        );
+        return rec;
+      } catch (err) {
+        console.log(err);
+        throw err;
+      }
     },
     setSelectedBracket(bracket) {
       console.log("Setting bracket", bracket);

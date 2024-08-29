@@ -15,6 +15,10 @@ const userSchema = mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Organization",
 		},
+		tournament: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Tournament",
+		},
 		status: {
 			type: String,
 			enum: ["guest", "active", "upgraded", "inactive", "archived"],

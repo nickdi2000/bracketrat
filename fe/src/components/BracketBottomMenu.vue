@@ -92,7 +92,7 @@
             </button>
           </div>
           <h3 class="text-gray-300 my-2 text-center m-auto uppercase font-bold">
-            {{ titlize(bracket?.type) }}
+            {{ titlize(bracket?.type ?? "") }}
           </h3>
           <div
             class="flex flex-col space-y-4"
@@ -265,11 +265,19 @@ export default {
         "Build Round-Robin Tournament?",
         `This will build a fresh new set of rounds with any new ${this.$teamPlayer}s added since the last generation. It will pit each ${this.$teamPlayer} against every other ${this.$teamPlayer} in a round-robin format.`
       );
-      await this.$store.generateRobinBracket(this.bracket._id);
+      try {
+      await this.$store.generateRobinBracket();
+      }
+      catch (error) {
+      this.$toast.error( error?.response?.data?.data?.message ||
+       "An error occurred while generating the round-robin bracket.");
+      }
     },
     titlize(str) {
-      //remove hyphens and capitalize
-      if (!str) return "";
+      if (typeof str !== 'string') {
+        return ''; 
+      }
+    // Remove hyphens and capitalize
       return str.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
     },
     async generatedFixed(size) {
@@ -283,7 +291,7 @@ export default {
         this.$toast.error("No bracket found. Please Refresh.");
         return;
       }
-      this.$store.generateFixedBracket(bracketId, size);
+      this.$store.generateFixedBracket(size);
     },
     async execute(action) {
       const dontClose = ["showSizes"];

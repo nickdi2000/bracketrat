@@ -7,16 +7,7 @@ const { required } = require("joi");
 
 const bracketSchema = new mongoose.Schema(
 	{
-		name: {
-			type: String,
-			required: true,
-		},
-		description: {
-			type: String,
-			required: false,
-		},
 		rounds: [roundSchema],
-		robinRounds: [roundSchema],
 		organization: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Organization",
@@ -44,11 +35,6 @@ const bracketSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false,
 		},
-		code: {
-			type: String,
-			required: true,
-			default: () => generateRandomCode(6), // Use the function to generate a default code
-		},
 		type: {
 			type: String,
 			enum: [
@@ -62,6 +48,7 @@ const bracketSchema = new mongoose.Schema(
 			],
 			default: "single-elimination",
 		},
+		tournament: { type: mongoose.Schema.Types.ObjectId, ref: "Tournament", required: false },
 		require_auth: {
 			type: Boolean,
 			default: false,

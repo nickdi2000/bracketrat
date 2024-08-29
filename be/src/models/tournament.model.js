@@ -32,9 +32,14 @@ const tournamentSchema = new mongoose.Schema(
 			type: String,
 			default: () => generateRandomCode(6), // Use the function to generate a default code
 		},
-		defaultBracket: {
+		currentBracket: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Bracket",
+		},
+		organization: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Organization",
+			required: false,
 		},
 		website: String,
 

@@ -26,13 +26,14 @@ export const deleteCollectionByName = async (collectionName) => {
  * @returns {Promise<{user: Object, bracketId: string}>}
  */
 export const createTestUser = async () => {
-    const randomEmail = "tester@email.com";
-    const testUser = {
-        email: randomEmail,
-        password: "password123",
-        name: "Test User ",
-    };
-    const user = await createUser(testUser);
-    const defaultBracketId = user.defaultBracket;
-    return { user, defaultBracketId };
+  const randomEmail = "tester@email.com";
+  const testUser = {
+    email: randomEmail,
+    password: "password123",
+    name: "Test User ",
+  };
+  const user = await createUser(testUser);
+  console.log("user value:", user);
+  const tournament = user.tournament;
+  return { user, tournament };
 }

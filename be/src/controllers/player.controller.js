@@ -31,13 +31,11 @@ const createPlayer = async (req, res) => {
 		console.log("----no participantIndex, create player for org");
 		try {
 			const player = await playerService.addPlayer(name, organization._id);
-			const bracket = await bracketService.getFullBracket(defaultBracket);
-
 			const players = await playerService.getPlayersByOrganization(
 				organization._id
 			);
 
-			res.status(201).json({ player, players, bracket });
+			res.status(201).json({ player, players });
 		} catch (error) {
 			console.error("Error creating player:", error);
 			res.status(500).json({ message: error.message });
@@ -143,7 +141,7 @@ const login = catchAsync(async (req, res) => {
 	const { name, bracketId } = req.body;
 
 	try {
-		const {player , bracket } = await bracketService.findPlayerInBracket({
+		const { player, bracket } = await bracketService.findPlayerInBracket({
 			name,
 			bracketId,
 		});
@@ -151,7 +149,7 @@ const login = catchAsync(async (req, res) => {
 		const io = socket.getIo();
 		io.emit("player-loggedin", { player: player });
 
-		res.status(201).json({ player: player , bracket: bracket });
+		res.status(201).json({ player: player, bracket: bracket });
 	} catch (error) {
 		console.error("Error finding player in bracket:", error);
 		res.status(500).json({ message: error.message });

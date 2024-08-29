@@ -235,7 +235,7 @@ export default {
 
     async generateBracket() {
       this.loading = true;
-      await this.$store.generateBracket(this.currentBracket._id);
+      await this.$store.generateBracket();
       this.compKey++;
       this.loading = false;
     },

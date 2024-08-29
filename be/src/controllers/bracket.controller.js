@@ -1,6 +1,6 @@
 // controllers/BracketController.js
 const BaseController = require("./baseController");
-const { Bracket, Game } = require("../models");
+const { Bracket, Game, Tournament } = require("../models");
 const { Player } = require("../models/player.model");
 const { bracketService, playerService } = require("../services");
 const mongoose = require("mongoose");
@@ -161,19 +161,21 @@ class BracketController extends BaseController {
 
 	async generateFixed(req, res) {
 		const { bracketId } = req.params;
-		const { size } = req.body;
+		const { size, bracketType } = req.body;
 
 		if (!size) {
 			return res.status(400).json({ message: "Bracket size is required." });
 		}
-
 		try {
 			await bracketService.generateBracket({
 				bracketId,
 				bracketSize: size,
 			});
-
-			let bracket = await bracketService.getFullBracket(bracketId);
+			const bracketIdTest = await Bracket.findOne({
+				tournament: mongoose.Types.ObjectId(bracketId),
+				type: bracketType,
+			});
+			let bracket = await bracketService.getFullBracket(bracketIdTest._id);
 
 			if (!bracket) {
 				return res.status(404).json({ message: "Bracket not found." });
@@ -230,14 +232,14 @@ class BracketController extends BaseController {
 		const { bracketId } = req.params;
 		const { playerId, gameId, winnerMarkedById, winnerMarkedByName } = req.body;
 		const userId = req?.user?._id ?? winnerMarkedById;
-		const userName = req?.user?.isAdmin === true ? "Admin"  : winnerMarkedByName;
+		const userName = req?.user?.isAdmin === true ? "Admin" : winnerMarkedByName;
 
 		try {
 			let game = await bracketService.updateGameWinner(gameId, playerId);
-			  game.winnerMarkedById = userId;
-				game.winnerMarkedByName = userName
-        game.lastUpdatedAt = new Date();
-				game.save();
+			game.winnerMarkedById = userId;
+			game.winnerMarkedByName = userName
+			game.lastUpdatedAt = new Date();
+			game.save();
 			try {
 				let bracket = await bracketService.getFullBracket(bracketId);
 				if (!bracket) {
@@ -338,10 +340,10 @@ class BracketController extends BaseController {
 
 	async undoWinner(req, res) {
 		const { bracketId } = req.params;
-		const { gameId, roundIndex } = req.body;
+		const { gameId, playerId } = req.body;
 
 		try {
-			let game = await bracketService.undoWinner({ gameId });
+			let game = await bracketService.undoWinner({ gameId, playerId });
 			if (!game) {
 				return res.status(404).json({ message: "game not found." });
 			}
@@ -364,8 +366,8 @@ class BracketController extends BaseController {
 	async findByCode(req, res) {
 		const { code } = req.params;
 		try {
-			const bracket = await Bracket.findOne({ code: code });
-
+			const tournament = await Tournament.findOne({ code: code });
+			const bracket = await Bracket.findById(tournament.currentBracket);
 			//find players via organization of bracket
 			const players = await Player.find({ organization: bracket.organization });
 
@@ -384,20 +386,40 @@ class BracketController extends BaseController {
 		const { id } = req.params;
 
 		try {
-			const bracket = await Bracket.findById(id);
-			if (!bracket) {
-				return res.status(404).send("Item not found");
+			const tournamentId = mongoose.Types.ObjectId(id);
+			let tournament = await Tournament.findById(tournamentId);
+
+			if (!tournament) {
+				return res.status(404).send("Tournament not found.");
 			}
 
-			Object.keys(body).forEach((key) => {
-				bracket[key] = body[key];
+			let bracket = await Bracket.findOne({
+				tournament: tournamentId,
+				type: body.type
 			});
 
-			await bracket.save();
-			res.status(200).send(bracket);
+			if (!bracket) {
+				bracket = await Bracket.create({
+					tournament: tournamentId,
+					type: body.type,
+					organization: body.organization.id,
+				});
+			} else {
+				// Update tournament name and code if provided
+				if (body.name) tournament.name = body.name;
+				if (body.code) tournament.code = body.code;
+			}
+			tournament.currentBracket = bracket._id;
+			await tournament.save();
+			bracket = bracket.toObject();
+			bracket.name = tournament.name;
+			bracket.code = tournament.code;
+
+			return res.status(200).send(bracket);
+
 		} catch (error) {
-			console.log("bracketController error", error);
-			res.status(400).send("bracketController error" + JSON.stringify(error));
+			console.error("BracketController error:", error);
+			return res.status(400).send(`BracketController error: ${error.message}`);
 		}
 	}
 }
