@@ -1,5 +1,5 @@
 <template>
-  <div class="card pt-15 mt-12 mx-4">
+  <div class="py-15 mt-12 mx-4 px-4">
     <div class="p-5 mx-5">
       <div class="header">
         <h1 class="header font-bold uppercase">Privacy Policy</h1>
@@ -130,7 +130,17 @@
           If you have questions or comments about this policy, you may email us
           at support@webfly.io
         </p>
-        <p>BracketForce<br />16 Brigade Cres, Hamilton, ONTARIO</p>
+        <p>
+          BracketForce<br />
+          Hamilton, ONTARIO
+        </p>
+      </div>
+    </div>
+    <div>
+      <div class="my-8">
+        <router-link to="/landing" class="text-blue-500"
+          >Back to Homepage</router-link
+        >
       </div>
     </div>
   </div>

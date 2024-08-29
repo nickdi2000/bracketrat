@@ -1,6 +1,6 @@
 <template>
-  <div class="card pt-15 mt-12 mx-4">
-    <div class="terms-of-service">
+  <div class="pt-15 mt-12 mx-4 px-8">
+    <div class="terms-of-service max-w-full">
       <div class="header">
         <h1>Terms of Service</h1>
         <p>Effective Date: Jul 11, 2024</p>
@@ -111,6 +111,14 @@
           If you have any questions about these terms, please contact us at
           support@webfly.io.
         </p>
+      </div>
+
+      <div>
+        <div class="my-8">
+          <router-link to="/landing" class="text-blue-500"
+            >Back to Homepage</router-link
+          >
+        </div>
       </div>
     </div>
   </div>

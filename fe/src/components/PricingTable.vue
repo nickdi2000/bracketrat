@@ -54,7 +54,7 @@
           awarded life-time free access to the platform.
         </p>
       </div>
-      <div class="grid max-w-screen-md gap-10 md:grid-cols-2 sm:mx-auto">
+      <div class="grid max-w-screen-md gap-10 md:grid-cols-2 sm:mx-auto hidden">
         <div>
           <div class="p-8 bg-gray-900 rounded border border-1 border-teal-800">
             <div class="mb-4 text-center">
@@ -274,6 +274,15 @@
             class="w-9/12 h-2 mx-auto bg-gray-900 rounded-b opacity-25"
           ></div>
         </div>
+      </div>
+
+      <div class="flex justify-center">
+        <router-link
+          class="rounded border border-blue-600 bg-blue-800 px-12 py-3 text-sm font-medium text-white hover:bg-slate-800 hover:text-white focus:outline-none focus:ring active:text-opacity-75 sm:w-auto"
+          to="/pages/contact"
+        >
+          Join Beta <ArrowLongRightIcon class="h-4 w-4 inline" />
+        </router-link>
       </div>
     </div>
   </div>

@@ -13,7 +13,12 @@
           :class="[animate ? 'altered' : '', bounce ? 'animate-bounce' : '']"
         />
       </span> -->
-      <div class="text-2xl my-2 fadein font-bold">{{ $appName }}</div>
+      <div
+        @click="$router.push('/landing')"
+        class="text-2xl my-2 fadein font-bold uppercase text-gray-400 hover:text-gray-300 cursor-pointer"
+      >
+        {{ $appName }}
+      </div>
 
       <div
         class="w-full md:w-96 rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:border-gray-700 backdrop-blur-md"
@@ -161,7 +166,7 @@
         </div>
       </div>
 
-      <div >
+      <div>
         <router-link
           :to="'/find'"
           class="btn hover:text-blue-100 hover:bg-slate-800"
@@ -317,12 +322,15 @@ export default {
     background-color: rgba(0, 0, 0, 0.8);
 
     */
-  background: linear-gradient(109.6deg, rgb(19, 26, 36) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%);
+  background: linear-gradient(
+    109.6deg,
+    rgb(19, 26, 36) 11.2%,
+    rgb(16, 37, 60) 51.2%,
+    rgb(0, 0, 0) 98.6%
+  );
   background-size: cover;
   background-position: center;
   background-blend-mode: multiply;
-  
-
 
   min-height: 100vh;
 }
@@ -334,7 +342,7 @@ export default {
 
 .fixed-footer {
   position: relative;
-  width:100vw;
+  width: 100vw;
   top: 200px;
   left: 0;
   right: 0;

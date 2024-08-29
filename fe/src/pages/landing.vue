@@ -28,7 +28,7 @@
           <div class="mt-8 flex flex-wrap justify-center gap-4">
             <router-link
               class="fadeInUp block w-full rounded border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-white focus:outline-none focus:ring active:text-opacity-75 sm:w-auto"
-              to="/login"
+              to="/register"
             >
               Generate Bracket <ArrowLongRightIcon class="h-4 w-4 inline" />
             </router-link>
@@ -55,38 +55,110 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 z-10">
           <div class="text-center">
+            <div class="flex justify-center mb-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="size-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                />
+              </svg>
+            </div>
+
             <h3
               class="text-xl font-semibold mb-2 text-gray-900 dark:text-white"
             >
               Simple.
             </h3>
             <p class="text-gray-600 dark:text-gray-400">
-              It's the simplist one. If you can find a smoother more intuitive
-              tournament bracket system, send us the link and we'll give you a
-              free membership to our platform.
+              It's the simplist one. Go ahead, try to find a simpler bracket.
             </p>
           </div>
           <div class="text-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-6 h-6 inline-block"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M6 13.5V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 9.75V10.5"
+              />
+            </svg>
             <h3
               class="text-xl font-semibold mb-2 text-gray-900 dark:text-white"
             >
               Flexible.
             </h3>
             <p class="text-gray-600 dark:text-gray-400">
-              Move things around. Add, remove, edit teams/players on the fly and
-              the system will adjust accordingly.
+              Move things around. Add, remove, edit teams/players on the
+              fly...go <i>nuts.</i>
             </p>
           </div>
           <div class="text-center">
+            <div class="flex justify-center mb-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="size-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"
+                />
+              </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="size-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"
+                />
+              </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="size-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"
+                />
+              </svg>
+            </div>
             <h3
-              class="text-xl font-semibold mb-2 text-gray-900 dark:text-white"
+              class="text-xl font-semibold mb-0 text-gray-900 dark:text-white"
             >
               Multi-user.
             </h3>
             <p class="text-gray-600 dark:text-gray-400">
-              The first genuinly mult-user bracket system. Have the bracket
-              build itself by having the players join the bracket themselves via
-              a QR code or custom link.
+              The feature you didn't <i>know</i> you needed. Share the QR code
+              and watch the thing run itself.
             </p>
           </div>
         </div>
@@ -193,8 +265,6 @@ export default {
     height: 75vh;
   }
 }
-
-
 
 .matrix {
   background-color: transparent;
