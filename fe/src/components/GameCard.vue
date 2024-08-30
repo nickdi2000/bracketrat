@@ -57,7 +57,8 @@
       <div v-else>
         <div
           class="px-3 mt-2 grid grid-cols-2 backdrop-opacity-10 backdrop-invert bg-slate-800/30 rounded-md"
-          v-for="(p, i) in [0, 1]"
+          v-for="(p, i) in [0, 1]"  
+          :key="i"
         >
           <div
             class="p-3 font-bold uppercase text-lg md:text-xl lg:text-2xl"
@@ -121,7 +122,7 @@ export default {
       try {
         await this.$store.markWinner({
           playerId: player._id,
-          gameId: this.game.id,
+          gameId: this.game._id,
           bracketId: this.game.bracketId,
         });
         this.toggleFlip();
@@ -138,7 +139,7 @@ export default {
       try {
         await this.$store.undoWinner({
           playerId: player._id,
-          gameId: this.game.id,
+          gameId: this.game._id,
           bracketId: this.game.bracketId,
         });
         this.toggleFlip();

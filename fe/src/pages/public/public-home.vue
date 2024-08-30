@@ -248,7 +248,8 @@ export default {
     },
   },
   methods: {
-    async getBracket(bracketId = null) {
+    async getBracket() {
+      const bracketId = this.player.bracketId;
       if (!bracketId) {
         console.error("no bracketid");
         return;
@@ -261,11 +262,9 @@ export default {
         console.error(e);
       }
     },
-    async getOrg(orgId = null) {
-      if (!orgId) {
-        orgId = this.player.organization;
-      }
-      if (!orgId) {
+    async getOrg() {
+      const orgId = this.player.organizationId;
+      if (!orgId) {  
         console.error("no orgId");
         return;
       }

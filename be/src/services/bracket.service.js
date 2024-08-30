@@ -710,7 +710,12 @@ findPlayerInBracket = async ({ name, bracketId }) => {
 	}
 
 	return {
-		player: { ...foundPlayer.toObject(), bracketId: bracket._id },
+		player:
+		{
+			...foundPlayer.toObject(),
+			bracketId: bracket._id,
+			organizationId: bracket.organization
+		},
 		bracket,
 	};
 };
@@ -757,8 +762,6 @@ generateRobinBracket = async ({ tournamentId }) => {
 			tournament: tournamentId,
 			type: 'round-robin'
 		}).populate("players");
-
-		console.log("bracket--Round-RObin::", bracket);
 
 		// If the bracket doesn't exist, create it
 		if (!bracket) {
