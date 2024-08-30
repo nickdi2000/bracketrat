@@ -1,13 +1,13 @@
 <template>
   <div class="py-3">
     <fwb-tabs v-model="activeTab" class="p-5">
-      <fwb-tab name="first" title="Brackets">
+      <fwb-tab name="first" title="My Tournaments">
         <div>
           <router-link
             :to="'/admin/brackets/create'"
             class="bg-slate-700 p-2 text-white rounded-md font-bold hover:bg-blue-800"
           >
-            + Create New Bracket
+            + Create New Tournament
           </router-link>
         </div>
 
@@ -29,9 +29,17 @@
                   <fwb-table-cell>
                     <span
                       :class="
-                        selectedBracket._id == item._id ? 'text-green-300' : ''
+                        selectedBracket._id == item.currentBracket
+                          ? 'text-green-300'
+                          : ''
                       "
-                      >{{ item.name }}
+                    >
+                      <CheckCircleIcon
+                        title="Currently Selected Bracket"
+                        class="h-6 w-6 inline mr-2"
+                        v-if="selectedBracket._id == item.currentBracket"
+                      />
+                      {{ item.name }}
                     </span>
                     <div class="badge mx-2" v-if="item.players?.length">
                       {{ item.players?.length }} {{ $teamPlayer }}s
@@ -50,7 +58,7 @@
                         @click.stop="
                           () =>
                             this.$router.push(
-                              `/admin/brackets/edit/${item._id}`
+                              `/admin/brackets/edit/${item.currentBracket}`
                             )
                         "
                       >
@@ -83,7 +91,7 @@
                 class="w-4 h-4 inline"
                 @click="
                   $bottomAlert(
-                    `Click on the row to switch to that bracket. (the currently selected one is highlighted green) You can also click 'Edit' to adjust the details, or create a New Bracket.`
+                    `Click on the row to switch to that tournament. (the currently selected one is highlighted green) You can also click 'Edit' to adjust the details, or create a New Tournament & Bracket.`
                   )
                 "
               />
@@ -139,14 +147,14 @@ export default {
   methods: {
     async getRecords() {
       this.loading = true;
-      const response = await this.$api.get("/brackets");
+      //const response = await this.$api.get("/brackets");
+      const response = await this.$api.get("/tournaments");
       this.items = response.data;
       this.loading = false;
     },
     async selectBracket(item) {
-      //this.$router.push(route);
-      await this.$store.fetchBracket(item._id);
-      //this.$store.setSelectedBracket(item);
+      //await this.$store.fetchBracket(item._id);
+      await this.$store.fetchBracket(item.currentBracket);
       this.$router.push(`/admin/dashboard`);
     },
     async deleteBracket(id) {

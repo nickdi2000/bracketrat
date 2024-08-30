@@ -90,7 +90,7 @@
             Share your unique room link/QR code or add them manually.
           </div>
           <button
-            class="btn btn-secondary mt-4 fadein"
+            class="p-2 bg-slate-900 mt-4 hover:bg-slate-700 fadein"
             @click="$router.push('/admin/players')"
           >
             <PlusCircleIcon class="h-6 inline mr-1 mb-1" />

@@ -6,6 +6,7 @@ const controllers = {
 	users: require("../../controllers/user.controller"),
 	message: require("../../controllers/message.controller"),
 	brackets: require("../../controllers/bracket.controller"),
+	tournaments: require("../../controllers/tournament.controller"),
 	// ... other model controllers
 };
 

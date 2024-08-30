@@ -3,3 +3,4 @@ module.exports.userController = require("./user.controller");
 module.exports.baseController = require("./baseController");
 module.exports.superController = require("./super.controller");
 module.exports.bracketController = require("./bracket.controller");
+module.exports.tournamentController = require("./tournament.controller");

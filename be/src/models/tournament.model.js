@@ -16,6 +16,11 @@ const tournamentSchema = new mongoose.Schema(
 			type: String,
 			trim: true,
 		},
+		status: {
+			type: String,
+			enum: ["active", "draft", "completed", "cancelled", "paused"],
+			default: "draft",
+		},
 		contactNumber: String,
 		address: {
 			street: String,
@@ -42,7 +47,6 @@ const tournamentSchema = new mongoose.Schema(
 			required: false,
 		},
 		website: String,
-
 	},
 	{
 		timestamps: true,

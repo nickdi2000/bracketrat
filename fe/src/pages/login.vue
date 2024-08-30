@@ -1,7 +1,7 @@
 <template>
   <section class="middle bg-image h-full lg:pt-0 md:pt-0 sm:pt-10">
     <div
-      class="flex flex-col items-center justify-center px-6 pb-1 mx-auto md:h-screen lg:py-0"
+      class="flex flex-col items-center justify-center px-0 pb-1 md:h-screen lg:py-0 mx-4"
     >
       <!-- <span
         @click="test()"
@@ -21,7 +21,7 @@
       </div>
 
       <div
-        class="w-full md:w-96 rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:border-gray-700 backdrop-blur-md"
+        class="mx-5 md:w-96 rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:border-gray-700 backdrop-blur-md"
       >
         <div v-if="error" class="pb-2 m-3">
           <Alert type="danger" class="w-full">{{ error }}</Alert>
@@ -35,21 +35,6 @@
           </h1>
 
           <div class="space-y-4 md:space-y-6" action="#">
-            <!-- <div v-if="registering">
-              <label
-                for="name"
-                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >Name</label
-              >
-              <input
-                type="text"
-                name="name"
-                v-model="form.name"
-                id="name"
-                class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="John Doe"
-              />
-            </div> -->
             <div>
               <label
                 for="email"
@@ -166,7 +151,7 @@
         </div>
       </div>
 
-      <div>
+      <div class="mt-8">
         <router-link
           :to="'/find'"
           class="btn hover:text-blue-100 hover:bg-slate-800"
@@ -333,6 +318,7 @@ export default {
   background-blend-mode: multiply;
 
   min-height: 100vh;
+  max-width: 100vw;
 }
 
 .altered {
@@ -343,7 +329,7 @@ export default {
 .fixed-footer {
   position: relative;
   width: 100vw;
-  top: 200px;
+  top: 160px;
   left: 0;
   right: 0;
   padding: 1rem;

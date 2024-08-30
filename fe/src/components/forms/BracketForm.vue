@@ -24,7 +24,10 @@
           ></textarea>
         </div>
 
-        <div class="pb-4">
+        <div
+          class="p-4 bg-slate-900 my-2 shadow-lg fadein"
+          v-if="showPlayerLinkInput"
+        >
           <Input
             label="Player Link"
             v-model="form.code"
@@ -34,17 +37,36 @@
           <div class="text-red-400 py-2" v-if="!form.code">
             Code cannot be blank.
           </div>
-          <div class="text-gray-300 my-2">
-            This is the link that players will use to join your tournament.
-            <span class="text-lg font-bold text-slate">{{ link }}</span>
+          <div class="md:flex md:justify-between mt-4">
+            <div class="text-gray-300 ml-4">
+              <span class="text-2xl font-bold text-slate uppercase">{{
+                link
+              }}</span>
+            </div>
+            <div class="mt-6 ml-4 md:mt-0">
+              <router-link
+                class="p-2 text-gray-200 bg-slate-700 hover:bg-slate-800"
+                :to="'/admin/players/invite'"
+              >
+                View QR Code <QrCodeIcon class="w-4 h-4 inline" />
+              </router-link>
+            </div>
           </div>
-          <div>
-            <router-link
-              class="p-2 bg-slate-800 hover:bg-slate-700"
-              :to="'/admin/players/invite'"
-            >
-              View QR Code <QrCodeIcon class="w-4 h-4 inline" />
-            </router-link>
+
+          <div class="my-4 text-gray-200 px-4">
+            Share this link with your players/teams so they can join the bracket
+            and update the outcome of their own games. You may change the code
+            to something more memorable if you like. (Note that changing the
+            code will change the link.)
+          </div>
+        </div>
+
+        <div v-else-if="!showPlayerLinkInput">
+          <div
+            class="fond-bold p-2 my-6 bg-slate-800 rounded-md cursor-pointer hover:bg-slate-900"
+            @click="showPlayerLinkInput = true"
+          >
+            Player Link: <span class="uppercase">{{ link }}</span>
           </div>
         </div>
 
@@ -245,8 +267,8 @@
     </div>
     <div v-show="shouldDisable">
       <div class="text-white text-sm alert alert-danger">
-        <span class="font-bold">Note:</span> One or more of your selected options is only available for
-        our upgraded Beta Users. <br />Please
+        <span class="font-bold">Note:</span> One or more of your selected
+        options is only available for our upgraded Beta Users. <br />Please
         <router-link
           class="text-blue-300 underline hover:text-blue-100 font-bold"
           :to="'/admin/contact'"
@@ -312,6 +334,7 @@ export default {
       selectionCount: 0,
       selections: [],
       showTip: false,
+      showPlayerLinkInput: false,
       showDescription: false,
       timer: null,
       form: {
@@ -410,18 +433,17 @@ export default {
       return import.meta.env.VITE_BASE_FE_URL + "" + this.form.code;
     },
     shouldDisable() {
-
       const standardTypes = [
         "single-elimination",
         "double-elimination",
         "round-robin",
       ];
 
-      const isProType = !standardTypes.includes(this.form.type) || this.form.require_auth;
+      const isProType =
+        !standardTypes.includes(this.form.type) || this.form.require_auth;
       const isProMark = this.form.mark_method === "points";
 
       return isProType || isProMark;
-      
     },
   },
   components: {
@@ -441,6 +463,7 @@ export default {
   },
   methods: {
     async save() {
+      this.showPlayerLinkInput = false;
       if (!this.validate()) {
         return;
       }
@@ -455,10 +478,10 @@ export default {
       delete data.robinRounds;
 
       try {
-       const res = await this.$store.patchBracket(data);
-       this.form = res.data;
-       this.$store.setSelectedBracket(res.data);
-       this.stopLoading();
+        const res = await this.$store.patchBracket(data);
+        this.form = res.data;
+        this.$store.setSelectedBracket(res.data);
+        this.stopLoading();
       } catch (e) {
         console.log("error saving bracket", e);
         this.loading = false;
