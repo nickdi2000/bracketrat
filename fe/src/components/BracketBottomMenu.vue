@@ -254,6 +254,10 @@ export default {
   },
   methods: {
     async generate() {
+      if (!this.$store.players?.length) {
+        this.$toast.error("Cannot Generate Dynamic Bracket without players.");
+        return;
+      }
       const ask = await this.$openDialog(
         "Build Bracket?",
         `This will build a fresh new bracket with any new ${this.$teamPlayer}s added since the last generation.`
@@ -266,18 +270,19 @@ export default {
         `This will build a fresh new set of rounds with any new ${this.$teamPlayer}s added since the last generation. It will pit each ${this.$teamPlayer} against every other ${this.$teamPlayer} in a round-robin format.`
       );
       try {
-      await this.$store.generateRobinBracket();
-      }
-      catch (error) {
-      this.$toast.error( error?.response?.data?.data?.message ||
-       "An error occurred while generating the round-robin bracket.");
+        await this.$store.generateRobinBracket();
+      } catch (error) {
+        this.$toast.error(
+          error?.response?.data?.data?.message ||
+            "An error occurred while generating the round-robin bracket."
+        );
       }
     },
     titlize(str) {
-      if (typeof str !== 'string') {
-        return ''; 
+      if (typeof str !== "string") {
+        return "";
       }
-    // Remove hyphens and capitalize
+      // Remove hyphens and capitalize
       return str.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
     },
     async generatedFixed(size) {

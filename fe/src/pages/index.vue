@@ -1,7 +1,7 @@
 <template>
   <span class="main-span- text-white">
     <Loader v-if="loading" />
-
+    <Welcome />
     <div
       v-if="playersNotInBracket?.length && playerCount > 2"
       style="position: fixed; right: 40px; top: 85px; z-index: 99"
@@ -176,6 +176,7 @@ import PlayerBadges from "@/components/PlayerBadges.vue";
 import BracketGenerator from "@/components/BracketGenerator.vue";
 import RoundsDetails from "@/components/RoundsDetails.vue";
 import RoundRobin from "@/components/RoundRobin.vue";
+import Welcome from "@/components/Welcome.vue";
 
 export default {
   components: {
@@ -188,6 +189,7 @@ export default {
     BracketGenerator,
     RoundsDetails,
     RoundRobin,
+    Welcome,
   },
   mixins: [bracketMixin],
   data() {

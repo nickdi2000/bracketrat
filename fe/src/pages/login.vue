@@ -260,7 +260,7 @@ export default {
 
         const rec = await this.$api.register(this.form);
         this.$store.setUser(rec);
-        this.$router.push("/admin/dashboard");
+        this.$router.push("/admin/dashboard?welcome=true");
       } catch (error) {
         this._handleResponse(error);
       }
