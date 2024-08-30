@@ -147,6 +147,9 @@
     </div>
 
     <div v-else-if="view == 'bracket'" class="mx-4 scrollable fadein">
+      <div class="mid" v-if="error">
+        <div class="alert alert-warning">{{ error }}</div>
+      </div>
       <div>
         <bracket
           :rounds="bracket.rounds"
@@ -203,6 +206,7 @@ export default {
   data() {
     return {
       bracket: {},
+      error: "",
       dev: false,
       compKey: 0,
       //currentGame: null,
@@ -252,6 +256,8 @@ export default {
       const bracketId = this.player.bracketId;
       if (!bracketId) {
         console.error("no bracketid");
+        this.error =
+          "No Bracket has been built for you yet. Please contact your organization.";
         return;
       }
       try {
@@ -264,7 +270,7 @@ export default {
     },
     async getOrg() {
       const orgId = this.player.organizationId;
-      if (!orgId) {  
+      if (!orgId) {
         console.error("no orgId");
         return;
       }

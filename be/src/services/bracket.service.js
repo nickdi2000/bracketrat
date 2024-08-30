@@ -19,13 +19,13 @@ const generateBracket = async ({
 
 		let bracket = await Bracket.findOne({
 			tournament: tournamentId,
-			type: 'single-elimination'
-		})
+			type: "single-elimination",
+		});
 
 		if (!bracket) {
 			bracket = await Bracket.create({
 				tournament: tournamentId,
-				type: 'single-elimination',
+				type: "single-elimination",
 				organization: tournament.organization,
 			});
 		}
@@ -320,15 +320,16 @@ const getFullBracket = async (bracketId) => {
 };
 
 const populateRoundsWithPlayers = async (bracket) => {
-	await bracket.populate({
-		path: "rounds.games",
-		populate: {
-			path: "participants.player",
-			select: "name",
-		},
-	})
+	await bracket
+		.populate({
+			path: "rounds.games",
+			populate: {
+				path: "participants.player",
+				select: "name",
+			},
+		})
 		.execPopulate();
-	let tournament = await Tournament.findById(bracket.tournament)
+	let tournament = await Tournament.findById(bracket.tournament);
 	bracket = bracket.toObject();
 	bracket.name = tournament.name || "";
 	bracket.code = tournament.code || "";
@@ -367,19 +368,19 @@ const formatDataForBracket = (bracket) => {
 				_id: game._id,
 				player1: game.participants[0]
 					? {
-						...game.participants[0],
-						_id: game.participants[0]._id,
-						participantIndex: 0,
-						gameId: game._id,
-					}
+							...game.participants[0],
+							_id: game.participants[0]._id,
+							participantIndex: 0,
+							gameId: game._id,
+					  }
 					: { ...defaultPlayer },
 				player2: game.participants[1]
 					? {
-						...game.participants[1],
-						_id: game.participants[1]._id,
-						participantIndex: 1,
-						gameId: game._id,
-					}
+							...game.participants[1],
+							_id: game.participants[1]._id,
+							participantIndex: 1,
+							gameId: game._id,
+					  }
 					: { ...defaultPlayer },
 				bracketId: game.bracketId,
 				__v: game.__v,
@@ -420,13 +421,18 @@ const addPlayerToFirstEmptySpot = async (bracketId, playerId) => {
 	try {
 		const bracket = await Bracket.findById(bracketId);
 		if (!bracket) {
+			console.error("NO bracket found");
 			throw new Error("Failed to find bracket.");
 		}
 
-		// Get the first round games
-		const firstRoundGames = await Game.find({
-			_id: { $in: bracket.rounds[0].games },
-		});
+		if (bracket.rounds?.length && bracket.rounds[0]?.games) {
+			// Get the first round games
+			const firstRoundGames = await Game.find({
+				_id: { $in: bracket.rounds[0].games },
+			});
+		} else {
+			return;
+		}
 
 		let foundEmptySpot = false;
 		let updatedGame = null;
@@ -710,11 +716,10 @@ findPlayerInBracket = async ({ name, bracketId }) => {
 	}
 
 	return {
-		player:
-		{
+		player: {
 			...foundPlayer.toObject(),
 			bracketId: bracket._id,
-			organizationId: bracket.organization
+			organizationId: bracket.organization,
 		},
 		bracket,
 	};
@@ -751,7 +756,9 @@ async function batchUpdatePlayers({ players }) {
 generateRobinBracket = async ({ tournamentId }) => {
 	try {
 		console.log("tournamentId::", tournamentId);
-		const tournament = await Tournament.findById(tournamentId).populate('organization');
+		const tournament = await Tournament.findById(tournamentId).populate(
+			"organization"
+		);
 		console.log("tournamnet::", tournament);
 		if (!tournament) {
 			throw new Error("Tournament not found.");
@@ -760,7 +767,7 @@ generateRobinBracket = async ({ tournamentId }) => {
 		// Check if a round-robin bracket already exists for this tournament
 		let bracket = await Bracket.findOne({
 			tournament: tournamentId,
-			type: 'round-robin'
+			type: "round-robin",
 		}).populate("players");
 
 		// If the bracket doesn't exist, create it
@@ -768,7 +775,7 @@ generateRobinBracket = async ({ tournamentId }) => {
 			bracket = await Bracket.create({
 				name: `Round Robin Bracket`,
 				tournament: tournamentId,
-				type: 'round-robin',
+				type: "round-robin",
 				organization: tournament.organization.id,
 			});
 		}

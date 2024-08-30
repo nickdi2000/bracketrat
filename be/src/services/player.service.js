@@ -2,7 +2,6 @@ const { Bracket, Game } = require("../models");
 const { Player } = require("../models/player.model");
 const bracketService = require("./bracket.service");
 
-
 const incrementPlayerWins = async (playerId) => {
 	await Player.findByIdAndUpdate(playerId, { $inc: { wins: 1 } });
 };
@@ -17,8 +16,10 @@ const addPlayerToBracket = async (playerId, bracketId) => {
 
 const createAndAddToBracket = async ({ name, bracketId }) => {
 	try {
-		const bracket = await Bracket.findById(bracketId);//.organization;
-		const organization = bracket.organization;
+		const bracket = await Bracket.findById(bracketId).populate("tournament"); //.organization;
+		//const organization = bracket.organization;
+		const tournament = bracket.tournament;
+		const organization = tournament.organization;
 
 		if (!organization) {
 			throw new Error("Organization not found");
@@ -31,20 +32,20 @@ const createAndAddToBracket = async ({ name, bracketId }) => {
 		/* await bracketService.appendPlayerToBracket(player._id, bracketId); */
 		/* this should add the user to an empty slot, if there are no empty slots it should EXPAND the bracket to allow them to join, this may mean creating bye's as the structure will be disrupted */
 		try {
-			const updatedBracket = await bracketService.addPlayerToFirstEmptySpot(bracketId, player._id);
+			const updatedBracket = await bracketService.addPlayerToFirstEmptySpot(
+				bracketId,
+				player._id
+			);
 		} catch (error) {
 			console.error("Error adding player to bracket", error);
 			throw new Error("Failed to add player to bracket (playerlservice.js)");
 		}
 
 		return player;
-
 	} catch (error) {
 		console.error("Error finding organization", error);
 		throw new Error("Failed to find organization (playerlservice.js)");
 	}
-
-
 };
 
 const removePlayerFromBracket = async (playerId, bracketId) => {
@@ -148,5 +149,5 @@ module.exports = {
 	addPlayer,
 	createPlayerToSlot,
 	getPlayersByOrganization,
-	createAndAddToBracket
+	createAndAddToBracket,
 };
