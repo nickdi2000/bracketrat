@@ -169,6 +169,10 @@
 
     <PricingTable />
 
+    <div class="my-8 flex justify-center">
+      <Logo2 />
+    </div>
+
     <!-- Footer -->
     <footer class="py-6 bg-gray-200 dark:bg-gray-700 z-10">
       <div class="container mx-auto text-center">
@@ -194,6 +198,7 @@ import landingWallpaper from "./landingWallpaper2.vue";
 import PricingTable from "../components/PricingTable.vue";
 import landingNav from "./landingNav.vue";
 import BracketSvg from "../components/graphics/BracketSvg.vue";
+import Logo2 from "../components/Logo2.vue";
 
 export default {
   components: {
@@ -201,6 +206,7 @@ export default {
     PricingTable,
     landingNav,
     BracketSvg,
+    Logo2,
   },
   data() {
     return {};

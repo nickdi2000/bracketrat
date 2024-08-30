@@ -13,11 +13,15 @@
           :class="[animate ? 'altered' : '', bounce ? 'animate-bounce' : '']"
         />
       </span> -->
-      <div
+      <!-- <div
         @click="$router.push('/landing')"
         class="text-2xl my-2 fadein font-bold uppercase text-gray-400 hover:text-gray-300 cursor-pointer"
       >
         {{ $appName }}
+      </div> -->
+
+      <div class="my-8">
+        <Logo2 @click="$router.push('/landing')" />
       </div>
 
       <div
@@ -85,7 +89,7 @@
                 </div>
               </div>
               <a
-                href="#"
+                href="/forgot-password"
                 class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
                 >Forgot password?</a
               >
@@ -175,12 +179,14 @@
 <script>
 import SocialLogin from "@/components/SocialLogin.vue";
 import { apiHandler } from "@/mixins/apiHandler";
+import Logo2 from "@/components/Logo2.vue";
 
 export default {
   name: "Login",
   mixins: [apiHandler],
   components: {
     SocialLogin,
+    Logo2,
   },
   data() {
     return {

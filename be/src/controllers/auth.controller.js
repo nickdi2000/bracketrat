@@ -59,7 +59,7 @@ const forgotPassword = catchAsync(async (req, res) => {
 		req.body.email
 	);
 	//await emailService.sendResetPasswordEmail(req.body.email, resetPasswordToken);
-	const baseUrl = process.env.APP_URL || "https://successionwills.com/app";
+	const baseUrl = process.env.APP_URL || "https://bracketforce.com";
 	const url = `${baseUrl}/reset-password?token=${resetPasswordToken}`;
 	console.log("Reset URL", url);
 

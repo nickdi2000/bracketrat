@@ -1,21 +1,21 @@
 const axios = require("axios");
 
-const product_name = "Rat Bracket";
+const product_name = "BracketForce";
 const contactTemplateID = 34214622;
 const admin = process.env.ADMIN_EMAIL ?? "nickdifelice@gmail.com";
-const sender_name = "The RatBracket Team";
+const sender_name = "The BracketForce Team";
 
 const { Message } = require("../models");
 
 const templateObject = {
-	From: "info@bracketrat.com",
+	From: "info@bracketforce.com",
 	To: admin,
 	TemplateId: 34214622,
 	TemplateModel: {
 		product_name: product_name,
-		action_url: "https://bracketrat.com",
-		support_url: "https://bracketrat.com/support",
-		login_url: "https://bracketrat.com",
+		action_url: "https://bracketforce.com",
+		support_url: "https://bracketforce.com/pages/contact",
+		login_url: "https://bracketforce.com",
 		sender_name: "Nick",
 	},
 	MessageStream: "outbound",
@@ -70,7 +70,7 @@ const sendWelcomeEmail = async (params) => {
 	data.TemplateModel.sender_name = sender_name;
 	data.TemplateModel.product_name = product_name;
 	data.TemplateModel.name = params.name ?? "[N/A]";
-	data.TemplateModel.action_url = "https://bracketrat.com/app/login";
+	data.TemplateModel.action_url = "https://bracketforce.com/login";
 	data.TemplateId = 35012190;
 	const rec = await executeSend(data);
 	return rec;
@@ -81,7 +81,7 @@ const sendResetPassword = async (email, token) => {
 	data.To = email;
 	data.TemplateModel.sender_name = sender_name;
 	data.TemplateModel.product_name = product_name;
-	data.TemplateModel.action_url = `https://bracketrat.com/app/reset-password?token=${token}`;
+	data.TemplateModel.action_url = `https://bracketforce.com/reset-password?token=${token}`;
 	data.TemplateId = 35013037;
 	const rec = await executeSend(data);
 	return rec;

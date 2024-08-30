@@ -1,6 +1,7 @@
 import AuthLayout from "@/layouts/AuthLayout.vue";
 import Index from "@/pages/index.vue";
 import Login from "@/pages/login.vue";
+import ForgotPassword from "@/pages/forgot-password.vue";
 import Players from "@/pages/players.vue";
 import Player from "@/pages/player.vue";
 import Rounds from "@/pages/rounds.vue";
@@ -82,6 +83,13 @@ const routes = [
         registering: true,
         name: "register",
         component: Login,
+      },
+      {
+        path: "/forgot-password",
+        meta: { isPublic: true },
+        registering: true,
+        name: "forgot-password",
+        component: ForgotPassword,
       },
     ],
   },
