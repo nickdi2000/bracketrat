@@ -16,7 +16,7 @@ const addPlayerToBracket = async (playerId, bracketId) => {
 
 const createAndAddToBracket = async ({ name, bracketId }) => {
 	try {
-		const bracket = await Bracket.findById(bracketId).populate("tournament"); //.organization;
+		const bracket = await Bracket.findById(bracketId).populate("tournament");
 		//const organization = bracket.organization;
 		const tournament = bracket.tournament;
 		const organization = tournament.organization;
@@ -88,13 +88,22 @@ const createPlayerToSlot = async ({
 
 	try {
 		// First, retrieve the bracket to get the associated organization
-		const bracket = await Bracket.findById(bracketId);
+		const bracket = await Bracket.findById(bracketId).populate("tournament");
 		if (!bracket) {
 			throw new Error("Bracket not found.");
 		}
 
+		const tournament = bracket.tournament;
+		const organization = tournament.organization;
+
+		// Check if the organization is valid
+		if (!organization) {
+			throw new Error("Organization not found");
+		}
+		console.log("Organization found! ", organization);
+
 		// Create the new player with the correct organization ID
-		const player = new Player({ name, organization: bracket.organization });
+		const player = new Player({ name, organization });
 		await player.save();
 
 		// Find the game using the provided gameId
@@ -115,8 +124,6 @@ const createPlayerToSlot = async ({
 			name: player.name,
 			filled: true,
 		};
-
-		console.log("new playerIndex value", game.participants[participantIndex]);
 
 		// Save the updated game
 		await game.save();
