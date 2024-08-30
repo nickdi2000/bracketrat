@@ -5,6 +5,10 @@ const create = async (data) => {
 	if (!data?.organization) {
 		throw new Error("Cannot create a tournament with an organization");
 	}
+
+	if (!data?.unit) {
+		data.unit = "solo";
+	}
 	//should create a tournament AND a bracket, then assign the bracket to the tournaments' currentBracket
 	const tournament = await Tournament.create(data);
 	const bracket = await Bracket.create({ tournament: tournament._id });

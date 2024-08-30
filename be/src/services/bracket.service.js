@@ -23,6 +23,7 @@ const generateBracket = async ({
 		});
 
 		if (!bracket) {
+			console.log("Non found -- Creating new organizaiton");
 			bracket = await Bracket.create({
 				tournament: tournamentId,
 				type: "single-elimination",
@@ -33,6 +34,8 @@ const generateBracket = async ({
 		if (!bracket) {
 			throw new Error("Bracket not found.");
 		}
+
+		console.log("bracket found or created:", bracket);
 
 		console.log("---bracketSize", bracketSize);
 
@@ -51,7 +54,8 @@ const generateBracket = async ({
 					.filter((player) => player) || [];
 		} else {
 			// Optionally load players based on another criterion, e.g., from an organization
-			const organization = await Organization.findById(bracket.organization);
+			const tournament = await Tournament.findById(bracket.tournament);
+			const organization = await Organization.findById(tournament.organization);
 			if (!organization) {
 				throw new Error("Organization not found.");
 			}

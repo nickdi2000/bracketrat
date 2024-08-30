@@ -83,6 +83,13 @@
           >
             {{ type.name }}
           </button>
+          <button
+            @click="showAllBrackets = !showAllBrackets"
+            class="text-white p-2 rounded-md bg-blue-900 hover:bg-blue-500 mx-2"
+          >
+            <Chain class="inline mr-2" /> Link
+          </button>
+
           <div v-if="selectedTypeObject" class="fadein">
             <div
               class="subtitle-2 text-gray-200 text-xs ml-3 fadein"
@@ -316,6 +323,7 @@ import {
   soloSports,
 } from "@/constants/enums";
 import Loader3 from "../Loader3.vue";
+import Chain from "@/components/Chain.vue";
 
 export default {
   emits: ["save"],
@@ -327,6 +335,7 @@ export default {
       teamSports,
       options,
       soloSports,
+      showAllBrackets: false, //TODO: build little div showing all brackets where we can set as active/deactive and change order
       model: {
         name: "Bracket",
         path: "brackets",
@@ -377,20 +386,20 @@ export default {
           description:
             "Everyone plays everyone else.  The person with the most wins is the winner. The winner cashes in on their bragging rights.",
         },
-        {
-          value: "swiss",
-          name: "Swiss",
-          disabled: true,
-          description:
-            "A non-elimination tournament.  You play someone with the same record as you.  The person with the best record at the end wins. Very European.",
-        },
-        {
-          value: "playoffs",
-          name: "Playoffs",
-          disabled: true,
-          description:
-            "You play in a group stage and then the top teams advance to a single elimination bracket.  It's great for pretending you're in the big leagues.",
-        },
+        // {
+        //   value: "swiss",
+        //   name: "Swiss",
+        //   disabled: true,
+        //   description:
+        //     "A non-elimination tournament.  You play someone with the same record as you.  The person with the best record at the end wins. Very European.",
+        // },
+        // {
+        //   value: "playoffs",
+        //   name: "Playoffs",
+        //   disabled: true,
+        //   description:
+        //     "You play in a group stage and then the top teams advance to a single elimination bracket.  It's great for pretending you're in the big leagues.",
+        // },
       ],
       markTypes: [
         {
@@ -451,6 +460,7 @@ export default {
   },
   components: {
     Loader3,
+    Chain,
   },
   mounted() {
     //check if we get it as prop first

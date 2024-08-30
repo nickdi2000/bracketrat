@@ -3,6 +3,8 @@
     class="pt-0 text-white min-h-screen- m-auto flex flex-row justify-center"
   >
     <div class="max-w-4xl">
+      <div class="header mb-4">Tournament Settings</div>
+      <!-- BRacketFOrm is more like a Tournament Form with "brackets" inside it -->
       <BracketForm :selectedBracket="selectedBracket" v-if="selectedBracket" />
       <div v-else>
         <Alert type="warning"
