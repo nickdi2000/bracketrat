@@ -477,27 +477,21 @@ export default {
       }
     },
     async create() {
-      console.log("Creating..");
       this.loading = true;
       const rec = await this.$api.post("tournaments", this.form);
 
       this.loading = false;
       this.$router.push(`/admin/my-organization`);
-      //TODO: FINISH THIS
     },
     async update() {
-      /* TODO: if we are creating (this.creatingNew == true) we should CREATE the tournament */
-
       this.showPlayerLinkInput = false;
       if (!this.validate()) {
         return;
       }
 
       this.loading = true;
-      //this.$emit("save", this.form);
-
-      console.log("saving data", "brackets");
       let data = JSON.parse(JSON.stringify(this.form));
+      //TODO: we shouldn't deed to delete these properties as they don't exist with the new structure, please confirm.
       delete data.players;
       delete data.rounds;
       delete data.robinRounds;

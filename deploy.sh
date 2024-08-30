@@ -11,7 +11,7 @@ npm install && npm run build
 # Run npm run build in the be folder
 echo "Building backend..."
 cd "$CURRENT_DIR/be"
-npm install && npm run build
+npm install && pm2 restart index
 
 # Ensure the backend script has execute permissions
 echo "Setting permissions for backend script..."
