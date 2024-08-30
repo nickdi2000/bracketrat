@@ -22,6 +22,9 @@ const templateObject = {
 };
 
 const executeSend = async (data) => {
+	if (!process.env.POSTMARK_KEY) {
+		throw new Error("Postmark Key not set");
+	}
 	try {
 		const rec = await axios.post(
 			"https://api.postmarkapp.com/email/withTemplate",
@@ -37,7 +40,7 @@ const executeSend = async (data) => {
 		console.log("PostMark Response", rec.response);
 		return true;
 	} catch (err) {
-		console.log("PostMark Error", err?.message);
+		console.log("Node executeSend Error", err);
 		//throw error
 
 		return false;
@@ -82,7 +85,7 @@ const sendResetPassword = async (email, token) => {
 	data.TemplateModel.sender_name = sender_name;
 	data.TemplateModel.product_name = product_name;
 	data.TemplateModel.action_url = `https://bracketforce.com/reset-password?token=${token}`;
-	data.TemplateId = 35013037;
+	data.TemplateId = 34214251;
 	const rec = await executeSend(data);
 	return rec;
 };

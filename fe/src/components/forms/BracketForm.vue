@@ -63,7 +63,7 @@
 
         <div v-else-if="!showPlayerLinkInput">
           <div
-            class="fond-bold p-2 my-6 bg-slate-800 rounded-md cursor-pointer hover:bg-slate-900"
+            class="text-gray-200 font-bold p-2 my-6 bg-slate-800 rounded-md cursor-pointer hover:bg-slate-900"
             @click="showPlayerLinkInput = true"
           >
             Player Link: <span class="uppercase">{{ link }}</span>
@@ -287,7 +287,7 @@
         "
         :disabled="shouldDisable"
       >
-        Save Changes
+        {{ creatingNew ? "Create!" : "Save Changes" }}
       </button>
 
       <button
@@ -423,6 +423,9 @@ export default {
     },
   },
   computed: {
+    creatingNew() {
+      return !this.selectedBracket || !this.selectedBracket._id;
+    },
     selectedTypeObject() {
       return this.types.find((type) => type.value === this.form.type);
     },
@@ -460,9 +463,31 @@ export default {
     if (this.$route.params.id) {
       this.getRecord(this.$route.params.id);
     }
+
+    if (this.creatingNew && !this.form?.code) {
+      this.form.code = Math.random().toString(36).substring(2, 6).toUpperCase();
+    }
   },
   methods: {
     async save() {
+      if (this.creatingNew) {
+        this.create();
+      } else {
+        this.update();
+      }
+    },
+    async create() {
+      console.log("Creating..");
+      this.loading = true;
+      const rec = await this.$api.post("tournaments", this.form);
+
+      this.loading = false;
+      this.$router.push(`/admin/my-organization`);
+      //TODO: FINISH THIS
+    },
+    async update() {
+      /* TODO: if we are creating (this.creatingNew == true) we should CREATE the tournament */
+
       this.showPlayerLinkInput = false;
       if (!this.validate()) {
         return;

@@ -1,8 +1,41 @@
 // controllers/TournamentController.js
 const { Bracket, Tournament } = require("../models");
 const { Player } = require("../models/player.model");
-const { bracketService } = require("../services");
+const { bracketService, tournamentService } = require("../services");
 const mongoose = require("mongoose");
+
+const upsert = async (req, res) => {
+	const org_id = req.user.organization;
+	console.log("orgaId", org_id);
+	req.body.organization = org_id;
+
+	try {
+		let item;
+		if (req.body.id) {
+			item = await Tournament.findByIdAndUpdate(req.body.id, req.body, {
+				new: true,
+				runValidators: true,
+			});
+			if (!item) {
+				return res.status(404).send("Item not found");
+			}
+		} else {
+			// If no ID is provided, create a new document
+			item = await tournamentService.create(req.body);
+			await item.save();
+
+			//if user does not have a defaultBracket, we will set it to this bracket
+			if (!req.user.defaultBracket) {
+				req.user.defaultBracket = item.currentBracket;
+				await req.user.save();
+			}
+		}
+		res.status(201).send(item);
+	} catch (error) {
+		console.log("TournamentController error", error);
+		res.status(400).send("TournamentController error" + JSON.stringify(error));
+	}
+};
 
 const list = async (req, res) => {
 	try {
@@ -124,4 +157,5 @@ module.exports = {
 	reGenerate,
 	generate,
 	list,
+	upsert,
 };
