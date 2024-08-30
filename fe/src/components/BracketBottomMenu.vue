@@ -91,9 +91,14 @@
               <QuestionMarkCircleIcon class="w-4 h-4" />
             </button>
           </div>
-          <h3 class="text-gray-300 my-2 text-center m-auto uppercase font-bold">
+          <h3 class="text-gray-300 mt-2 text-center m-auto uppercase font-bold">
             {{ titlize(bracket?.type ?? "") }}
           </h3>
+          <div
+            class="text-center mt-0 text-xs text-gray-500 uppercase mb-2 font-bold"
+          >
+            {{ bracket?.build_type }}
+          </div>
           <div
             class="flex flex-col space-y-4"
             v-if="!displaySizeOptions && filteredButtons"
@@ -131,17 +136,17 @@
               <span class="text-gray-400 text-4xl font-bold">{{ size }}</span>
             </button>
 
-            <button
+            <!-- <button
               class="btn btn-block mt-5 bg-slate-900 hover:bg-blue-900"
               @click="displaySizeOptions = false"
             >
               <ArrowLeftCircleIcon class="w-6 h-6 mr-3 mt-1 inline-block" />
               Back
-            </button>
+            </button> -->
           </div>
 
           <button
-            @click="show = false"
+            @click="closeMenu()"
             class="p-4 text-2xl font-bold uppercase text-gray-500 bg-slate-900 hover:bg-blue-900 w-full rounded-md mt-8"
           >
             Close
@@ -253,6 +258,10 @@ export default {
     },
   },
   methods: {
+    closeMenu() {
+      this.show = false;
+      this.displaySizeOptions = false;
+    },
     async generate() {
       if (!this.$store.players?.length) {
         this.$toast.error("Cannot Generate Dynamic Bracket without players.");
@@ -291,11 +300,11 @@ export default {
         `Build ${size}-player Bracket?`,
         `This will build a fresh new bracket with ${size} empty slots.`
       );
-      const bracketId = this.bracket._id;
-      if (!bracketId) {
-        this.$toast.error("No bracket found. Please Refresh.");
-        return;
-      }
+      // const bracketId = this.bracket._id;
+      // if (!bracketId) {
+      //   this.$toast.error("No bracket found. Please Refresh.");
+      //   return;
+      // }
       this.$store.generateFixedBracket(size);
     },
     async execute(action) {

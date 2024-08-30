@@ -1,5 +1,6 @@
 <template>
-  <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+  <p class="mb-3 text-sm font-normal text-gray-700 dark:text-gray-400">
+    <div class="alert alert-warning my-4">Not Enough {{ $teamPlayer }}'s</div>
     <span v-if="players?.length === 0">
       You have no
       <span class="lowercase">{{ $teamPlayer }}'s</span> in this bracket. Add

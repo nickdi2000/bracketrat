@@ -268,9 +268,6 @@ export default {
   computed: {
     shouldShowBracket() {
       const s = this.currentBracket?.rounds?.length && !this.dev; //rounds?.length && playerCount && !dev
-      console.log("shouldShowBracket", s);
-      console.log("rounds", this.currentBracket?.rounds?.length);
-      console.log("playerCount", this.playerCount);
       return s;
     },
     bracketType() {

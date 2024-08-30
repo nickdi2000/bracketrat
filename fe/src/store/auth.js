@@ -49,7 +49,14 @@ export const authStore = defineStore({
     async generateBracket() {
       return new Promise(async (resolve, reject) => {
         try {
-          const tournamentId = this.user.tournament;
+          const tournamentId = this.selected_bracket?.tournament;
+          if (!tournamentId) {
+            console.error("No tournamentId provided to authStore");
+            return;
+          } else {
+            console.log("tournamentId", tournamentId);
+          }
+
           const rec = await api.post(`tournament/${tournamentId}/generate`);
           console.log("rec generated", rec.data?.bracket);
           this.setSelectedBracket(rec.data.bracket);
@@ -62,13 +69,11 @@ export const authStore = defineStore({
 
     async generateRobinBracket() {
       try {
-        const tournamentId = this.user.tournament;
-        const rec = await api.post(
-          `tournament/${tournamentId}/generate-robin`
-        );
+        const tournamentId = this.user;
+        const rec = await api.post(`tournament/${tournamentId}/generate-robin`);
         this.setSelectedBracket(rec.data.bracket);
       } catch (err) {
-        console.error("Error generating Robin bracket:", err)
+        console.error("Error generating Robin bracket:", err);
         throw err;
       }
     },
@@ -76,8 +81,15 @@ export const authStore = defineStore({
     async generateFixedBracket(size) {
       return new Promise(async (resolve, reject) => {
         try {
-          const tournamentId = this.user.tournament;
-          const bracketType = this.selected_bracket.type;
+          // const tournamentId = this.user.tournament;
+          const tournamentId = this.selected_bracket?.tournament;
+
+          if (!tournamentId) {
+            console.error("No tournamentId provided to authStore");
+            return;
+          }
+
+          const bracketType = this.selected_bracket?.type;
           const rec = await api.post(
             `tournament/${tournamentId}/generate-fixed`,
             {
