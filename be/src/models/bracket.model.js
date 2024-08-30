@@ -17,14 +17,14 @@ const bracketSchema = new mongoose.Schema(
 			type: String,
 			required: false,
 		},
-		unit: {
-			type: String,
-			enum: ["team", "solo", "other"],
-			required: false,
-		},
 		sport: {
 			type: String,
 			required: false,
+		},
+		build_type: {
+			type: String,
+			enum: ["dynamic", "fixed"],
+			default: "dynamic",
 		},
 		status: {
 			type: String,
@@ -48,7 +48,11 @@ const bracketSchema = new mongoose.Schema(
 			],
 			default: "single-elimination",
 		},
-		tournament: { type: mongoose.Schema.Types.ObjectId, ref: "Tournament", required: false },
+		tournament: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Tournament",
+			required: false,
+		},
 		require_auth: {
 			type: Boolean,
 			default: false,

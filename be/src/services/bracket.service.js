@@ -40,6 +40,7 @@ const generateBracket = async ({
 		if (bracketSize) {
 			// Fixed bracket size for starting the tournament without initial player data
 			players = new Array(bracketSize).fill(null);
+			bracket.build_type = "fixed"; // Set the build type to fixed for UI purposes if necessary
 		} else if (useCurrentPlayers) {
 			// Load current players from existing games (if any)
 			players =

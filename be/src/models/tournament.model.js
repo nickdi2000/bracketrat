@@ -21,6 +21,11 @@ const tournamentSchema = new mongoose.Schema(
 			enum: ["active", "draft", "completed", "cancelled", "paused"],
 			default: "draft",
 		},
+		unit: {
+			type: String,
+			enum: ["team", "solo", "other"],
+			required: false,
+		},
 		contactNumber: String,
 		address: {
 			street: String,
