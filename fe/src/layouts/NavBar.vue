@@ -113,7 +113,7 @@
         v-if="showMobile"
       >
         <div class="space-y-1 px-2 pb-3 pt-3 z-50">
-          <div class="subheader md:hidden sm:block pt-2">This Bracket</div>
+          <div class="header md:hidden sm:block pt-2">This Tournament</div>
           <button
             v-for="item in items"
             class="w-full text-left text-white block rounded-md px-3 py-4 text-lg font-medium hover:bg-blue-800"
@@ -128,7 +128,13 @@
           </button>
 
           <div class="mobile-dropdown py-10">
-            <ProfileDropdown :mobile="true" @close="handleClose()" />
+            <div class="header md:hidden sm:block pt-2">Profile</div>
+
+            <ProfileDropdown
+              :mobile="true"
+              @close="handleClose()"
+              @select="handleClick"
+            />
           </div>
         </div>
       </div>

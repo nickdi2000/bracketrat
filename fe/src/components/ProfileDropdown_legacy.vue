@@ -1,6 +1,6 @@
 <template>
-  <div class="relative inline-block md:py-0" v-if="!mobile">
-    <div class="subheader md:hidden sm:block">Organization</div>
+  <div class="relative inline-block md:py-0">
+    <div class="subheader md:hidden sm:block" v-if="mobile">Organization</div>
     <button
       id="dropdownDefaultButton"
       data-dropdown-toggle="dropdown"
@@ -82,23 +82,6 @@
       </ul>
     </div>
   </div>
-
-  <div v-else>
-    <div>
-      <button
-        v-for="item in menuItems"
-        class="w-full text-left mb-2 text-white block rounded-md px-3 py-4 text-lg font-medium hover:bg-blue-800"
-        aria-current="page"
-        @click="handleClick(item)"
-        :class="$route.path === item.route ? 'bg-blue-900' : 'bg-gray-900'"
-        :key="item.name + '-mobile'"
-      >
-        <component :is="item.icon" class="h-4 w-4 inline mr-2" />
-
-        {{ item.name }}
-      </button>
-    </div>
-  </div>
 </template>
 
 <script>
@@ -111,21 +94,6 @@ export default {
   data() {
     return {
       show: false,
-      menuItems: [
-        {
-          name: "My Organization",
-          route: "/admin/my-organization",
-          icon: "BuildingOffice2Icon",
-        },
-        { name: "My Profile", route: "/admin/profile", icon: "UserCircleIcon" },
-        {
-          name: "Contact Support",
-          route: "/admin/contact",
-          icon: "EnvelopeIcon",
-        },
-        // { name: "Account & Pricing", route: "/admin/pricing" },
-        { name: "Logout", action: "logout", icon: "ArrowUturnRightIcon" },
-      ],
     };
   },
   props: {
@@ -155,16 +123,6 @@ export default {
       this.show = false;
       this.$emit("close");
       this.$router.push(route);
-    },
-    handleClick(item) {
-      if (item.route) {
-        this.$router.push(item.route);
-      }
-      if (item.action) {
-        this[item.action]();
-      }
-
-      this.$emit("close");
     },
   },
 };

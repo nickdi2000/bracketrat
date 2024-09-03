@@ -219,7 +219,7 @@ export const authStore = defineStore({
       if (isNaN(participantIndex)) {
         console.info("!participantIndex, creating new", participantIndex);
       }
-      const bracketId = this.selected_bracket._id;
+      const bracketId = this.selected_bracket?._id;
 
       if (!bracketId) {
         console.error("No bracket selected");
@@ -234,8 +234,8 @@ export const authStore = defineStore({
             gameId,
             bracketId,
           });
-          const bracket = rec.data.bracket;
-          this.setSelectedBracket(bracket);
+          //const bracket = rec.data.bracket;
+          //this.setSelectedBracket(bracket);
 
           //check if rec.data.players exists
           if (rec.data.players) {

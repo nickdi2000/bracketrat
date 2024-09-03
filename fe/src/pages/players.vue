@@ -59,12 +59,16 @@
       <PlusCircleIcon class="h-8 text-white inline" />
     </button>
 
-    <div class="players-footer text-center flex flex-row justify-center mt-8 pt-8">
-      <router-link to="/admin/dashboard" class="text-sm text-gray-100 bg-gray-800 hover:bg-blue-800 rounded-md p-2">
+    <div
+      class="players-footer text-center flex flex-row justify-center mt-8 pt-8"
+    >
+      <router-link
+        to="/admin/dashboard"
+        class="text-sm text-gray-100 bg-gray-800 hover:bg-blue-800 rounded-md p-2"
+      >
         <ArrowLongLeftIcon class="h-6 text-white inline-block mr-2" />
-      Back to Bracket
+        Back to Bracket
       </router-link>
-
     </div>
   </div>
 </template>
@@ -102,6 +106,13 @@ export default {
 
   mounted() {
     this.$store.fetchPlayers();
+  },
+  created() {
+    const bracket = this.$store?.getBracket;
+    if (!bracket || bracket === "undefined" || !bracket._id) {
+      console.warn("No Bracket selected, redirecting to Organization");
+      this.$router.push({ name: "Organization" });
+    }
   },
   methods: {
     async getRecords() {

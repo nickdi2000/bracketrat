@@ -60,6 +60,8 @@ import {
   QrCodeIcon,
   ListBulletIcon,
   Cog6ToothIcon,
+  BuildingOffice2Icon,
+  EnvelopeIcon,
 } from "@heroicons/vue/24/solid";
 
 import piniaPlugin from "./plugins/pinia";
@@ -109,7 +111,7 @@ app.component("UsersIcon", UsersIcon);
 app.component("ListBulletIcon", ListBulletIcon);
 app.component("Error", Error);
 app.component("HomeIcon", HomeIcon);
-
+app.component("BuildingOffice2Icon", BuildingOffice2Icon);
 //custom
 
 app.component("Loader", Loader);
@@ -138,6 +140,7 @@ app.component("ArrowPathIcon", ArrowPathIcon);
 app.component("QrCodeIcon", QrCodeIcon);
 app.component("TrophyIcon", TrophyIcon);
 app.component("Cog6ToothIcon", Cog6ToothIcon);
+app.component("EnvelopeIcon", EnvelopeIcon);
 
 app.use(router);
 
