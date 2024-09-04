@@ -47,31 +47,60 @@ export const authStore = defineStore({
     },
 
     async generateBracket() {
-      return new Promise(async (resolve, reject) => {
-        try {
-          const tournamentId = this.selected_bracket?.tournament;
-          if (!tournamentId) {
-            console.error("No tournamentId provided to authStore");
-            return;
-          } else {
-            console.log("tournamentId", tournamentId);
-          }
+      try {
+        const bracketType = this.selected_bracket?.type;
 
-          const rec = await api.post(`tournament/${tournamentId}/generate`);
-          console.log("rec generated", rec.data?.bracket);
-          this.setSelectedBracket(rec.data.bracket);
-          resolve(rec);
-        } catch (err) {
-          reject(err);
+        if (!bracketType) {
+          console.error("Bracket type is missing or undefined.");
+          return;
         }
-      });
+
+        let bracket;
+        switch (bracketType) {
+          case "single-elimination":
+            bracket = await this.generateSingleElimBracket();
+            break;
+          case "round-robin":
+            bracket = await this.generateRobinBracket();
+            break;
+          default:
+            console.error(`Unknown bracket type: ${bracketType}`);
+            return;
+        }
+
+        return bracket;
+      } catch (err) {
+        console.error("Error generating bracket:", err);
+        throw err;
+      }
+    },
+
+    async generateSingleElimBracket() {
+      try {
+        const tournamentId = this.selected_bracket?.tournament;
+        if (!tournamentId) {
+          console.error("No tournamentId provided to authStore");
+          return;
+        }
+        const rec = await api.post(`tournament/${tournamentId}/generate`);
+        this.setSelectedBracket(rec.data.bracket);
+        return rec;
+      } catch (err) {
+        console.error("Error generating Single Elimination bracket:", err);
+        throw err;
+      }
     },
 
     async generateRobinBracket() {
       try {
-        const tournamentId = this.user;
+        const tournamentId = this.selected_bracket?.tournament;
+        if (!tournamentId) {
+          console.error("No tournamentId provided to authStore");
+          return;
+        }
         const rec = await api.post(`tournament/${tournamentId}/generate-robin`);
         this.setSelectedBracket(rec.data.bracket);
+        return rec;
       } catch (err) {
         console.error("Error generating Robin bracket:", err);
         throw err;
@@ -81,9 +110,7 @@ export const authStore = defineStore({
     async generateFixedBracket(size) {
       return new Promise(async (resolve, reject) => {
         try {
-          // const tournamentId = this.user.tournament;
           const tournamentId = this.selected_bracket?.tournament;
-
           if (!tournamentId) {
             console.error("No tournamentId provided to authStore");
             return;
@@ -234,8 +261,9 @@ export const authStore = defineStore({
             gameId,
             bracketId,
           });
-          //const bracket = rec.data.bracket;
-          //this.setSelectedBracket(bracket);
+          const bracket = rec.data.bracket;
+          if (bracket)
+            this.setSelectedBracket(bracket);
 
           //check if rec.data.players exists
           if (rec.data.players) {
@@ -403,12 +431,7 @@ export const authStore = defineStore({
           "brackets/" + this.user.tournament,
           partialData
         );
-        this.selected_bracket = rec.data;
-        // Store the updated selected_bracket in local storage
-        localStorage.setItem(
-          "selected_bracket",
-          JSON.stringify(this.selected_bracket)
-        );
+        this.fetchBracket(rec.data._id);
         return rec;
       } catch (err) {
         console.log(err);
@@ -431,8 +454,14 @@ export const authStore = defineStore({
     },
     destroy() {
       return new Promise((resolve) => {
-        this.user = null;
-        this.tokens = null;
+        this.$patch({
+          user: null,
+          tokens: null,
+          selected_bracket: null,
+          players: [],
+          organization: null,
+        });
+
         localStorage.removeItem("user");
         localStorage.removeItem("token");
         localStorage.removeItem("selected_bracket");

@@ -203,6 +203,7 @@ export default {
       loading: false,
     };
   },
+  
   async created() {
     if (!this.players?.length && this.$store?.getBracket?._id) {
       await this.$store.fetchBracket(this.$store.getBracket._id);

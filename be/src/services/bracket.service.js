@@ -373,19 +373,19 @@ const formatDataForBracket = (bracket) => {
 				_id: game._id,
 				player1: game.participants[0]
 					? {
-							...game.participants[0],
-							_id: game.participants[0]._id,
-							participantIndex: 0,
-							gameId: game._id,
-					  }
+						...game.participants[0],
+						_id: game.participants[0]._id,
+						participantIndex: 0,
+						gameId: game._id,
+					}
 					: { ...defaultPlayer },
 				player2: game.participants[1]
 					? {
-							...game.participants[1],
-							_id: game.participants[1]._id,
-							participantIndex: 1,
-							gameId: game._id,
-					  }
+						...game.participants[1],
+						_id: game.participants[1]._id,
+						participantIndex: 1,
+						gameId: game._id,
+					}
 					: { ...defaultPlayer },
 				bracketId: game.bracketId,
 				__v: game.__v,
@@ -429,10 +429,10 @@ const addPlayerToFirstEmptySpot = async (bracketId, playerId) => {
 			console.error("NO bracket found");
 			throw new Error("Failed to find bracket.");
 		}
-
+		let firstRoundGames;
 		if (bracket.rounds?.length && bracket.rounds[0]?.games) {
 			// Get the first round games
-			const firstRoundGames = await Game.find({
+			firstRoundGames = await Game.find({
 				_id: { $in: bracket.rounds[0].games },
 			});
 		} else {
@@ -784,7 +784,6 @@ generateRobinBracket = async ({ tournamentId }) => {
 				organization: tournament.organization.id,
 			});
 		}
-
 		const organization = await Organization.findById(bracket.organization);
 		const players = await Player.find({ organization: organization._id });
 
@@ -808,7 +807,6 @@ generateRobinBracket = async ({ tournamentId }) => {
 
 		bracket.rounds = [];
 		let allGames = [];
-
 		// Generate rounds
 		for (let round = 0; round < totalRounds; round++) {
 			const roundGames = [];
@@ -899,6 +897,33 @@ async function augmentRobinRounds(bracketId) {
 	return bracket;
 }
 
+const unsetPlayerAsWinner = async ({ bracketId, playerId, roundIndex }) => {
+
+	const bracket = await Bracket.findById(bracketId)
+		.populate({
+			path: 'rounds.games',
+			model: 'Game',
+		})
+		.exec();
+
+	if (!bracket) {
+		throw new Error('Bracket not found');
+	}
+
+	const previousRoundIndex = roundIndex - 1;
+
+	if (previousRoundIndex < 0) {
+		throw new Error('No previous round exists');
+	}
+
+	const previousRound = bracket.rounds[previousRoundIndex];
+	const gameIds = previousRound.games.map(game => game._id);
+	const result = await Game.updateMany(
+		{ _id: { $in: gameIds }, 'participants.player': playerId },
+		{ $set: { 'participants.$[].winner': null } }
+	);
+}
+
 module.exports = {
 	generateBracket,
 	generateRobinBracket,
@@ -916,4 +941,5 @@ module.exports = {
 	findPlayerInBracket,
 	batchUpdatePlayers,
 	getFullBracket,
+	unsetPlayerAsWinner,
 };

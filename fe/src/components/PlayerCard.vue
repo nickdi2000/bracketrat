@@ -35,7 +35,7 @@
               </button>
             </div>
 
-            <div v-else-if="player.winner == null">
+            <div v-else-if="player.winner == null ">
               <button
                 class="btn btn-success btn-block"
                 @click="markPlayerAsWinner()"
@@ -147,7 +147,7 @@
               </button>
 
               <button
-                v-if="$store.players.length"
+                v-if="isFirstRound && $store.players.length"
                 @click="showAllPlayersToSelect = true"
                 class="btn bg-slate-900 btn-block mb-6 text-gray-300 hover:bg-slate-800"
               >
@@ -199,7 +199,7 @@ export default {
       return this.$store.getBracket;
     },
     isFirstRound() {
-      return this.player.roundIndex === 0;
+      return  this.game.roundIndex === 0;
     },
     isLastRound() {
       return this.player.roundIndex === this.rounds.length - 1;
@@ -225,7 +225,6 @@ export default {
         return false;
       }
       const opponent = this.getOpponent(this.player);
-
       return this.rounds
         .slice(this.player.roundIndex + 1)
         .some((round) =>
@@ -239,6 +238,10 @@ export default {
   },
   methods: {
     addPlayer() {
+      if (!this.isFirstRound) {
+      this.$toast.error("Players can only be added in the first round.");
+      return;
+      }
       this.$emit("update", false);
       const participantIndex = this.player?.participantIndex;
       const gameId = this.game._id;

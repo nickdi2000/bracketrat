@@ -289,6 +289,12 @@ class BracketController extends BaseController {
 				gameId,
 			});
 
+			await bracketService.unsetPlayerAsWinner({
+				bracketId,
+				playerId,
+				roundIndex,
+			})
+
 			const bracket = await bracketService.getFullBracket(bracketId);
 			if (!bracket) {
 				return res.status(404).json({ message: "Bracket not found." });
