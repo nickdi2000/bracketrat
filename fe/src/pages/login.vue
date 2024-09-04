@@ -3,23 +3,6 @@
     <div
       class="flex flex-col items-center justify-center px-0 pb-1 md:h-screen lg:py-0 mx-4"
     >
-      <!-- <span
-        @click="test()"
-        class="flex items-center lg:mt-0 sm:mt-5 fade fadeinUp text-2xl font-semibold text-gray-900 dark:text-white"
-      >
-        <img
-          src="/images/logo-light.png"
-          class="logo-image"
-          :class="[animate ? 'altered' : '', bounce ? 'animate-bounce' : '']"
-        />
-      </span> -->
-      <!-- <div
-        @click="$router.push('/landing')"
-        class="text-2xl my-2 fadein font-bold uppercase text-gray-400 hover:text-gray-300 cursor-pointer"
-      >
-        {{ $appName }}
-      </div> -->
-
       <div class="my-8">
         <Logo2 @click="$router.push('/landing')" />
       </div>
@@ -29,6 +12,15 @@
       >
         <div v-if="error" class="pb-2 m-3">
           <Alert type="danger" class="w-full">{{ error }}</Alert>
+
+          <div v-if="invalidCredentials" class="my-1 text-center fadein">
+            <!-- <div class="text-gray-200 mb-4">
+              Did you mean to register a new account with this email?
+            </div> -->
+            <button @click="goToCreateNew" class="btn btn-sm">
+              Create New Account instead
+            </button>
+          </div>
         </div>
         <div class="p-6 space-y-4 md:space-y-1 sm:p-8">
           <h1
@@ -195,6 +187,7 @@ export default {
       loading: false,
       bounce: false,
       error: "",
+      invalidCredentials: false,
       dummy_form: {
         email: "admin@example.com",
         password: "password123",
@@ -218,6 +211,13 @@ export default {
     copyDummy() {
       this.form = this.dummy_form;
     },
+
+    goToCreateNew() {
+      //this.$router.push("/register?email=" + this.form.email);
+      this.registering = true;
+      this.error = "";
+      this.invalidCredentials = false;
+    },
     async test() {
       try {
         const rec = await this.$api.test();
@@ -227,7 +227,6 @@ export default {
           this.bounce = false;
         }, 5000);
       } catch (error) {
-        console.log("ERROR", error);
         this.$toast.error("Error Testing System");
       }
     },
@@ -264,11 +263,15 @@ export default {
         this.$store.setUser(rec);
         this.$router.push("/admin/dashboard");
       } catch (error) {
-        console.log("ERROR", error);
-        //this.$toast.error("Error registering");
-        this._handleResponse(error);
-        if (error.message) {
-          this.error = error.message;
+        console.log("ERROR", error?.response?.status);
+
+        const err = this._handleResponse(error);
+        if (err) {
+          this.error = err;
+        }
+
+        if (error?.response?.status == 401) {
+          this.invalidCredentials = true;
         }
       }
       this.loading = false;

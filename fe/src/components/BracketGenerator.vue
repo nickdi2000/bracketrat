@@ -1,7 +1,7 @@
 <template>
   <div v-if="players.length > 2" class="flex flex-col items-center">
     <p
-      class="mb-3 font-normal text-gray-700 dark:text-gray-400"
+      class="mb-3 font-normal text-gray-700 dark:text-gray-400 max-w-xl"
       v-if="!showOptions"
     >
       You have {{ players.length }} players in this bracket. Click below to

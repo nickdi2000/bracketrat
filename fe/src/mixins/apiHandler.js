@@ -3,7 +3,7 @@ import { data } from "autoprefixer";
 export const apiHandler = {
   data() {
     return {
-      _errorMessage: '',
+      _errorMessage: "",
     };
   },
   methods: {
@@ -20,7 +20,9 @@ export const apiHandler = {
         }
         this.$toast.error(msg);
         this._errorMessage = msg;
+        return msg;
       }
+      return null;
     },
   },
 };
