@@ -40,21 +40,24 @@
             </div>
           </span>
         </h2>
-        <div class="text-orange-500 text-lg uppercase font-bold">
-          *Free Until 2025
-        </div>
 
-        <p
-          class="text-base sm:text-gray-300 md:text-gray-300 lg:text-gray-800 lg:text-lg"
-        >
-          <span class="text-orange-500 text-lg uppercase font-bold">*</span
-          >&nbsp;While we collect feedback from our active users and build the
-          thing up -- we are not charging anything for full access to the
-          platform. Users that signup and provide feedback early on will be
-          awarded life-time free access to the platform.
-        </p>
+        <div v-if="isFree">
+          <div class="text-orange-500 text-lg uppercase font-bold">
+            *Free Until 2025
+          </div>
+
+          <p
+            class="text-base sm:text-gray-300 md:text-gray-300 lg:text-gray-800 lg:text-lg"
+          >
+            <span class="text-orange-500 text-lg uppercase font-bold">*</span
+            >&nbsp;While we collect feedback from our active users and build the
+            thing up -- we are not charging anything for full access to the
+            platform. Users that signup and provide feedback early on will be
+            awarded life-time free access to the platform.
+          </p>
+        </div>
       </div>
-      <div class="grid max-w-screen-md gap-10 md:grid-cols-2 sm:mx-auto hidden">
+      <div class="grid max-w-screen-md gap-10 md:grid-cols-2 sm:mx-auto">
         <div>
           <div class="p-8 bg-gray-900 rounded border border-1 border-teal-800">
             <div class="mb-4 text-center">
@@ -65,11 +68,11 @@
                 <p class="mr-2 text-5xl font-semibold text-white lg:text-6xl">
                   $0
                 </p>
-                <p class="text-lg text-gray-500">/ month</p>
+                <p class="text-lg text-gray-500">/ {{ interval }}</p>
               </div>
             </div>
             <ul class="mb-8 space-y-2">
-              <li class="flex items-center">
+              <li class="flex items-center py-1" v-for="item in items">
                 <div class="mr-3">
                   <svg
                     class="w-4 h-4 text-teal-accent-400"
@@ -91,32 +94,9 @@
                     ></circle>
                   </svg>
                 </div>
-                <p class="font-medium text-gray-300">5-Player Limit</p>
+                <p class="font-medium text-gray-300 py-1">{{ item }}</p>
               </li>
-              <li class="flex items-center">
-                <div class="mr-3">
-                  <svg
-                    class="w-4 h-4 text-teal-accent-400"
-                    viewBox="0 0 24 24"
-                    stroke-linecap="round"
-                    stroke-width="2"
-                  >
-                    <polyline
-                      fill="none"
-                      stroke="currentColor"
-                      points="6,12 10,16 18,8"
-                    ></polyline>
-                    <circle
-                      cx="12"
-                      cy="12"
-                      fill="none"
-                      r="11"
-                      stroke="currentColor"
-                    ></circle>
-                  </svg>
-                </div>
-                <p class="font-medium text-gray-300">1 bracket</p>
-              </li>
+
               <li>
                 <div><p>&nbsp;</p></div>
               </li>
@@ -147,17 +127,27 @@
                 Pro Plan
               </p>
               <div class="flex items-center justify-center">
-                <p class="mr-2 font-semibold text-white lg:text-6xl">
+                <p
+                  class="mr-2 font-semibold text-white lg:text-6xl"
+                  v-if="isDiscounted"
+                >
                   <span class="line-through text-red-500 inline text-5xl mr-2"
                     >$29</span
                   >
                   <span class="text-3xl">$0</span>
                 </p>
-                <p class="text-lg text-gray-500">/ month</p>
+                <p
+                  class="mr-2 text-5xl font-semibold text-white lg:text-6xl"
+                  v-else
+                >
+                  $199
+                </p>
+
+                <p class="text-lg text-gray-500">/ {{ interval }}</p>
               </div>
             </div>
             <ul class="mb-8 space-y-2">
-              <li class="flex items-center">
+              <li class="flex items-center" v-for="proItem in proItems">
                 <div class="mr-3">
                   <svg
                     class="w-4 h-4 text-teal-accent-400"
@@ -179,81 +169,9 @@
                     ></circle>
                   </svg>
                 </div>
-                <p class="font-medium text-gray-300">
-                  Unlimited Players & Teams
+                <p class="font-medium text-gray-300 py-1">
+                  {{ proItem }}
                 </p>
-              </li>
-              <li class="flex items-center">
-                <div class="mr-3">
-                  <svg
-                    class="w-4 h-4 text-teal-accent-400"
-                    viewBox="0 0 24 24"
-                    stroke-linecap="round"
-                    stroke-width="2"
-                  >
-                    <polyline
-                      fill="none"
-                      stroke="currentColor"
-                      points="6,12 10,16 18,8"
-                    ></polyline>
-                    <circle
-                      cx="12"
-                      cy="12"
-                      fill="none"
-                      r="11"
-                      stroke="currentColor"
-                    ></circle>
-                  </svg>
-                </div>
-                <p class="font-medium text-gray-300">Unlimited Brackets</p>
-              </li>
-              <li class="flex items-center">
-                <div class="mr-3">
-                  <svg
-                    class="w-4 h-4 text-teal-accent-400"
-                    viewBox="0 0 24 24"
-                    stroke-linecap="round"
-                    stroke-width="2"
-                  >
-                    <polyline
-                      fill="none"
-                      stroke="currentColor"
-                      points="6,12 10,16 18,8"
-                    ></polyline>
-                    <circle
-                      cx="12"
-                      cy="12"
-                      fill="none"
-                      r="11"
-                      stroke="currentColor"
-                    ></circle>
-                  </svg>
-                </div>
-                <p class="font-medium text-gray-300">All Features</p>
-              </li>
-              <li class="flex items-center">
-                <div class="mr-3">
-                  <svg
-                    class="w-4 h-4 text-teal-accent-400"
-                    viewBox="0 0 24 24"
-                    stroke-linecap="round"
-                    stroke-width="2"
-                  >
-                    <polyline
-                      fill="none"
-                      stroke="currentColor"
-                      points="6,12 10,16 18,8"
-                    ></polyline>
-                    <circle
-                      cx="12"
-                      cy="12"
-                      fill="none"
-                      r="11"
-                      stroke="currentColor"
-                    ></circle>
-                  </svg>
-                </div>
-                <p class="font-medium text-gray-300">Premium Support</p>
               </li>
             </ul>
             <button
@@ -287,3 +205,32 @@
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      isFree: false,
+      isDiscounted: false,
+      interval: "year",
+      items: ["Ad-Driven", "Fully functioning Brackets", "Limited features"],
+      proItems: [
+        "Unlimited Players & Teams",
+        "No Ads",
+        "Custom Branding & Domain",
+        "Unlimited Tournaments",
+        "All Advanced Features",
+        "Full Screen and Cast",
+        "Player email comm",
+        "Premium Support",
+      ],
+    };
+  },
+};
+</script>
+
+<style scoped>
+p {
+  margin: 0;
+}
+</style>

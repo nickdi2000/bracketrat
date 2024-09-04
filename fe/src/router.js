@@ -34,6 +34,12 @@ import { authStore } from "./store/auth";
 
 const routes = [
   {
+    path: "",
+    name: "landing",
+    component: Landing,
+    meta: { isPublic: true },
+  },
+  {
     path: "/pages",
     name: "pages",
     children: [
@@ -46,7 +52,7 @@ const routes = [
     ],
   },
   {
-    path: "/",
+    path: "/join",
     name: "PublicPlay",
     meta: { isPublic: true },
     component: PublicEntryLayout,
@@ -67,7 +73,7 @@ const routes = [
 
       {
         path: "/landing",
-        name: "landing",
+        name: "auth-landing",
         component: Landing,
         meta: { isPublic: true },
       },

@@ -35,11 +35,19 @@
 
             <router-link
               class="fadeInUpSlow block w-full rounded border border-blue-600 px-12 py-3 text-sm font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring active:bg-blue-500 sm:w-auto"
-              to="/pages/contact"
+              to="/find"
             >
-              Contact
+              Join Existing
             </router-link>
           </div>
+          <!-- <div class="mt-12 flex flex-col flex-wrap justify-center mb-6">
+            <router-link
+              to="/find"
+              class="mt-0 bg-slate-800 text-sm text-gray-500 p-2 rounded-lg hover:bg-slate-700 uppercase font-bold"
+            >
+              Join Existing Bracket
+            </router-link>
+          </div> -->
         </div>
       </div>
     </section>
