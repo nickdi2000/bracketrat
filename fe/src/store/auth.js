@@ -13,6 +13,7 @@ export const authStore = defineStore({
       : null,
     utm_source: localStorage.getItem("utm_source") || null,
     players: [],
+    locale: localStorage.getItem("locale") || "",
     organization: null,
     selected_bracket:
       localStorage.getItem("selected_bracket") != "undefined"
@@ -37,6 +38,10 @@ export const authStore = defineStore({
     },
     setOrganization(organization) {
       this.organization = organization;
+    },
+    setLocale(locale) {
+      this.locale = locale;
+      localStorage.setItem("locale", locale);
     },
     async fetchDefaultBracket() {
       if (!this.user.defaultBracket) {
