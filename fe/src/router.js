@@ -215,7 +215,7 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.VITE_BASE_PUBLIC_PATH),
   mode: "history",
-  base: '/',
+  //base: '/',
   routes: routes,
   scrollBehavior(to, from, savedPosition) {
     // always scroll to top
