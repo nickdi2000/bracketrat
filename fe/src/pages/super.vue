@@ -2,6 +2,9 @@
   <div class="flex h-screen">
     <div class="m-auto text-white mt-4">
       <h1>SuperAdmin</h1>
+      <div>
+        <Button @click="fetch" class="btn btn-primary p-2 mt-4">Fetch</Button>
+      </div>
       <div v-if="!authorized">
         <input
           v-model="password"
@@ -12,7 +15,7 @@
         <button @click="authenticate" class="p-2 mt-4">Authenticate</button>
       </div>
 
-      <table class="p-3 tr-table">
+      <table class="p-3 tr-table" v-if="records && records?.length">
         <tr>
           <th>Name</th>
           <th>Email</th>
@@ -49,12 +52,12 @@ export default {
     if (!this.authorized) {
       return;
     }
-    this.fetch();
+    // this.fetch();
   },
 
   computed: {
     authorized() {
-      const user = this.$store.getUser;
+      const user = this.$store?.getUser;
       return user.email == "admin@example.com";
     },
   },
