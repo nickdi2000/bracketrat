@@ -196,8 +196,8 @@
 
       <div class="flex justify-center">
         <router-link
-          class="rounded border border-blue-600 bg-blue-800 px-12 py-3 text-sm font-medium text-white hover:bg-slate-800 hover:text-white focus:outline-none focus:ring active:text-opacity-75 sm:w-auto"
-          to="/pages/contact"
+          class="rounded bg-slate-800 p-3 py-3 text-sm font-medium text-white hover:bg-slate-800 hover:text-white focus:outline-none focus:ring active:text-opacity-75 sm:w-auto"
+          to="/pages/contact/beta"
         >
           Join Beta <ArrowLongRightIcon class="h-4 w-4 inline" />
         </router-link>
@@ -213,7 +213,12 @@ export default {
       isFree: false,
       isDiscounted: false,
       interval: "year",
-      items: ["Ad-Driven", "Fully functioning Brackets", "Limited features"],
+      items: [
+        "Ad-Driven",
+        "Fully functioning Brackets",
+        "Limited features",
+        "All Good",
+      ],
       proItems: [
         "Unlimited Players & Teams",
         "No Ads",

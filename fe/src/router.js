@@ -44,7 +44,7 @@ const routes = [
     name: "pages",
     children: [
       {
-        path: "contact",
+        path: "contact/:flag?",
         name: "Contact",
         component: Contact,
         meta: { isPublic: true },

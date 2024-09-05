@@ -21,7 +21,7 @@
       <h2
         class="mb-4 text-4xl tracking-tight font-extrabold text-center text-gray-900 dark:text-white"
       >
-        Contact Us
+        {{ content.title }}
       </h2>
       <p v-if="$route.query?.feedback">
         <Alert type="success"
@@ -33,10 +33,9 @@
 
       <p
         v-else
-        class="mb-8 lg:mb-16 font-light text-center text-gray-500 dark:text-gray-400 sm:text-xl"
+        class="mb-8 lg:mb-16 font-light text-left text-gray-500 dark:text-gray-400 sm:text-xl"
       >
-        Contact us with any questions you have, technical or otherwise. We will
-        do our best to get back to you as soon as possible.
+        {{ content.description }}
       </p>
       <div>
         <label
@@ -70,8 +69,12 @@
       </div>
 
       <div class="mt-4">
-        <button @click="submit()" class="btn btn-success bg-green-700">
-          Send message
+        <button
+          @click="submit()"
+          class="btn btn-success bg-green-700"
+          :disabled="!form.email"
+        >
+          {{ content.button }}
         </button>
         <button class="btn btn-secondary mx-3" @click.stop="$router.go(-1)">
           Cancel
@@ -90,6 +93,21 @@ export default {
         email: "",
         message: "",
         tags: [],
+        flags: {
+          default: {
+            title: "Contact Us",
+            description:
+              "Contact us with any questions you have, technical or otherwise. We will do our best to get back to you as soon as possible.",
+            button: "Send Message",
+          },
+
+          beta: {
+            title: "Beta Request",
+            description:
+              "Thank you for your interest in joining our beta program. Please provide your email and any additional information you'd like to share.  If you are selected to move forward, you will be provided with a free upgrade to our premium plan.  The free upgrade will be valid for at least 1 year from the date of acceptance.",
+            button: "Submit Request!",
+          },
+        },
       },
     };
   },
@@ -97,6 +115,9 @@ export default {
     flag() {
       //route
       return this.$route?.params?.flag || "form";
+    },
+    content() {
+      return this.form.flags[this.flag] || this.form.flags.default;
     },
   },
   created() {
