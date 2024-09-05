@@ -62,6 +62,7 @@ import {
   Cog6ToothIcon,
   BuildingOffice2Icon,
   EnvelopeIcon,
+  CalendarIcon,
 } from "@heroicons/vue/24/solid";
 
 import piniaPlugin from "./plugins/pinia";
@@ -141,6 +142,7 @@ app.component("QrCodeIcon", QrCodeIcon);
 app.component("TrophyIcon", TrophyIcon);
 app.component("Cog6ToothIcon", Cog6ToothIcon);
 app.component("EnvelopeIcon", EnvelopeIcon);
+app.component("CalendarIcon", CalendarIcon);
 
 app.use(router);
 

@@ -27,6 +27,7 @@ import Organization from "@/pages/organization.vue";
 import PublicIndex from "@/pages/public/public-index.vue";
 //import PublicEntry from "@/pages/public/public-entry.vue";
 import PublicHome from "@/pages/public/public-home.vue";
+import MapWrapper from "@/pages/mapwrapper.vue";
 
 import { createRouter, createWebHistory } from "vue-router";
 
@@ -37,6 +38,12 @@ const routes = [
     path: "",
     name: "landing",
     component: Landing,
+    meta: { isPublic: true },
+  },
+  {
+    path: "/map",
+    name: "map",
+    component: MapWrapper,
     meta: { isPublic: true },
   },
   {

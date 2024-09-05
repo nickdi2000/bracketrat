@@ -1,31 +1,34 @@
 <template>
   <span>
     <div v-if="showModal" class="fade fadeinUp hostModal backdrop-blur-lg">
-      <div class="card-body">
-        <h1>{{ selectedHost.location }}</h1>
-        <h1 class="text-3xl font-bold text-white">{{ selectedHost.name }}</h1>
-        <p class="text-white mt-3">{{ selectedHost.description }}</p>
-        <p v-if="selectedHost.site_url" class="pt-2" target="_BLANK">
-          <a
-            :href="selectedHost.site_url"
-            class="button text-blue-500 underline"
-          >
-            {{ selectedHost.site_label }}</a
-          >
-        </p>
+      <div class="card-body-">
+        <h1>{{ selectedGame.location }}</h1>
+        <div class="text-2xl font-bold text-white mb-0">
+          {{ selectedGame.name }}
+        </div>
+        <div class="mt-0 uppercase text-gray-400 font-bold opacity-80">
+          SPORT: {{ selectedGame.sport }}
+        </div>
+        <div class="text-white">{{ selectedGame.description }}</div>
 
-        <div>
-          <h3 class="text-4xl font-bold mt-10">
-            {{ selectedHost.day }}'s<br />
-            @ {{ selectedHost.time }}
+        <div class="fadein">
+          <h3 class="text-2xl font-bold mt-10">
+            {{ selectedGame.day }}'s<br />
+            @ {{ selectedGame.time }}
           </h3>
-          <p class="mt-2 uppercase text-gray-400 font-bold opacity-80">
-            {{ selectedHost.interval }}
-          </p>
+          <div class="mt-2 uppercase text-gray-400 font-bold opacity-80">
+            <CalendarIcon class="w-4 inline mr-2" /> {{ selectedGame.interval }}
+          </div>
 
           <div>
+            <router-link
+              to="/pages/contact/map"
+              class="bg-blue-800 text-white hover:bg-blue-400 font-bold p-2 mt-4 mr-2"
+            >
+              Request Join
+            </router-link>
             <button
-              class="mt-10 bg-blue-900 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              class="mt-10 bg-gray-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
               @click="toggleModal"
             >
               Close
@@ -101,7 +104,7 @@ export default {
     },
     toggleModal(host = null) {
       if (host) {
-        this.selectedHost = host;
+        this.selectedGame = host;
       }
 
       this.showModal = !this.showModal;
@@ -111,7 +114,7 @@ export default {
     return {
       key: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
       showModal: false,
-      selectedHost: {},
+      selectedGame: {},
       sampleHosts: hostService.sampleHosts,
       markerOptions: {
         position: { lat: 43.01107, lng: -79.617015 },

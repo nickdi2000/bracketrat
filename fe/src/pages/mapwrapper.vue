@@ -27,16 +27,16 @@
         <div class="flex justify-end">
           <button
             @click="inspecting = !inspecting"
-            class="from-gray-500 rounded-md to-gray-500 opacity-50 bg-gradient-to-br px-2 text-gray-800"
+            class="from-blue-500 rounded-md to-slate-300 opacity-50 bg-gradient-to-br px-2 text-gray-800"
           >
             X
           </button>
         </div>
         <h5
           v-if="!inspecting"
-          class="rounded-md p-2 text-center font-bold text-2xl text-gray-700 transition-colors text-white"
+          class="rounded-md p-2 text-center font-bold text-2xl text-white transition-colors text-shadow"
         >
-          Where's the Trivia At?
+          Find a Game
         </h5>
 
         <div class="my-4 w-full">
@@ -152,6 +152,9 @@ body {
   @apply dark:bg-gray-900 dark:text-gray-50;
 }
 
+.text-shadow {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
 .spot {
   transition: all 0.2s ease;
 }

@@ -107,6 +107,12 @@ export default {
               "Thank you for your interest in joining our beta program. Please provide your email and any additional information you'd like to share.  If you are selected to move forward, you will be provided with a free upgrade to our premium plan.  The free upgrade will be valid for at least 1 year from the date of acceptance.",
             button: "Submit Request!",
           },
+          map: {
+            title: "Join the BF Sports Network",
+            description:
+              "Our sports network is still in beta so we are bringing on small groups of players in phases.  Please provide your email and a quick blurb about your athletic background and any other details/questions you may have.  Thank you!",
+            button: "Submit Request!",
+          },
         },
       },
     };
