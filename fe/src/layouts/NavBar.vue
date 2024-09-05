@@ -76,7 +76,14 @@
                   class="text-white rounded-md py-2 px-3 bg-blue-900 font-bold mt-2 hover:text-blue-200 truncate sm:max-w-50 md:max-w-80"
                 >
                   <HomeIcon class="h-6 w-6 inline" />
+                
                 </span>
+
+                <span class="ml-3 text-slate-400 m-1 md:mt-3 uppercase font-bold">
+                    {{ getName }}
+                </span>
+
+              
               </div>
             </div>
             <!-- LARGE screens -->

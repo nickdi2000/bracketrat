@@ -489,7 +489,11 @@ export default {
     async create() {
       this.loading = true;
       const rec = await this.$api.post("tournaments", this.form);
-
+      if (!rec.data?.currentBracket){
+        this.$toast.error("Failed to set bracket.");
+        return;
+      }
+      await this.$store.fetchBracket(rec.data.currentBracket);
       this.loading = false;
       this.$router.push(`/admin/my-organization`);
     },

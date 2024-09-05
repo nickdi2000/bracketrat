@@ -216,7 +216,11 @@ export default {
     if (Object.keys(this.currentBracket)?.length) {
       console.log("currentBracket ID", this.currentBracket?._id);
     } else {
-      this.$store.fetchDefaultBracket();
+      await this.$store.fetchDefaultBracket();
+    }
+
+    if(!this.$store.getBracket._id){
+      this.$router.push('/admin/my-organization');
     }
   },
   methods: {
