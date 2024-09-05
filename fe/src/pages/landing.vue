@@ -231,14 +231,6 @@ export default {
 </script>
 
 <style scoped>
-.bg-wallpaper- {
-  background-image: url("/images/stadium.png");
-  background-size: cover;
-  background-position: center;
-  background-blend-mode: multiply;
-  background-color: rgba(0, 0, 0, 0.7);
-}
-
 .logo-image {
   width: 4rem;
   height: auto;
@@ -251,16 +243,6 @@ export default {
 .altered {
   filter: brightness(50%) sepia(100%) saturate(400%);
   transform: scale(1.1) rotate(5deg);
-}
-
-.bg-image {
-  background-image: url("https://p2.piqsels.com/preview/130/86/477/earth-planet-space-cosmos.jpg");
-  background-size: cover;
-  background-position: center;
-  background-blend-mode: multiply;
-  min-height: 100vh;
-
-  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .matrix-container {
