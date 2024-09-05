@@ -11,14 +11,14 @@ npm install && npm run build
 # Run npm run build in the be folder
 echo "Building backend..."
 cd "$CURRENT_DIR/be"
-npm install && pm2 restart index
+npm install && pm2 restart bracket
 
-# Ensure the backend script has execute permissions
-echo "Setting permissions for backend script..."
-chmod +x "$CURRENT_DIR/be/src/index.js"
+# do a curl command to https://bracketforce.com/api/v1/test
+echo "Testing deployment..."
+curl https://bracketforce.com/api/v1/test
 
-# Restart the bracket application using pm2
-echo "Restarting bracket application..."
-pm2 start "$CURRENT_DIR/be/src/index.js" --name bracket || pm2 restart bracket
+echo "Curl finished."
 
-echo "Deployment completed successfully."
+
+
+echo "Bracket Deployment completed successfully."
