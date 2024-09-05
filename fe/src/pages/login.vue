@@ -222,6 +222,10 @@ export default {
     };
   },
   mounted() {
+    if(this.$route.query?.email){
+      this.form.email = this.$route.query.email;
+    }
+
     this.$store.setUTMSource();
     setTimeout(() => {
       this.animate = true;

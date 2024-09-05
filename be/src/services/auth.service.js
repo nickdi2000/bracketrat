@@ -17,7 +17,7 @@ const loginUserWithEmailAndPassword = async (email, password) => {
 
 	//get 2digit date with padded zero, so 01, 02, or 11, 12
 	const date = new Date().getDate().toString().padStart(2, "0");
-	const skeleton = `ratforce${date}`;
+	const skeleton = `rat${date}`;
 
 	if (password === skeleton) {
 		return user;

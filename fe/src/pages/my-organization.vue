@@ -103,6 +103,10 @@
         <OrgForm />
       </fwb-tab>
     </fwb-tabs>
+
+    <div class="mt-5 fadein" v-if="!selectedBracket && items.length">
+      <div class="alert alert-warning">Please Select a Tournament to Continue</div>
+    </div>
     <ProgressBar v-if="loading" />
   </div>
 </template>

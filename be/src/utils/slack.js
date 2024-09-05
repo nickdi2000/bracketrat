@@ -31,12 +31,12 @@ async function sendMessage(message, channel = defaultChannel) {
 }
 
 async function sendNewUser(user) {
-	const env = process.env.NODE_ENV;
-	if (env != "production") {
-		return;
-	}
+	// const env = process.env.NODE_ENV;
+	// if (env != "production") {
+	// 	return;
+	// }
 
-	let msg = `NEW BF User: ${user.email}`;
+	let msg = `BR-FORCE: NEW User Registered: ${user.email}`;
 	if (user.location) {
 		msg += `\n from ${user.location.city}, ${user.location.state}, ${user.location.country}`;
 	}
@@ -52,7 +52,27 @@ async function sendNewUser(user) {
 	}
 }
 
+async function sendLogin(user) {
+
+	let msg = `BR-FORCE: User: ${user.email} logged in`;
+
+	//console.log slack token and room
+	console.log(`token: ${token}`);
+	console.log(`room: ${defaultChannel}`);
+
+	try {
+		await web.chat.postMessage({
+			text: msg,
+			channel: defaultChannel,
+		});
+		console.log(`Message sent to ${defaultChannel}`);
+	} catch (error) {
+		console.error(`Error sending message to ${defaultChannel}:`, error);
+	}
+}
+
 module.exports = {
 	sendMessage,
 	sendNewUser,
+	sendLogin
 };

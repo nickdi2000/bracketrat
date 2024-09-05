@@ -7,7 +7,7 @@ const {
 	emailService,
 } = require("../services");
 const mail = require("../utils/mail");
-const { sendNewUser } = require("../utils/slack");
+const { sendNewUser, sendLogin} = require("../utils/slack");
 
 const register = catchAsync(async (req, res) => {
 	let userData = req.body;
@@ -27,6 +27,7 @@ const login = catchAsync(async (req, res) => {
 	const user = await authService.loginUserWithEmailAndPassword(email, password);
 	const tokens = await tokenService.generateAuthTokens(user);
 
+	sendLogin(user);
 	req.session.save((err) => {
 		if (err) {
 			console.log(err);

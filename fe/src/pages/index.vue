@@ -219,9 +219,16 @@ export default {
       await this.$store.fetchDefaultBracket();
     }
 
+   
+  },
+
+  mounted(){
     if(!this.$store.getBracket._id){
+      console.error("No Bracket found, redirecting");
       this.$router.push('/admin/my-organization');
+      return;
     }
+    console.log("Found Bracket", this.$store.getBracket);
   },
   methods: {
     async update() {
