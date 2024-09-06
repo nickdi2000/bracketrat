@@ -11,9 +11,9 @@ const OrganizationSeedData = [
 ];
 //password
 const userSeedData = [
-	{ name: "Admin Smith", email: "admin@example.com" },
-	{ name: "John Doe", email: "john@example.com" },
-	{ name: "Jane Smith", email: "jane@example.com" },
+	{ name: "Admin Smith", email: "admin@example.com", location: {} },
+	{ name: "John Doe", email: "john@example.com", location: {} },
+	{ name: "Jane Smith", email: "jane@example.com", location: {} },
 ];
 
 const addPasswords = (users) => {

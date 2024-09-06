@@ -133,10 +133,9 @@ const generateFixed = async (req, res) => {
 };
 
 const reGenerate = async (req, res) => {
-	const { bracketId } = req.params;
-
+	const { tournamentId } = req.params;
 	try {
-		let bracket = await bracketService.reGenerateBracket(bracketId);
+		let bracket = await bracketService.reGenerateBracket(tournamentId);
 		if (!bracket) {
 			return res.status(404).json({ message: "Bracket not found." });
 		}

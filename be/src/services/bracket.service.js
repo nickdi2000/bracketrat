@@ -35,7 +35,6 @@ const generateBracket = async ({
 			throw new Error("Bracket not found.");
 		}
 
-		console.log("bracket found or created:", bracket);
 
 		console.log("---bracketSize", bracketSize);
 
@@ -45,6 +44,12 @@ const generateBracket = async ({
 			players = new Array(bracketSize).fill(null);
 			bracket.build_type = "fixed"; // Set the build type to fixed for UI purposes if necessary
 		} else if (useCurrentPlayers) {
+			bracket = await Bracket.findById(bracket._id).populate({
+				path: "rounds.games",
+				populate: {
+					path: "participants.player",
+				},
+			});
 			// Load current players from existing games (if any)
 			players =
 				bracket.rounds[0]?.games
@@ -336,7 +341,7 @@ const populateRoundsWithPlayers = async (bracket) => {
 		.execPopulate();
 	let tournament = await Tournament.findById(bracket.tournament);
 	bracket = bracket.toObject();
-	if(tournament) {
+	if (tournament) {
 		bracket.name = tournament.name || "";
 		bracket.code = tournament.code || "";
 	}
@@ -415,13 +420,8 @@ const formatDataForBracket = (bracket) => {
 };
 
 //use same players (without pulling in straggler players)
-const reGenerateBracket = async (bracketId) => {
-	let bracket = await Bracket.findById(bracketId).populate("players");
-	if (!bracket) {
-		throw new Error("Bracket not found.");
-	}
-
-	return await generateBracket(bracketId, true);
+const reGenerateBracket = async (tournamentId) => {
+	return await generateBracket({ tournamentId: tournamentId, useCurrentPlayers: true });
 };
 
 const addPlayerToFirstEmptySpot = async (bracketId, playerId) => {

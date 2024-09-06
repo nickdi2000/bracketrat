@@ -151,6 +151,7 @@ export default {
     closeModal() {
       this.isVisible = false;
       this.form.name = "";
+      this._errorMessage = "";
     },
     save() {
       this.loading = true;

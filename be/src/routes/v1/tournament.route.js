@@ -17,7 +17,7 @@ router.post("/:tournamentId/generate-fixed", (req, res, next) => {
 
 //re-generate uses the same players in the bracket without incorporating new stragglers
 router.post("/:tournamentId/regenerate", (req, res, next) => {
-	bracketController.reGenerate(req, res, next);
+	tournamentController.reGenerate(req, res, next);
 });
 
 module.exports = router;

@@ -362,10 +362,11 @@ export const authStore = defineStore({
         }
       });
     },
-    async resetBracket(bracketId) {
+    async resetBracket() {
       return new Promise(async (resolve, reject) => {
         try {
-          const rec = await api.post(`brackets/${bracketId}/regenerate`);
+          const tournamentId = this.user.tournament;
+          const rec = await api.post(`tournament/${tournamentId}/regenerate`);
           console.log("rec regenerated", rec.data);
           this.setSelectedBracket(rec.data.bracket);
           resolve(rec);

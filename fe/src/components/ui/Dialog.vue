@@ -82,7 +82,7 @@ function confirm() {
 
 function close() {
   if (confirmPromise.value) {
-    confirmPromise.value.reject(new Error("Dialog closed by user"));
+    confirmPromise.value.resolve(false);
   }
   isVisible.value = false;
 }

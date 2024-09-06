@@ -288,12 +288,12 @@ class BracketController extends BaseController {
 				roundIndex,
 				gameId,
 			});
-
-			await bracketService.unsetPlayerAsWinner({
-				bracketId,
-				playerId,
-				roundIndex,
-			})
+			if (roundIndex !== 0)
+				await bracketService.unsetPlayerAsWinner({
+					bracketId,
+					playerId,
+					roundIndex,
+				})
 
 			const bracket = await bracketService.getFullBracket(bracketId);
 			if (!bracket) {

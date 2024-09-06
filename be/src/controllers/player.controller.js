@@ -27,21 +27,28 @@ const createPlayer = async (req, res) => {
 	const { name, bracketId, gameId, participantIndex } = req.body;
 	const { organization, defaultBracket } = req.user;
 
-	if (isNaN(participantIndex) || !gameId) {
-		console.log("----no participantIndex, create player for org");
-		try {
+	try {
+		//check if player already exists
+		const existingPlayer = await Player.findOne({
+			name,
+			organization: organization._id,
+		});
+		if (existingPlayer) {
+			return res.status(400).json({ message: "Player already exists with this name" });
+		}
+
+		if (isNaN(participantIndex) || !gameId) {
+			console.log("----no participantIndex, create player for org");
 			const player = await playerService.addPlayer(name, organization._id);
 			const players = await playerService.getPlayersByOrganization(
 				organization._id
 			);
 
-			res.status(201).json({ player, players });
-		} catch (error) {
-			console.error("Error creating player:", error);
-			res.status(500).json({ message: error.message });
+			return res.status(201).json({ player, players });
 		}
-
-		return;
+	} catch (error) {
+		console.error("Error creating player:", error);
+		res.status(500).json({ message: error.message });
 	}
 
 	//if participantIndex, insert it into bracket directly

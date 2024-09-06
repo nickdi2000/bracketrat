@@ -57,14 +57,6 @@ const destroyPlayer = async (playerId) => {
 };
 
 const addPlayer = async (name, organization_id) => {
-	//check if player already exists
-	const existingPlayer = await Player.findOne({
-		name,
-		organization: organization_id,
-	});
-	if (existingPlayer) {
-		throw new Error("Player already exists with this name");
-	}
 
 	const player = await Player.create({
 		name,

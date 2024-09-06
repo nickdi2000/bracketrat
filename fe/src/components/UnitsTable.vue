@@ -234,6 +234,8 @@ export default {
     },
     async destroy(record) {
       const ask = await this.$openDialog("Delete Player?");
+      if(!ask)
+        return
       try {
         await this.$store.removePlayer(record._id);
         //this.$emit("updated");
