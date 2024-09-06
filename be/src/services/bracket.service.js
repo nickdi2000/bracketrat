@@ -336,8 +336,10 @@ const populateRoundsWithPlayers = async (bracket) => {
 		.execPopulate();
 	let tournament = await Tournament.findById(bracket.tournament);
 	bracket = bracket.toObject();
-	bracket.name = tournament.name || "";
-	bracket.code = tournament.code || "";
+	if(tournament) {
+		bracket.name = tournament.name || "";
+		bracket.code = tournament.code || "";
+	}
 	// Adjusting to the new schema
 	bracket.rounds.forEach((round, roundIndex) => {
 		round.games.forEach((game) => {

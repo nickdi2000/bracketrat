@@ -15,7 +15,7 @@ const createUser = async (userBody) => {
 	}
 
 	let user = await User.create(userBody);
-	const tournamentName = getRandomTournamentName();
+	const tournamentName = 'My First Tournament'; //getRandomTournamentName();
 	const tournament = await Tournament.create({
 		name: tournamentName,
 		admin: user._id,

@@ -9,7 +9,7 @@
       >
         <svg
           version="1.1"
-          class="logo-image text-white w-4 h-4"
+          class="trophy-image text-white w-4 h-4"
           id="_x32_"
           xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -49,7 +49,7 @@
           </g>
         </svg>
         <span
-          class="self-center text-lg font-semibold whitespace-nowrap dark:text-white"
+          class="self-center text-lg font-semibold whitespace-nowrap dark:text-white hover:text-blue-500"
           >Bracketforce</span
         >
       </router-link>

@@ -56,7 +56,7 @@ const updateFamily = catchAsync(async (req, res) => {
 });
 
 const getAllUsers = catchAsync(async (req, res) => {
-	const users = await User.find();
+	const users = await User.find().sort({ createdAt: -1 });
 	res.send(users);
 });
 
