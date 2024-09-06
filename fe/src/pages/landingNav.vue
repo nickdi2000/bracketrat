@@ -50,7 +50,7 @@
         </svg>
         <span
           class="self-center text-lg font-semibold whitespace-nowrap dark:text-white hover:text-blue-500"
-          >Bracketforce</span
+          >{{ $appName }}</span
         >
       </router-link>
       <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
