@@ -2,7 +2,7 @@ require('dotenv').config();
 module.exports = {
   apps: [
     {
-      name: 'electo',
+      name: 'bracket',
       script: 'src/index.js --interpreter=/root/.nvm/versions/node/v18.18.2/bin/node',
       instances: 1,
       autorestart: true,
