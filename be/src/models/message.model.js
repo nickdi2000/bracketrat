@@ -6,11 +6,15 @@ const messageSchema = new mongoose.Schema(
 		subject: String,
 		body: String,
 		type: String,
+		email: String,
 		user: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User",
 		},
 		tags: [String],
+		location: {
+			type: Object,
+		}
 	},
 	{
 		timestamps: true,

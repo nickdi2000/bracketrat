@@ -47,13 +47,16 @@ const executeSend = async (data) => {
 	}
 };
 
-const sendContactMail = async (email, message, type = "none") => {
+const sendContactMail = async ({email, message, type = "none", location}) => {
 	const data = templateObject;
+	message += `<br/><br/><br/>Location: ${JSON.stringify(location)}`;
+
 	data.TemplateModel.message = message;
 	data.TemplateModel.type = type;
 	data.TemplateModel.from_email = email;
 	data.ReplyTo = email;
 	data.TemplateId = contactTemplateID;
+
 
 	const messageObject = {
 		subject: "Contact Form",

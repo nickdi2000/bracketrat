@@ -16,10 +16,13 @@ class MessageController extends BaseController {
 	};
 
 	contact = async (req, res) => {
-		const { email, message, type } = req.body;
+		const { email, message, type, location } = req.body;
+		
+		messageService.insertMessage({ email, body: message, type, location });
+
 		//res.json({ email: email, message: message, type: type });
 		try {
-			const rec = await mailer.sendContactMail(email, message, type);
+			const rec = await mailer.sendContactMail({email, message, type, location});
 			if (!rec) throw new Error("Error sending email");
 			res.status(200).send(rec);
 		} catch (error) {

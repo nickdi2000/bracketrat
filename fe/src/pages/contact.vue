@@ -85,15 +85,21 @@
 </template>
 
 <script>
+
+import locationMixin from "@/mixins/locationMixin";
+
 export default {
   name: "Contact",
+  mixins: [locationMixin],
   data() {
     return {
       form: {
         email: "",
         message: "",
         tags: [],
-        flags: {
+     
+      },
+      flags: {
           default: {
             title: "Contact Us",
             description:
@@ -114,7 +120,6 @@ export default {
             button: "Submit Request!",
           },
         },
-      },
     };
   },
   computed: {
@@ -123,10 +128,13 @@ export default {
       return this.$route?.params?.flag || "form";
     },
     content() {
-      return this.form.flags[this.flag] || this.form.flags.default;
+      return this.flags[this.flag] || this.flags.default;
     },
   },
   created() {
+    this._getGeo();
+    
+
     if (this.$store?.user?.email) {
       this.form.email = this.$store.user.email;
     }
@@ -138,6 +146,7 @@ export default {
   methods: {
     async submit() {
       try {
+        this.form.location = this._location ?? {};
         const rec = await this.$api.post("/guest/contact", this.form);
         this.$router.push("/admin/contact/success");
         console.log("rec", rec);

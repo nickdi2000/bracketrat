@@ -3,6 +3,7 @@
 # Store the current directory
 CURRENT_DIR=$(pwd)
 
+cd "$CURRENT_DIR" && git pull
 # Run npm run build in the fe folder
 echo "Building frontend..."
 cd "$CURRENT_DIR/fe"
