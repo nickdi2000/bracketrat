@@ -72,6 +72,12 @@ const generateBracket = async ({
 		const totalRoundsNeeded = Math.log2(nextPowerOfTwo);
 
 		if (totalRoundsNeeded <= 0 || numberOfGames < 1) {
+			/*
+			*
+			TODO:
+			Instead of throwing an error, we should just generate a bracket of size 4, with the players available (even if just one player) 
+			*/
+		
 			throw new Error("Invalid player count to generate a bracket.");
 		}
 
