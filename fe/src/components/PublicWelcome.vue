@@ -2,7 +2,16 @@
   <div
     class="h-screen flex flex-col items-center justify-center sm:px-10 md:px-2 pt-12"
   >
-    <Logo @click="$router.push('/landing')" />
+    <div class="fixed right-6 top-6">
+      <router-link
+        to="/pages/player-help"
+        class="text-gray-400 hover:text-blue-300"
+      >
+        <QuestionMarkCircleIcon class="h-6" /> &nbsp;
+      </router-link>
+    </div>
+
+    <Logo2 @click="$router.push('/landing')" title="Bracket Force" />
 
     <div
       class="mt-5 mb-0 pb-0 text-3xl font-bold leading-tight text-gray-900 dark:text-gray-100"
@@ -115,7 +124,7 @@
 </template>
 
 <script>
-import Logo from "@/components/Logo.vue";
+import Logo2 from "@/components/Logo2.vue";
 
 export default {
   name: "PublicWelcome",
@@ -133,7 +142,7 @@ export default {
     }
   },
   components: {
-    Logo,
+    Logo2,
   },
   methods: {
     trigger(action) {
@@ -153,6 +162,7 @@ export default {
     },
     cancel() {
       this.selection = null;
+      this.$router.push("/");
       this.mutateText(
         "Welcome to " + this.$appName,
         "What do you want to do next?"

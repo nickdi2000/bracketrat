@@ -123,6 +123,10 @@ body {
   @apply bg-yellow-600 hover:bg-yellow-500 focus:outline-none;
 }
 
+.btn-dark {
+  @apply bg-gray-900 hover:bg-gray-800 focus:outline-none;
+}
+
 .btn-lg {
   @apply px-4 py-2 text-2xl;
 }

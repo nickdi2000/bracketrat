@@ -8,6 +8,7 @@ import Player from "@/pages/player.vue";
 import Rounds from "@/pages/rounds.vue";
 import Options from "@/pages/options.vue";
 import Settings from "@/pages/settings.vue";
+import PlayerHelp from "@/pages/player-help.vue";
 import NotFound from "@/pages/not-found.vue";
 import Profile from "@/pages/profile.vue";
 import MyOrganization from "@/pages/my-organization.vue";
@@ -54,6 +55,12 @@ const routes = [
         path: "contact/:flag?",
         name: "Contact",
         component: Contact,
+        meta: { isPublic: true },
+      },
+      {
+        path: "player-help",
+        name: "PlayerHelp",
+        component: PlayerHelp,
         meta: { isPublic: true },
       },
     ],

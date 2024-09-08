@@ -14,7 +14,12 @@
     <main class="px-4 w-full" v-if="bracket">
       <router-view v-slot="{ Component }" :key="$route.fullPath">
         <transition
-          ><component :is="Component" :code="code" :bracket="bracket" :players="players" />
+          ><component
+            :is="Component"
+            :code="code"
+            :bracket="bracket"
+            :players="players"
+          />
         </transition>
       </router-view>
     </main>
@@ -35,10 +40,7 @@
             Bracket not found for code: {{ code }}
           </p>
           <p v-if="!showNewCodeInput">
-            <button
-              class="btn btn-secondary"
-              @click="showNewCodeInput = !showNewCodeInput"
-            >
+            <button class="btn btn-secondary" @click="$router.push('/find')">
               Try a new code
             </button>
           </p>
@@ -59,14 +61,11 @@
             </button>
 
             <div>
-            <router-link to="/landing" class="btn btn-secondary mt-4">
-              Back to Homepage
-            </router-link>
+              <router-link to="/landing" class="btn btn-secondary mt-4">
+                Back to Homepage
+              </router-link>
+            </div>
           </div>
-
-          </div>
-
-         
         </div>
       </div>
     </main>

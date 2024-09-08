@@ -3,9 +3,8 @@
     <div class="p-5 mx-5">
       <div class="header">
         <h1 class="header font-bold uppercase">Privacy Policy</h1>
-        <p>Effective Date: July 11, 2024</p>
       </div>
-
+      <p>Effective Date: July 11, 2024</p>
       <div class="introduction">
         <p>
           Welcome to BracketForce. We are committed to protecting your personal
@@ -122,25 +121,6 @@
           the contact details provided below. We will consider and act upon any
           request in accordance with applicable data protection laws.
         </p>
-      </div>
-
-      <div class="contact-us">
-        <h2>Contact Us</h2>
-        <p>
-          If you have questions or comments about this policy, you may email us
-          at support@webfly.io
-        </p>
-        <p>
-          BracketForce<br />
-          Hamilton, ONTARIO
-        </p>
-      </div>
-    </div>
-    <div>
-      <div class="my-8">
-        <router-link to="/landing" class="text-blue-500"
-          >Back to Homepage</router-link
-        >
       </div>
     </div>
   </div>

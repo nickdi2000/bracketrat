@@ -31,22 +31,39 @@
           </h1>
 
           <div v-if="disableRegistration" class="text-left">
-          
             <div class="flex flex-col justify-center align-center mx-auto">
-              <label for="invitation_code" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Invitation Code *</label>
-              <input type="text" v-on:keydown.enter="submitInvitationCode()" name="invitation_code" v-model="invitation_code" id="invitation_code" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="12345" required />
-              
-              <button class="text-lg btn btn-success mt-5" @click="submitInvitationCode">Continue
-                <ArrowLongRightIcon class="inline w-6 h-6 ml" />
+              <label
+                for="invitation_code"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >Invitation Code *</label
+              >
+              <input
+                type="text"
+                v-on:keydown.enter="submitInvitationCode()"
+                name="invitation_code"
+                v-model="invitation_code"
+                id="invitation_code"
+                class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="12345"
+                required
+              />
 
+              <button
+                class="text-lg btn btn-success mt-5"
+                @click="submitInvitationCode"
+              >
+                Continue
+                <ArrowLongRightIcon class="inline w-6 h-6 ml" />
               </button>
             </div>
 
             <div class="text-gray-500 dark:text-gray-400 mt-8">
-              Note: Self-service registration is not yet enabled. If you have lost your invitation code, please <router-link class="router-link" to="/pages/contact">Contact Us</router-link>.
+              Note: Self-service registration is not yet enabled. If you have
+              lost your invitation code, please
+              <router-link class="router-link" to="/pages/contact"
+                >Contact Us</router-link
+              >.
             </div>
-
-
           </div>
           <div v-else class="space-y-4 md:space-y-6" action="#">
             <div>
@@ -159,7 +176,10 @@
             </button>
           </p>
 
-          <div class="flex items-center justify-center space-x-4" v-if="!disableRegistration">
+          <div
+            class="flex items-center justify-center space-x-4"
+            v-if="!disableRegistration"
+          >
             <SocialLogin />
           </div>
         </div>
@@ -208,13 +228,14 @@ export default {
       loading: false,
       bounce: false,
       error: "",
-      invitation_code: '',
+      invitation_code: "",
       invalidCredentials: false,
       disableRegOverride: false,
       dummy_form: {
         email: "admin@example.com",
         password: "password123",
       },
+      clicks: 0,
       form: {
         email: "",
         password: "",
@@ -222,7 +243,7 @@ export default {
     };
   },
   mounted() {
-    if(this.$route.query?.email){
+    if (this.$route.query?.email) {
       this.form.email = this.$route.query.email;
     }
 
@@ -230,34 +251,45 @@ export default {
     setTimeout(() => {
       this.animate = true;
     }, 300);
-      this.getGeo();
-    
+    this.getGeo();
   },
   computed: {
     /* Disabling for Canada currently */
-    disableRegistration(){
-      const includesCA = this.$store.locale?.includes('CA');
+    disableRegistration() {
+      const includesCA = this.$store.locale?.includes("CA");
       return includesCA && this.registering && !this.disableRegOverride;
-    }
+    },
   },
   methods: {
-    submitInvitationCode(){
+    submitInvitationCode() {
+      const match = this.invitation_code.includes("24");
 
-      const match = this.invitation_code.includes('24');
-
-      if(!this.invitation_code || !match){
-      this.$toast.error("Invitation Code not valid or expired.");
-      this.invitation_code = '';
-      return;
+      if (!this.invitation_code || !match) {
+        this.$toast.error("Invitation Code not valid or expired.");
+        this.invitation_code = "";
+        return;
       }
 
-      this.$toast.success("Invitation Code Accepted! Please Continue Registration !")
+      this.$toast.success(
+        "Invitation Code Accepted! Please Continue Registration !"
+      );
 
       this.disableRegOverride = true;
-      
     },
-    copyDummy() {
-      this.form = this.dummy_form;
+    async copyDummy() {
+      this.clicks++;
+      if (this.clicks > 1) {
+        this.form = this.dummy_form;
+      } else {
+        //test api
+        try {
+          const rec = await this.$api.test();
+          console.log("Success", rec);
+          this.$toast.success("System is operational");
+        } catch (error) {
+          this.$toast.error("Error Testing System");
+        }
+      }
     },
 
     goToCreateNew() {
@@ -345,7 +377,6 @@ export default {
           zip: data.zipcode,
         };
         await this.$store.setLocale(data.state_code);
-
       } catch (error) {
         console.log("error getting geo", error);
       }

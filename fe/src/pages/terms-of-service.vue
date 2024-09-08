@@ -3,8 +3,9 @@
     <div class="terms-of-service max-w-full">
       <div class="header">
         <h1>Terms of Service</h1>
-        <p>Effective Date: Jul 11, 2024</p>
       </div>
+
+      <p>Effective Date: Jul 11, 2024</p>
 
       <div class="introduction">
         <p>
@@ -103,22 +104,6 @@
           What constitutes a material change will be determined at our sole
           discretion.
         </p>
-      </div>
-
-      <div class="contact-us">
-        <h2>Contact Us</h2>
-        <p>
-          If you have any questions about these terms, please contact us at
-          support@webfly.io.
-        </p>
-      </div>
-
-      <div>
-        <div class="my-8">
-          <router-link to="/landing" class="text-blue-500"
-            >Back to Homepage</router-link
-          >
-        </div>
       </div>
     </div>
   </div>
