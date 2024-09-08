@@ -237,7 +237,7 @@ class BracketController extends BaseController {
 		try {
 			let game = await bracketService.updateGameWinner(gameId, playerId);
 			game.winnerMarkedById = userId;
-			game.winnerMarkedByName = userName
+			game.winnerMarkedByName = userName;
 			game.lastUpdatedAt = new Date();
 			game.save();
 			try {
@@ -293,7 +293,7 @@ class BracketController extends BaseController {
 					bracketId,
 					playerId,
 					roundIndex,
-				})
+				});
 
 			const bracket = await bracketService.getFullBracket(bracketId);
 			if (!bracket) {
@@ -387,6 +387,8 @@ class BracketController extends BaseController {
 		}
 	}
 
+	/* TODO, maybe this should be moved to the tournament controller (and route should be updated) */
+
 	async patch(req, res) {
 		const body = req.body;
 		const { id } = req.params;
@@ -401,7 +403,7 @@ class BracketController extends BaseController {
 
 			let bracket = await Bracket.findOne({
 				tournament: tournamentId,
-				type: body.type
+				type: body.type,
 			});
 
 			if (!bracket) {
@@ -414,6 +416,7 @@ class BracketController extends BaseController {
 				// Update tournament name and code if provided
 				if (body.name) tournament.name = body.name;
 				if (body.code) tournament.code = body.code;
+				if (body.unit) tournament.unit = body.unit;
 			}
 			tournament.currentBracket = bracket._id;
 			await tournament.save();
@@ -422,7 +425,6 @@ class BracketController extends BaseController {
 			bracket.code = tournament.code;
 
 			return res.status(200).send(bracket);
-
 		} catch (error) {
 			console.error("BracketController error:", error);
 			return res.status(400).send(`BracketController error: ${error.message}`);

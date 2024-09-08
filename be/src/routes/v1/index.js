@@ -8,7 +8,7 @@ const testRoute = require("./test.route");
 const guestRoute = require("./guest.route");
 const superRoute = require("./super.route");
 const bracketsRoute = require("./brackets.route");
-const tournamentRoute = require("./tournament.route")
+const tournamentRoute = require("./tournament.route");
 const aiRoute = require("./ai.route");
 const config = require("../../config/config");
 const getUser = require("../../middlewares/getUser");
@@ -60,13 +60,13 @@ const defaultRoutes = [
 		route: companyRoute,
 	},
 	{
+		path: "/tournaments",
+		route: tournamentRoute,
+	},
+	{
 		path: "/",
 		route: baseRoute,
 	},
-	{
-		path: "/tournament",
-		route: tournamentRoute,
-	}
 ];
 
 const devRoutes = [

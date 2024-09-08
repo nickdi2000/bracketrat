@@ -1,10 +1,10 @@
 <template>
-  <div class="flex h-screen">
-    <div class="m-auto text-white mt-4">
+  <div class="flex h-screen w-screen">
+    <div class="m-auto text-white mt-4 bg-slate-800 min-w-xl p-4">
       <h1>SuperAdmin</h1>
-      <div>
+      <!-- <div>
         <Button @click="fetch" class="btn btn-primary p-2 mt-4">Fetch</Button>
-      </div>
+      </div> -->
       <div v-if="!authorized">
         <input
           v-model="password"
@@ -12,12 +12,14 @@
           placeholder="Password"
           class="p-2 mt-4 text-black"
         />
-        <button @click="authenticate" class="p-2 mt-4">Authenticate</button>
+        <br />
+        <button @click="authenticate" class="btn btn-dark p-2 mt-4">
+          Authenticate
+        </button>
       </div>
 
       <table class="p-3 tr-table" v-if="records && records?.length">
         <tr>
-          <th>Name</th>
           <th>Email</th>
           <th>Created</th>
           <th>SSO?</th>
@@ -25,10 +27,8 @@
         </tr>
         <tr v-for="rec in records" class="m-2 w-full">
           <td>
-            {{ rec.name }}
-          </td>
-          <td>
-            {{ rec.email }}
+            <div>{{ rec.email }}</div>
+            <div class="mt-2 text-gray-300 text-xs">{{ rec.name }}</div>
           </td>
           <td>{{ rec.createdAt }}</td>
           <td>{{ rec.sso_info?.name ?? "-" }}</td>
@@ -49,26 +49,30 @@ export default {
     };
   },
   mounted() {
-    if (!this.authorized) {
-      return;
-    }
-    // this.fetch();
+    this.fetch();
   },
 
   computed: {
     authorized() {
-      const user = this.$store?.getUser;
-      return user.email == "admin@example.com";
+      //const user = this.$store?.getUser;
+      //return user.email == "admin@example.com";
+      const isAdmin = localStorage.getItem("isAdmin");
+      return isAdmin;
     },
   },
 
   methods: {
     async authenticate() {
       if (this.password == "ratboy") {
+        await localStorage.setItem("isAdmin", true);
         this.fetch();
       }
     },
     async fetch() {
+      if (!this.authorized) {
+        console.log("Not authorized");
+        return;
+      }
       const rec = await this.$api.get("users/all");
       this.records = rec.data;
     },

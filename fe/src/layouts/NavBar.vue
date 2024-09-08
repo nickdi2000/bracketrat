@@ -72,18 +72,18 @@
                 /> -->
 
                 <span
-                  v-if="shouldShowBracketButton"
-                  class="text-white rounded-md py-2 px-3 bg-blue-900 font-bold mt-2 hover:text-blue-200 truncate sm:max-w-50 md:max-w-80"
+                  v-if="isBracketRoute"
+                  class="text-white rounded-md md:hidden py-2 px-3 bg-blue-900 font-bold mt-2 hover:text-blue-200 truncate sm:max-w-50 md:max-w-80"
                 >
                   <HomeIcon class="h-6 w-6 inline" />
-                
                 </span>
 
-                <span class="ml-3 text-slate-400 m-1 md:mt-3 uppercase font-bold">
-                    {{ getName }}
+                <span
+                  :class="isBracketRoute ? 'hidden md:inline-block' : ''"
+                  class="text-slate-400 m-1 p-2 rounded md:mt-3 uppercase font-bold hover:bg-slate-600"
+                >
+                  {{ getName }}
                 </span>
-
-              
               </div>
             </div>
             <!-- LARGE screens -->
@@ -199,7 +199,7 @@ export default {
     selectedBracket() {
       return this.$store.getBracket ?? null;
     },
-    shouldShowBracketButton() {
+    isBracketRoute() {
       return this.$route.name !== "Bracket" && this.$route.name !== "Dashboard";
     },
     getName() {

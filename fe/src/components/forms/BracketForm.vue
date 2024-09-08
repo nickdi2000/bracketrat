@@ -1,3 +1,4 @@
+<!-- NOTE: Technically this should be TournamentForm.vue -->
 <template>
   <span>
     <div v-if="!newUser">
@@ -102,7 +103,7 @@
           </div>
         </div>
 
-        <!-- <div class="grid grid-cols-2">
+        <div class="grid grid-cols-2">
           <div>
             <label class="block text-sm font-medium text-white"
               >Sport Category</label
@@ -128,7 +129,7 @@
               placeholder="Select Sport (Optional)"
             />
           </div>
-        </div> -->
+        </div>
 
         <!-- PLAYER OPTIONs -->
         <div>
@@ -462,16 +463,24 @@ export default {
     Loader3,
     Chain,
   },
-  mounted() {
+  async mounted() {
     //check if we get it as prop first
-    if (this.selectedBracket) {
-      this.form = this.selectedBracket;
-      return;
-    }
+    // if (this.selectedBracket) {
+    //   this.form = this.selectedBracket;
+    //   return;
+    // }
 
     //else from the route :id
     if (this.$route.params.id) {
       this.getRecord(this.$route.params.id);
+    } else {
+      const tournamentId = await this.$store.getBracket?.tournament;
+      if (tournamentId) {
+        this.getRecord(tournamentId);
+      } else {
+        console.log("no tournamentId in param, and none in user store");
+        this.$toast.error("No tournament found. Please try again.");
+      }
     }
 
     if (this.creatingNew && !this.form?.code) {
@@ -489,7 +498,8 @@ export default {
     async create() {
       this.loading = true;
       const rec = await this.$api.post("tournaments", this.form);
-      if (!rec.data?.currentBracket){
+
+      if (!rec.data?.currentBracket) {
         this.$toast.error("Failed to set bracket.");
         return;
       }
@@ -505,15 +515,19 @@ export default {
 
       this.loading = true;
       let data = JSON.parse(JSON.stringify(this.form));
-      //TODO: we shouldn't deed to delete these properties as they don't exist with the new structure, please confirm.
-      delete data.players;
       delete data.rounds;
-      delete data.robinRounds;
 
+      console.log("datat to update", data);
       try {
-        const res = await this.$store.patchBracket(data);
-        this.form = res.data;
-        this.$store.setSelectedBracket(res.data);
+        //const res = await this.$store.patchBracket(data);
+        const res = await this.$store.patchTournament(data);
+        //this.form = res.data;
+        if (res.data.bracket) {
+          this.$store.setSelectedBracket(res.data.bracket);
+        } else {
+          console.error("No bracket returned from patchTournament", res);
+        }
+
         this.stopLoading();
       } catch (e) {
         console.log("error saving bracket", e);
@@ -556,10 +570,10 @@ export default {
     },
     async getRecord(id) {
       try {
-        const { data } = await this.$api.get(`/brackets/${id}`);
+        const { data } = await this.$api.get(`/tournaments/${id}`);
         this.form = data;
       } catch (error) {
-        this.$toast.error("Failed to load bracket. Please try again.");
+        this.$toast.error("Failed to load tournament. Please try again.");
       }
     },
     makeSelection(type) {
@@ -579,7 +593,7 @@ export default {
       setTimeout(() => {
         this.loading = false;
         this.$toast.success("Bracket saved successfully");
-      }, 700);
+      }, 100);
     },
   },
 };

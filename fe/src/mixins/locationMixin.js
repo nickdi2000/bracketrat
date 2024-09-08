@@ -13,8 +13,9 @@ export default {
   },
   methods: {
     async _getGeo() {
-
-      const closestFitnessCenter = localStorage.getItem("closest-fitness-center");
+      const closestFitnessCenter = localStorage.getItem(
+        "closest-fitness-center"
+      );
       if (closestFitnessCenter) {
         this._location = JSON.parse(closestFitnessCenter);
         return;
@@ -36,8 +37,11 @@ export default {
         };
 
         this._location = _location;
-        localStorage.setItem("closest-fitness-center", JSON.stringify(_location));
-
+        await this.$store.setLocale(data.state_code);
+        localStorage.setItem(
+          "closest-fitness-center",
+          JSON.stringify(_location)
+        );
       } catch (error) {
         console.log("error getting geo", error);
       }

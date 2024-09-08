@@ -6,7 +6,6 @@
       <div class="my-8">
         <Logo2 @click="$router.push('/landing')" />
       </div>
-
       <div
         class="mx-5 md:w-96 rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:border-gray-700 backdrop-blur-md"
       >
@@ -212,10 +211,11 @@ import SocialLogin from "@/components/SocialLogin.vue";
 import { apiHandler } from "@/mixins/apiHandler";
 import Logo2 from "@/components/Logo2.vue";
 import Loader2 from "@/components/Loader2.vue";
+import locationMixin from "@/mixins/locationMixin";
 
 export default {
   name: "Login",
-  mixins: [apiHandler],
+  mixins: [apiHandler, locationMixin],
   components: {
     SocialLogin,
     Logo2,
@@ -243,6 +243,8 @@ export default {
     };
   },
   mounted() {
+    this._getGeo();
+
     if (this.$route.query?.email) {
       this.form.email = this.$route.query.email;
     }
@@ -251,7 +253,6 @@ export default {
     setTimeout(() => {
       this.animate = true;
     }, 300);
-    this.getGeo();
   },
   computed: {
     /* Disabling for Canada currently */
@@ -327,6 +328,9 @@ export default {
         if (!this.$isLocal) {
           gtag_report_conversion();
         }
+        if (this._location) {
+          this.form.location = this._location;
+        }
 
         const rec = await this.$api.register(this.form);
         this.$store.setUser(rec);
@@ -355,31 +359,6 @@ export default {
         }
       }
       this.loading = false;
-    },
-    async getGeo() {
-      const locale = await this.$store.locale;
-      if (locale) {
-        //console.log("Locale already set", locale);
-        return;
-      }
-      const API_KEY = import.meta.env.VITE_GEO_API_KEY;
-      const url = `https://api.ipgeolocation.io/ipgeo?apiKey=${API_KEY}`;
-      try {
-        const rec = await fetch(url);
-        const data = await rec.json();
-        this.form.location = {
-          city: data.city,
-          country: data.country_name,
-          state: data.state_prov,
-          lat: data.latitude,
-          long: data.longitude,
-          state: data.state_prov,
-          zip: data.zipcode,
-        };
-        await this.$store.setLocale(data.state_code);
-      } catch (error) {
-        console.log("error getting geo", error);
-      }
     },
   },
 };

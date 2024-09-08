@@ -150,6 +150,67 @@ const reGenerate = async (req, res) => {
 	}
 };
 
+const patch = async (req, res) => {
+	const body = req.body;
+	const { tournamentId } = req.params;
+
+	try {
+		//const tournament = await tournamentService.update(tournamentId, body);
+		let tournament = await Tournament.findById(tournamentId);
+		if (!tournament) {
+			return res.status(404).json({ message: "Tournament not found." });
+		}
+
+		//create bracket for type if doesn't exist (copied from bracket controller)
+		let bracket;
+
+		bracket = await Bracket.findOne({
+			tournament: tournamentId,
+			type: body.type,
+		});
+
+		if (!bracket) {
+			bracket = await Bracket.create({
+				tournament: tournamentId,
+				type: body.type,
+				organization: body.organization.id,
+			});
+		}
+
+		// Update tournament with request body
+		Object.keys(body).forEach((key) => {
+			tournament[key] = body[key];
+		});
+
+		await tournament.save();
+
+		//bracket = bracket.toObject();
+		bracket.type = body.type;
+		bracket.save();
+
+		const bracketObject = await bracketService.getFullBracket(bracket._id);
+
+		res.send({ bracket: bracketObject, tournament: tournament });
+	} catch (error) {
+		console.log("TournamentController error", error);
+		res.status(400).json({ message: "Error" + error });
+	}
+};
+
+const show = async (req, res) => {
+	const { tournamentId } = req.params;
+	try {
+		const tournament = await Tournament.findById(tournamentId);
+		if (!tournament) {
+			return res.status(404).json({ message: "Tournament not found." });
+		}
+		res.json(tournament);
+	} catch (error) {
+		console.error("Error getting tournament:", error);
+		res.status(500).json({ message: error.message });
+	}
+};
+
 module.exports = {
 	generateFixed,
 	generateRobin,
@@ -157,4 +218,6 @@ module.exports = {
 	generate,
 	list,
 	upsert,
+	patch,
+	show,
 };

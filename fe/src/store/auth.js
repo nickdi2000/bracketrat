@@ -103,7 +103,9 @@ export const authStore = defineStore({
           console.error("No tournamentId provided to authStore");
           return;
         }
-        const rec = await api.post(`tournament/${tournamentId}/generate-robin`);
+        const rec = await api.post(
+          `tournaments/${tournamentId}/generate-robin`
+        );
         this.setSelectedBracket(rec.data.bracket);
         return rec;
       } catch (err) {
@@ -267,8 +269,7 @@ export const authStore = defineStore({
             bracketId,
           });
           const bracket = rec.data.bracket;
-          if (bracket)
-            this.setSelectedBracket(bracket);
+          if (bracket) this.setSelectedBracket(bracket);
 
           //check if rec.data.players exists
           if (rec.data.players) {
@@ -438,6 +439,28 @@ export const authStore = defineStore({
           partialData
         );
         this.fetchBracket(rec.data._id);
+        return rec;
+      } catch (err) {
+        console.log(err);
+        throw err;
+      }
+    },
+    async patchTournament(partialData) {
+      if (!partialData._id) {
+        console.error(
+          "(patchTournament) No tournament id provided to authStore"
+        );
+        return;
+      }
+
+      try {
+        const rec = await api.patch(
+          "tournaments/" + partialData._id,
+          partialData
+        );
+        console.log("auth patched data", rec.data);
+
+        //this.fetchBracket(rec.data._id);
         return rec;
       } catch (err) {
         console.log(err);

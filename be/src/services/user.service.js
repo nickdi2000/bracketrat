@@ -1,5 +1,11 @@
 const httpStatus = require("http-status");
-const { User, Document, Organization, Bracket, Tournament } = require("../models");
+const {
+	User,
+	Document,
+	Organization,
+	Bracket,
+	Tournament,
+} = require("../models");
 const ApiError = require("../utils/ApiError");
 
 /**
@@ -15,14 +21,18 @@ const createUser = async (userBody) => {
 	}
 
 	let user = await User.create(userBody);
-	const tournamentName = 'My First Tournament'; //getRandomTournamentName();
+	const tournamentName = "My First Tournament"; //getRandomTournamentName();
 	const tournament = await Tournament.create({
 		name: tournamentName,
 		admin: user._id,
+		type: "single-elimination",
+		status: "draft",
+		unit: "solo",
+		mark_method: "binary",
 	});
 	// Create the organization
 	const org = await createOrganization(user, tournament);
-	tournament.organization = org._id
+	tournament.organization = org._id;
 	tournament.currentBracket = org.defaultBracket;
 	await tournament.save();
 
@@ -54,13 +64,11 @@ const createOrganization = async (user, tournament) => {
 		owner: user._id,
 	});
 
-
 	//also create a bracket for the organization and set the defaultBracket for the org to it
 	const bracket = await Bracket.create({
 		name: "My First Bracket",
 		organization: org._id,
 		tournament: tournament._id,
-
 	});
 	org.brackets.push(bracket._id);
 	org.defaultBracket = bracket._id;
@@ -130,7 +138,8 @@ const getRandomTournamentName = () => {
 		"Snooker",
 		"Cycling",
 	];
-	const randomActivity = activities[Math.floor(Math.random() * activities.length)];
+	const randomActivity =
+		activities[Math.floor(Math.random() * activities.length)];
 	return `${randomActivity} Tournament`;
 };
 /**

@@ -107,16 +107,17 @@ export const options = Object.freeze([
     key: "require_auth",
     value: false,
   },
-  {
-    label: "Automatically throw user into bracket upon signup",
-    key: "auto_bracket",
-    value: true,
-  },
+  //REMOVING for now, i think we want to have gthe user log in to see the bracket, then click "JOIN" themselves
+  // {
+  //   label: "Automatically throw user into bracket upon signup",
+  //   key: "auto_bracket",
+  //   value: true,
+  // },
   {
     label: "Require a password to join",
     key: "require_password",
     value: false,
-    additional_options: true
+    additional_options: true,
   },
 ]);
 

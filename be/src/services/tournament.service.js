@@ -17,6 +17,22 @@ const create = async (data) => {
 	return tournament;
 };
 
+const update = async (id, data) => {
+	const tournament = await Tournament.findById(id);
+
+	if (!tournament) {
+		throw new Error("Tournament not found (service)");
+	}
+
+	Object.keys(data).forEach((key) => {
+		tournament[key] = data[key];
+	});
+
+	await tournament.save();
+	return tournament;
+};
+
 module.exports = {
 	create,
+	update,
 };
