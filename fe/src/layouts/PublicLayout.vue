@@ -11,13 +11,14 @@
   </div>
 
   <div v-else class="bg-gradient-to-bl from-gray-800 to-sky-950">
-    <main class="px-4 w-full" v-if="bracket">
+    <main class="px-4 w-full" v-if="tournament">
       <router-view v-slot="{ Component }" :key="$route.fullPath">
         <transition
           ><component
             :is="Component"
             :code="code"
             :bracket="bracket"
+            :tournament="tournament"
             :players="players"
           />
         </transition>
@@ -93,8 +94,9 @@ export default {
       if (!this.code) return;
       this.loading = true;
       try {
-        const rec = await this.$api.get(`/brackets/code/${this.code}`);
-        this.bracket = rec.data?.bracket;
+        /* TODO: should now be tournaments/code... */
+        const rec = await this.$api.get(`/tournaments/code/${this.code}`);
+        this.tournament = rec.data?.tournament;
         this.players = rec.data?.players;
         this.loading = false;
       } catch (error) {
@@ -112,6 +114,7 @@ export default {
       code: null,
       loading: false,
       bracket: null,
+      tournament: null,
       players: [],
       error: "",
       showNewCodeInput: false,

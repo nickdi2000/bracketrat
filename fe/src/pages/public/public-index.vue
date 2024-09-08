@@ -8,10 +8,10 @@
         <h1
           class="fadein text-3xl font-bold leading-tight text-gray-900 dark:text-gray-100"
         >
-          {{ bracket.name }}
+          {{ tournament.name }}
         </h1>
         <p class="fadein mt-0 pt-0 text-lg text-gray-900 dark:text-gray-500">
-          {{ bracket.description }}
+          {{ tournament.description }}
         </p>
         <div class="flex flex-col text-center">
           <label class="text-gray-700 mb-2"
@@ -31,13 +31,12 @@
             class="block w-full p-4 uppercase text-3xl font-bold border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
           />
 
-
           <button
             v-if="!foundMatch"
             @click="joinBracket"
             :disabled="shouldDisable"
             :class="
-            shouldDisable
+              shouldDisable
                 ? 'opacity-50 bg-gray-800'
                 : 'bg-blue-500 hover:bg-blue-600'
             "
@@ -98,6 +97,10 @@ export default {
       type: Object,
       required: true,
     },
+    tournament: {
+      type: Object,
+      required: true,
+    },
     players: {
       type: Array,
       required: true,
@@ -131,22 +134,19 @@ export default {
       const store = playerAuthStore();
       try {
         const res = await this.$api.post("players/login", {
-          bracketId: this.bracket._id,
+          bracketId: this.tournament._id,
           name: this.name,
         });
         //toast
         if (res.data.player) {
-         this.$toast.success("Added to bracket");
+          this.$toast.success("Added to bracket");
 
           await store.setPlayer(res.data.player);
           await nextTick();
           window.location = "/player";
-
         } else {
           this.$toast.error("Error adding player to bracket");
-
         }
-
       } catch (e) {
         console.error(e);
       } finally {
@@ -157,13 +157,13 @@ export default {
       const store = playerAuthStore();
       try {
         const res = await this.$api.post("players/register", {
-          bracketId: this.bracket._id,
+          bracketId: this.tournament._id,
           name: this.name,
         });
         console.log("res", res.data?.player);
         //return;
 
-        if(!res.data.player){
+        if (!res.data.player) {
           this.$toast.error("Error adding player to bracket");
           return;
         }
@@ -180,9 +180,8 @@ export default {
   watch: {
     name: {
       handler(v) {
-        //check if name matches a 'name' from the bracket.players array
-        this.foundMatch =
-          this.players.some((p) => p.name === v);
+        //check if name matches a 'name' from the tournament.players array
+        this.foundMatch = this.players.some((p) => p === v);
       },
     },
   },

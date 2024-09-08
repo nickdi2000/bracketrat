@@ -7,6 +7,10 @@ router.get("/:tournamentId", (req, res, next) => {
 	tournamentController.show(req, res, next);
 });
 
+router.get("/code/:code", (req, res, next) => {
+	tournamentController.findByCode(req, res, next);
+});
+
 router.post("/:tournamentId/generate", (req, res, next) => {
 	tournamentController.generate(req, res, next);
 });

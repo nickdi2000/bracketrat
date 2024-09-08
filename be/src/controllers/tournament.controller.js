@@ -211,6 +211,38 @@ const show = async (req, res) => {
 	}
 };
 
+const findByCode = async (req, res) => {
+	const { code } = req.params;
+	try {
+		//ignore case
+		const tournament = await Tournament.findOne({
+			code: { $regex: new RegExp(code, "i") },
+		});
+
+		const bracketId = tournament.currentBracket;
+
+		if (!bracketId) {
+			return res
+				.status(404)
+				.json({ message: "BracketId not found for this tournament." });
+		}
+
+		const bracket = await Bracket.findById(bracketId);
+		//find players via organization of bracket
+		const players = await Player.find({ organization: bracket.organization });
+
+		const playersNames = players.map((player) => player.name);
+
+		if (!bracket) {
+			return res.status(404).send("Bracket not found");
+		}
+		res.send({ tournament, bracket, players: playersNames });
+	} catch (error) {
+		console.log("error", error);
+		res.status(400).send("BracketController error" + JSON.stringify(error));
+	}
+};
+
 module.exports = {
 	generateFixed,
 	generateRobin,
@@ -219,5 +251,6 @@ module.exports = {
 	list,
 	upsert,
 	patch,
+	findByCode,
 	show,
 };
