@@ -185,6 +185,10 @@
       <PublicProfile :bracket="bracket" :player="player" />
     </div>
 
+    <div class="fab-bar">
+      <button class="btn btn-primary">Join!</button>
+    </div>
+
     <PlayerBottomNav />
   </div>
 </template>
@@ -228,12 +232,13 @@ export default {
     if (!this.player) {
       this.$router.push("/find");
     }
-    await this.getOrg();
-    await this.getBracket(this.bracketId);
+    //await this.getOrg();
+    //await this.getBracket(this.bracketId);
+    await this.fetchTournament();
 
     //this.currentGame = findCurrentGame(this.bracket, this.player.name);
-    this.myGames = findAllMyGames(this.bracket, this.player.name);
-    this.currentGame = this.myGames[this.gameIndex];
+    //this.myGames = findAllMyGames(this.bracket, this.player.name);
+    //fetchTournament this.currentGame = this.myGames[this.gameIndex];
   },
   computed: {
     player() {
@@ -252,6 +257,22 @@ export default {
     },
   },
   methods: {
+    async fetchTournament(id = null) {
+      const store = playerAuthStore();
+      const tournaments = id || this.player?.tournaments;
+      if (!tournaments || !tournaments.length) {
+        console.error("no tournaments");
+        this.error = "No tournaments found. Please contact your organization.";
+        return;
+      }
+      //for now (mvp) we are pretending there is only one tournament per player
+      const tournamentId = tournaments[0];
+      const tourn = await store.fetchTournament(tournamentId);
+      // this.bracket = tourn.currentBracket;
+      const bracket = await store.fetchBracket(tourn.currentBracket._id);
+      this.bracket = bracket;
+    },
+
     async getBracket() {
       const organizationId = this.player.organization;
       if (!organizationId) {

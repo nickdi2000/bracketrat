@@ -200,10 +200,16 @@ const patch = async (req, res) => {
 const show = async (req, res) => {
 	const { tournamentId } = req.params;
 	try {
-		const tournament = await Tournament.findById(tournamentId);
+		let tournament = await Tournament.findById(tournamentId).populate(
+			"currentBracket"
+		);
+
 		if (!tournament) {
 			return res.status(404).json({ message: "Tournament not found." });
 		}
+		tournament = tournament.toObject();
+		delete tournament.currentBracket.tournament;
+
 		res.json(tournament);
 	} catch (error) {
 		console.error("Error getting tournament:", error);

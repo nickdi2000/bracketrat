@@ -32,7 +32,27 @@ export const playerAuthStore = defineStore({
           .then(async (rec) => {
             this.setSelectedBracket(rec.data);
 
-            resolve(rec);
+            resolve(rec.data);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    },
+
+    async fetchTournament(tournament_id) {
+      console.log("fetching tournament");
+      return new Promise((resolve, reject) => {
+        if (!tournament_id) {
+          console.warn("No tournament_id provided to authStore");
+          reject("No tournament_id provided to authStore");
+        }
+        api
+          .get(`/tournaments/${tournament_id}`)
+          .then(async (rec) => {
+            console.log("Fetched from store", rec.data);
+            //this.setSelectedBracket(rec.data.bracket);
+            resolve(rec.data);
           })
           .catch((err) => {
             reject(err);
