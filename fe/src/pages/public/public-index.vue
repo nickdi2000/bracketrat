@@ -157,7 +157,8 @@ export default {
       const store = playerAuthStore();
       try {
         const res = await this.$api.post("players/register", {
-          bracketId: this.tournament._id,
+          // bracketId: this.tournament._id,
+          tournamentId: this.tournament._id,
           name: this.name,
         });
         console.log("res", res.data?.player);

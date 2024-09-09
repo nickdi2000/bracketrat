@@ -56,6 +56,7 @@ export const playerAuthStore = defineStore({
       this.player = playerData;
       localStorage.setItem("player", JSON.stringify(this.player));
     },
+
     setPlayers(players) {
       this.players = players;
     },

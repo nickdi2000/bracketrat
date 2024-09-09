@@ -1,4 +1,4 @@
-const { Bracket, Game } = require("../models");
+const { Bracket, Game, Tournament } = require("../models");
 const { Player } = require("../models/player.model");
 const bracketService = require("./bracket.service");
 
@@ -27,7 +27,7 @@ const createAndAddToBracket = async ({ name, bracketId }) => {
 			console.log("Organization found! ", organization);
 		}
 
-		const player = await createPlayer(name, organization);
+		const player = await createPlayer({ name, organization });
 		/* TODO: bracket service here to add player to bracket */
 		/* await bracketService.appendPlayerToBracket(player._id, bracketId); */
 		/* this should add the user to an empty slot, if there are no empty slots it should EXPAND the bracket to allow them to join, this may mean creating bye's as the structure will be disrupted */
@@ -48,6 +48,34 @@ const createAndAddToBracket = async ({ name, bracketId }) => {
 	}
 };
 
+//player should just join ORG (via tourn) first, then select to join the bracket (if option is available)
+const joinTournament = async ({ name, tournamentId }) => {
+	try {
+		const tournament = await Tournament.findById(tournamentId);
+
+		if (!tournament) {
+			throw new Error("Tournament not found");
+		}
+
+		const organization = tournament.organization;
+
+		if (!organization) {
+			throw new Error("Organization not found");
+		} else {
+			console.log("Organization found! ", organization);
+		}
+
+		const player = await createPlayer({ name, organization, tournamentId });
+
+		return { player, tournament };
+
+		//TODO: --- finish this
+	} catch (error) {
+		console.error("Error finding organization", error);
+		throw new Error("Failed to find organization (player ser)");
+	}
+};
+
 const removePlayerFromBracket = async (playerId, bracketId) => {
 	await Player.findByIdAndUpdate(playerId, { $pull: { brackets: bracketId } });
 };
@@ -57,7 +85,6 @@ const destroyPlayer = async (playerId) => {
 };
 
 const addPlayer = async (name, organization_id) => {
-
 	const player = await Player.create({
 		name,
 		organization: organization_id,
@@ -127,8 +154,13 @@ const createPlayerToSlot = async ({
 	}
 };
 
-const createPlayer = async (name, organization) => {
+const createPlayer = async ({ name, organization, tournamentId }) => {
 	const player = new Player({ name, organization });
+
+	// Add the player to the tournament if provided
+	if (tournamentId) {
+		player.tournaments.push(tournamentId);
+	}
 	await player.save();
 	return player;
 };
@@ -149,4 +181,5 @@ module.exports = {
 	createPlayerToSlot,
 	getPlayersByOrganization,
 	createAndAddToBracket,
+	joinTournament,
 };

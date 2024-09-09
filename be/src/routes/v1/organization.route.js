@@ -17,4 +17,8 @@ router.route("/").get(organizationController.getorganization);
 router.route("/:orgId").get(organizationController.show);
 router.route("/code/:code").get(organizationController.getByCode);
 
+// router
+// 	.route("/current-bracket/:organizationId")
+// 	.get(organizationController.getCurrentBracket);
+
 module.exports = router;

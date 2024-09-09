@@ -34,7 +34,9 @@ const createPlayer = async (req, res) => {
 			organization: organization._id,
 		});
 		if (existingPlayer) {
-			return res.status(400).json({ message: "Player already exists with this name" });
+			return res
+				.status(400)
+				.json({ message: "Player already exists with this name" });
 		}
 
 		if (isNaN(participantIndex) || !gameId) {
@@ -127,17 +129,21 @@ const showPlayer = catchAsync(async (req, res) => {
 });
 
 const register = catchAsync(async (req, res) => {
-	const { name, bracketId } = req.body;
+	const { name, tournamentId } = req.body;
 
 	try {
-		const player = await playerService.createAndAddToBracket({ name, bracketId });
+		//const player = await playerService.createAndAddToBracket({ name, bracketId });
+		const { player, tournament } = await playerService.joinTournament({
+			name,
+			tournamentId,
+		});
 		//const playerId = result.newPlayer._id;
 
 		// Emit an event to all connected clients
 		//const io = socket.getIo();
 		//io.emit("player-created", { player: result.newPlayer });
 
-		res.status(201).json({ player });
+		res.status(201).json({ player, tournament });
 	} catch (error) {
 		console.error("Error adding player to bracket:", error);
 		res.status(500).json({ message: error.message });

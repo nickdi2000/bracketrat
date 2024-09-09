@@ -147,8 +147,8 @@
     </div>
 
     <div v-else-if="view == 'bracket'" class="mx-4 scrollable fadein">
-      <div class="mid" v-if="error">
-        <div class="alert alert-warning">{{ error }}</div>
+      <div class="mid pb-8" v-if="error">
+        <div class="alert alert-warning text-center" v-html="error"></div>
       </div>
       <div>
         <bracket
@@ -253,19 +253,23 @@ export default {
   },
   methods: {
     async getBracket() {
-      const bracketId = this.player.bracketId;
-      if (!bracketId) {
-        console.error("no bracketid");
+      const organizationId = this.player.organization;
+      if (!organizationId) {
+        console.error("no organizationId");
         this.error =
-          "No Bracket has been built for you yet. Please contact your organization.";
+          "No Bracket available. <br/>Please contact your organization.";
         return;
       }
       try {
-        const res = await this.$api.get("brackets/" + bracketId);
+        const res = await this.$api.get(
+          "organization/current-bracket/" + organizationId
+        );
         console.log("res", res.data);
         this.bracket = res.data;
       } catch (e) {
         console.error(e);
+        this.error =
+          "Failed to fetch bracket.<br/> Please contact your organization.";
       }
     },
     async getOrg() {

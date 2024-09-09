@@ -13,7 +13,13 @@ const playerSchema = new mongoose.Schema(
 		wins: { type: Number, default: 0 },
 		strength: { type: Number, default: 0 },
 		//brackets: [{ type: mongoose.Schema.Types.ObjectId, ref: "Bracket" }],
-		organization: { type: mongoose.Schema.Types.ObjectId, ref: "Organization", required: true },
+		organization: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Organization",
+			required: true,
+		},
+		//array, but for now it will act as a one-to-one relationship (single bracket/tournament)
+		tournaments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tournament" }],
 	},
 	{
 		timestamps: true,
