@@ -186,7 +186,7 @@
     </div>
 
     <div class="fab-bar">
-      <button class="btn btn-primary">Join!</button>
+      <button @click="join()">Join!</button>
     </div>
 
     <PlayerBottomNav />
@@ -257,6 +257,14 @@ export default {
     },
   },
   methods: {
+    async join() {
+      console.log("Joining");
+      /* TODO: Implement logic for user to join bracket
+       * if tournament is dynamic, it should rebuild as they join
+       * if fixed, they should just go in the next empty slot
+       * if they are already in the bracket, this button shouldn't be here
+       */
+    },
     async fetchTournament(id = null) {
       const store = playerAuthStore();
       const tournaments = id || this.player?.tournaments;
@@ -370,6 +378,23 @@ export default {
   right: 0;
   transition: all 0.3s;
   min-height: 3rem;
+}
+
+.fab-bar {
+  position: fixed;
+  bottom: 10%;
+  z-index: 999;
+  width: 100%;
+  display: flex;
+  padding: 0 1rem;
+  justify-content: end;
+}
+
+.fab-bar > button {
+  filter: drop-shadow(10px 10px 3px #171c2a);
+  border: 1px solid #566789;
+  box-shadow: 0 0 10px #7b8394;
+  @apply text-lg bg-blue-800 p-4 md:p-2 font-bold uppercase md:rounded-lg hover:bg-blue-900;
 }
 
 .scrollable {
