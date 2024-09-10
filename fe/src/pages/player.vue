@@ -15,6 +15,7 @@
             <div
               class="flex justify-between mb-2 border-bottom"
               v-for="stat in stats"
+              :key="stat"
             >
               <div>{{ stat.label }}</div>
               <div>{{ record[stat.key] }}</div>

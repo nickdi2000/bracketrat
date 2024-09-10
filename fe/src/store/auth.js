@@ -87,7 +87,7 @@ export const authStore = defineStore({
           console.error("No tournamentId provided to authStore");
           return;
         }
-        const rec = await api.post(`tournament/${tournamentId}/generate`);
+        const rec = await api.post(`tournaments/${tournamentId}/generate`);
         this.setSelectedBracket(rec.data.bracket);
         return rec;
       } catch (err) {
@@ -125,7 +125,7 @@ export const authStore = defineStore({
 
           const bracketType = this.selected_bracket?.type;
           const rec = await api.post(
-            `tournament/${tournamentId}/generate-fixed`,
+            `tournaments/${tournamentId}/generate-fixed`,
             {
               size,
               bracketType,
@@ -367,7 +367,7 @@ export const authStore = defineStore({
       return new Promise(async (resolve, reject) => {
         try {
           const tournamentId = this.user.tournament;
-          const rec = await api.post(`tournament/${tournamentId}/regenerate`);
+          const rec = await api.post(`tournaments/${tournamentId}/regenerate`);
           console.log("rec regenerated", rec.data);
           this.setSelectedBracket(rec.data.bracket);
           resolve(rec);

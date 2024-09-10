@@ -55,40 +55,54 @@
       <!-- PARTICIPANTS LOOP -->
 
       <div v-else>
+      <div
+        class="px-3 mt-2 grid grid-cols-2 backdrop-opacity-10 backdrop-invert bg-slate-800/30 rounded-md"
+        v-for="(p, i) in [0, 1]"  
+        :key="i"
+      >
         <div
-          class="px-3 mt-2 grid grid-cols-2 backdrop-opacity-10 backdrop-invert bg-slate-800/30 rounded-md"
-          v-for="(p, i) in [0, 1]"  
-          :key="i"
+          class="p-3 font-bold uppercase text-lg md:text-xl lg:text-2xl"
+          :class="game.participants[i]?.winner ? 'text-green-400' : ''"
         >
-          <div
-            class="p-3 font-bold uppercase text-lg md:text-xl lg:text-2xl"
-            :class="game.participants[i]?.winner ? 'text-green-400' : ''"
+          {{ game.participants[i]?.player?.name || "TBA" }}
+        </div>
+        <div class="px-1 py-2">
+          <button
+            class="btn btn-secondary"
+            v-if="winnerIsSet && game.participants[i]?.winner"
+            @click="undoWinner(game.participants[i]?.player)"
           >
-            {{ game.participants[i]?.player?.name || "TBA" }}
-          </div>
-          <div class="px-1 py-2">
-            <button
-              class="btn btn-secondary"
-              v-if="winnerIsSet && game.participants[i]?.winner"
-              @click="undoWinner(game.participants[i]?.player)"
-            >
-              Undo
-            </button>
-            <button
-              v-else
-              class="btn btn-success fadein"
-              :disabled="loading"
-              @click="markAsWinner(game.participants[i]?.player)"
-            >
-              Mark Winner
-            </button>
-          </div>
+            Undo
+          </button>
+          <span v-if="winnerIsSet && game.participants[i]?.winner" class="px-8 py-2 font-medium">
+            Score: {{ playerScores[i] }}
+          </span>
+          <button
+            v-else-if="!winnerIsSet"
+            class="btn btn-success fadein"
+            :disabled="loading"
+            @click="markAsWinner(game.participants[i]?.player)"
+          >
+            Mark Winner
+          </button>
+          <input
+            v-if="!winnerIsSet"
+            v-model.number="playerScores[i]"
+            type="number"
+            class="input input-score ml-16"
+            :placeholder="'0'"
+            :disabled="loading || game.participants[i]?.winner"
+            :min="0"
+            :max="5"
+            @input="validateScore(i)"
+          />
         </div>
         <!-- END PARTICIPANTS -->
       </div>
     </div>
     <Loader2 v-if="loading" />
   </div>
+</div>  
 </template>
 
 <script>
@@ -142,12 +156,21 @@ export default {
           gameId: this.game._id,
           bracketId: this.game.bracketId,
         });
+      // Reset the scores for both participants
+      this.playerScores = [0, 0];
         this.toggleFlip();
       } catch (e) {
         console.log("error undoing winner", e);
         this.$toast.error("Error undoing winner");
       }
       this.loading = false;
+    },
+    validateScore(index) {
+      if (this.playerScores[index] < 0) {
+        this.playerScores[index] = 0;
+      } else if (this.playerScores[index] > 5) {
+        this.playerScores[index] = 5;
+      }
     },
     toggleFlip() {
       setTimeout(() => {
@@ -159,6 +182,7 @@ export default {
     return {
       isFlipped: false,
       loading: false,
+      playerScores: [0, 0],
     };
   },
 };
@@ -238,5 +262,12 @@ export default {
   background: rgba(11, 12, 33, 0.6);
   border-radius: 12%;
   backdrop-filter: blur(10px);
+}
+.input-score {
+  width: 60px;  
+  border-radius: 0.25rem;
+  border: 1px solid #ccc;
+  text-align: center;
+  background-color: #000;
 }
 </style>

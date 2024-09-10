@@ -335,8 +335,10 @@ export default {
       this.displaySizeOptions = true;
     },
     async reset() {
-      if (this.$store.players?.length < 3) {
-        this.$toast.error("Cannot Rebuild Bracket without players.");
+      const filterPlayers = this.$store.players?.filter(
+        (p) => p.stateLabel !== "Limbo");
+      if (filterPlayers.length < 3) {
+        this.$toast.error("Cannot rebuild bracket: not enough valid players.");
         return;
       }
       const ask = await this.$openDialog(
