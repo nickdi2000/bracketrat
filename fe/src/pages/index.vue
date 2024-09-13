@@ -203,7 +203,7 @@ export default {
       loading: false,
     };
   },
-  
+
   async created() {
     if (!this.players?.length && this.$store?.getBracket?._id) {
       await this.$store.fetchBracket(this.$store.getBracket._id);
@@ -218,14 +218,12 @@ export default {
     } else {
       await this.$store.fetchDefaultBracket();
     }
-
-   
   },
 
-  mounted(){
-    if(!this.$store.getBracket._id){
+  mounted() {
+    if (!this.$store.getBracket._id) {
       console.error("No Bracket found, redirecting");
-      this.$router.push('/admin/my-organization');
+      this.$router.push("/admin/my-organization");
       return;
     }
     console.log("Found Bracket", this.$store.getBracket);
@@ -342,17 +340,23 @@ export default {
   justify-content: center;
   align-items: center;
   padding: 6rem;
-  margin-top: 10%;
+  margin-top: 30px;
   height: 90vh;
   overflow: auto;
+  padding-top: 90px;
 }
 
 .vtb-wrapper {
   background: inherit;
   position: absolute;
   top: 0;
-  padding-top: 4rem;
+  padding-top: 8rem;
   padding-right: 3rem;
+  background: rgb(31, 43, 65);
+  border-radius: 20px;
+  min-width: 100vw;
+  padding: 20px;
+  margin-top: 20px;
 }
 
 .player-box {
@@ -553,15 +557,18 @@ p {
 
 /* smaller screens @ media */
 
-@media only screen and (max-width: 1090px) {
+@media only screen and (max-width: 2090px) {
   .bracket-container {
+    margin: auto;
+    display: flex;
+    justify-content: center;
     position: fixed;
     width: 100vw;
     height: 100dvh;
     top: 10px;
     left: 0;
     padding-top: 90px;
-    padding-left: 0px;
+    padding-left: 12px;
     padding-right: 0px;
     padding-bottom: 0px;
     overflow: scroll;
@@ -574,6 +581,7 @@ p {
     padding-left: 12px;
     min-height: 100vh;
     z-index: 0;
+    flex-grow: 1;
   }
 
   .vtp-wrapper {

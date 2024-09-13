@@ -86,7 +86,8 @@
               Simple.
             </h3>
             <p class="text-gray-600 dark:text-gray-400">
-              It's the simplist one. Go ahead, try to find a simpler bracket generator.
+              It's the simplist one. Go ahead, try to find a simpler bracket
+              generator.
             </p>
           </div>
           <div class="text-center">

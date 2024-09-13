@@ -83,6 +83,14 @@ app.config.globalProperties.$showAddPlayerModal = (data = {}) => {
   eventBus.emit("show-add-player-modal", data);
 };
 
+app.config.globalProperties.$formatDate = (date) => {
+  return new Date(date).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+
 app.use(piniaPlugin);
 app.config.globalProperties.$appName = "Bracket Force";
 app.config.globalProperties.$baseUrl = "BracketForce.com";

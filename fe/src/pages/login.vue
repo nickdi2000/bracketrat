@@ -257,6 +257,7 @@ export default {
   computed: {
     /* Disabling for Canada currently */
     disableRegistration() {
+      return false;
       const includesCA = this.$store.locale?.includes("CA");
       return includesCA && this.registering && !this.disableRegOverride;
     },

@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-gradient-to-bl from-gray-600 to-gray-900">
+  <div class="bg-gradient-to-bl from-gray-600 to-gray-900 min-h-screen">
     <NavBar />
     <!-- <div class="h-16 mb-0"></div> -->
-    <main class="pt-24 px-4 w-full">
+    <main class="pt-24 px-4 w-full grow">
       <router-view v-slot="{ Component }" :key="$route.fullPath">
         <transition><component :is="Component" /> </transition>
       </router-view>

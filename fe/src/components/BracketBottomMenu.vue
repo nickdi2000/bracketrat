@@ -129,7 +129,7 @@
           <div class="flex flex-col space-y-4" v-else-if="displaySizeOptions">
             <button
               class="wide-button fadeInUp"
-              v-for="(size, index) in [4, 8, 16, 32]"
+              v-for="(size, index) in [4, 8, 12, 32, 64, 128]"
               :key="index"
               @click="generatedFixed(size)"
             >
@@ -271,8 +271,7 @@ export default {
         "Build Bracket?",
         `This will build a fresh new bracket with any new ${this.$teamPlayer}s added since the last generation.`
       );
-      if (!ask)
-        return 
+      if (!ask) return;
       this.$emit("generate");
     },
     async generateRobin() {
@@ -280,8 +279,7 @@ export default {
         "Build Round-Robin Tournament?",
         `This will build a fresh new set of rounds with any new ${this.$teamPlayer}s added since the last generation. It will pit each ${this.$teamPlayer} against every other ${this.$teamPlayer} in a round-robin format.`
       );
-      if (!ask)
-        return
+      if (!ask) return;
       try {
         await this.$store.generateRobinBracket();
       } catch (error) {
@@ -304,8 +302,7 @@ export default {
         `Build ${size}-player Bracket?`,
         `This will build a fresh new bracket with ${size} empty slots.`
       );
-      if (!ask)
-        return 
+      if (!ask) return;
       // const bracketId = this.bracket._id;
       // if (!bracketId) {
       //   this.$toast.error("No bracket found. Please Refresh.");
@@ -336,7 +333,8 @@ export default {
     },
     async reset() {
       const filterPlayers = this.$store.players?.filter(
-        (p) => p.stateLabel !== "Limbo");
+        (p) => p.stateLabel !== "Limbo"
+      );
       if (filterPlayers.length < 3) {
         this.$toast.error("Cannot rebuild bracket: not enough valid players.");
         return;
@@ -346,8 +344,7 @@ export default {
         `This will overwrite the existing bracket and rebuild it with the only the ${this.$teamPlayer}s already in the bracket. Any existing info on matche results will be lost.`
       );
 
-      if (!ask)
-        return
+      if (!ask) return;
 
       this.$store.resetBracket(this.bracket._id);
     },
@@ -373,8 +370,7 @@ export default {
 
       const ask = await this.$openDialog(message, details);
 
-      if (!ask) 
-        return;
+      if (!ask) return;
 
       try {
         const bracketId = this.$store.getBracket?._id;

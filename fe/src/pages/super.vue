@@ -30,9 +30,14 @@
             <div>{{ rec.email }}</div>
             <div class="mt-2 text-gray-300 text-xs">{{ rec.name }}</div>
           </td>
-          <td>{{ rec.createdAt }}</td>
+          <td>{{ $formatDate(rec.createdAt) }}</td>
           <td>{{ rec.sso_info?.name ?? "-" }}</td>
-          <td>{{ rec.location }}</td>
+          <td>
+            <span v-if="rec.location">
+              {{ rec.location?.country }}, {{ rec.location?.city }},
+              {{ rec.location?.state }}
+            </span>
+          </td>
         </tr>
       </table>
     </div>
