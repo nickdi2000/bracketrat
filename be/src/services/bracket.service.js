@@ -1,8 +1,15 @@
 const { Bracket, Organization, Tournament } = require("../models");
 const mongoose = require("mongoose");
 const { Player } = require("../models/player.model");
-const { Game } = require("../models");
 const { populate } = require("../models/token.model");
+const {
+	updatePlayerStats, findHeadToHeadWinner,
+	findPlayerWithMaxPoints, countPlayerGames,
+	hasTieInWinCounts
+} = require("../utils/statTable")
+const { Game } = require("../models");
+const Rule = require("../models/rule.model");
+
 
 /* Generate Bracket with all players, or if bracketSize is provided, generate a fixed-size bracket with no players.  if useCurrentPlayers is true, we take the players already in the bracket and rebuild it (to fix blanks/errorenous byes etc) */
 const generateBracket = async ({
@@ -234,11 +241,15 @@ const updateGameWinner = async (gameId, winnerId) => {
 Update winner for round robin 
 */
 
-const updateGameWinnerRobin = async (gameId, winnerId) => {
+const updateGameWinnerRobin = async (gameId, winnerId, winnerScore, loserScore) => {
 	try {
 		const game = await Game.findById(gameId).populate("participants.player");
 		if (!game) {
 			throw new Error("Game not found.");
+		}
+
+		if (winnerScore > 5 || loserScore > 5) {
+			throw new Error("Invalid scores. Scores should not exceed 5.");
 		}
 
 		// Initialize variables to track the winner
@@ -253,9 +264,11 @@ const updateGameWinnerRobin = async (gameId, winnerId) => {
 			) {
 				participant.winner = true;
 				winnerName = participant.player.name;
+				participant.score += winnerScore || 0;
 				winnerAssigned = true;
 			} else {
 				participant.winner = false; // Mark other participants as not winners
+				participant.score += loserScore || 0;
 			}
 		});
 
@@ -280,7 +293,7 @@ const updateGameWinnerRobin = async (gameId, winnerId) => {
 	}
 };
 
-const undoWinner = async ({ gameId, playerId }) => {
+const undoWinner = async ({ gameId }) => {
 	try {
 		const game = await Game.findById(gameId).populate("participants.player");
 		if (!game) {
@@ -290,6 +303,7 @@ const undoWinner = async ({ gameId, playerId }) => {
 		// Reset the winner status for player1 and player2 within the game
 		game.participants.forEach((participant) => {
 			participant.winner = null;
+			participant.score = 0;
 		});
 
 		game.status = "pending";
@@ -385,19 +399,19 @@ const formatDataForBracket = (bracket) => {
 				_id: game._id,
 				player1: game.participants[0]
 					? {
-							...game.participants[0],
-							_id: game.participants[0]._id,
-							participantIndex: 0,
-							gameId: game._id,
-					  }
+						...game.participants[0],
+						_id: game.participants[0]._id,
+						participantIndex: 0,
+						gameId: game._id,
+					}
 					: { ...defaultPlayer },
 				player2: game.participants[1]
 					? {
-							...game.participants[1],
-							_id: game.participants[1]._id,
-							participantIndex: 1,
-							gameId: game._id,
-					  }
+						...game.participants[1],
+						_id: game.participants[1]._id,
+						participantIndex: 1,
+						gameId: game._id,
+					}
 					: { ...defaultPlayer },
 				bracketId: game.bracketId,
 				__v: game.__v,
@@ -701,6 +715,7 @@ validateBracket = (bracketId) => {
 
 findPlayerInBracket = async ({ name, bracketId }) => {
 	//get bracket and player from bracket if exists
+
 	let bracket = await Bracket.findById(bracketId).populate({
 		path: "rounds.games",
 		populate: {
@@ -770,15 +785,18 @@ async function batchUpdatePlayers({ players }) {
 
 generateRobinBracket = async ({ tournamentId }) => {
 	try {
-		console.log("tournamentId::", tournamentId);
 		const tournament = await Tournament.findById(tournamentId).populate(
 			"organization"
 		);
-		console.log("tournamnet::", tournament);
 		if (!tournament) {
 			throw new Error("Tournament not found.");
 		}
 
+		let rule = await Rule.create({
+			name: "Default Round Robin Rule",
+			description: "This is the default rule for round-robin tournaments.",
+			criteria: ["head-to-head", "total-points"],
+		});
 		// Check if a round-robin bracket already exists for this tournament
 		let bracket = await Bracket.findOne({
 			tournament: tournamentId,
@@ -792,6 +810,7 @@ generateRobinBracket = async ({ tournamentId }) => {
 				tournament: tournamentId,
 				type: "round-robin",
 				organization: tournament.organization.id,
+				tie_breaker_rules: rule._id,
 			});
 		}
 
@@ -911,9 +930,43 @@ async function augmentRobinRounds(bracketId) {
 			return aNulls.length - bNulls.length;
 		});
 	});
+
+	// Track if all games are completed
+	let allGamesCompleted = true;
+	let isTie;
+	const participantStats = {};
+
+	bracket.rounds.forEach(round => {
+		round.games.forEach(game => {
+			// If any game is not completed, set the flag to false
+			if (game.status !== "completed") {
+				allGamesCompleted = false;
+			}
+			game.participants.forEach(participant => {
+				updatePlayerStats(participant, participantStats, game.status);
+			});
+		});
+	});
+
+	const { playerGamesPlayed, playerRemainingGames } = countPlayerGames(bracket);
+
+	Object.keys(participantStats).forEach(playerId => {
+		const stats = participantStats[playerId];
+		stats.remaining = playerRemainingGames[playerId];
+		stats.played = playerGamesPlayed[playerId];
+	});
+
+	if (allGamesCompleted) {
+		isTie = hasTieInWinCounts(participantStats);
+	}
+
+	const table = Object.values(participantStats);
+
 	bracket = bracket.toObject();
 	bracket.name = tournament.name;
 	bracket.code = tournament.code;
+	bracket.isTie = isTie;
+	bracket.playerStats = table;
 	return bracket;
 }
 
@@ -939,9 +992,72 @@ const unsetPlayerAsWinner = async ({ bracketId, playerId, roundIndex }) => {
 	const gameIds = previousRound.games.map((game) => game._id);
 	const result = await Game.updateMany(
 		{ _id: { $in: gameIds }, "participants.player": playerId },
-		{ $set: { "participants.$[].winner": null } }
+		{
+			$set: {
+				"participants.$[].winner": null,
+				"status": "pending"
+			}
+		},
 	);
 };
+
+const tieBreakerWinner = async (bracketId) => {
+	try {
+		// Fetch and populate the bracket
+		let bracket = await Bracket.findById(bracketId)
+			.populate({
+				path: 'rounds.games',
+				populate: {
+					path: 'participants',
+					populate: { path: 'player' }
+				}
+			})
+			.exec();
+
+		if (!bracket) {
+			return res.status(404).json({ status: 'error', message: 'Bracket not found' });
+		}
+
+		const playerStats = {};
+
+		// Update player stats for each game
+		bracket.rounds.forEach(round => {
+			round.games.forEach(game => {
+				game.participants.forEach(participant => {
+					updatePlayerStats(participant, playerStats, game.status);
+				});
+			});
+		});
+
+		// Identify tied players based on max wins
+		const players = Object.values(playerStats);
+		const maxWins = Math.max(...players.map(p => p.wins));
+		const tiedPlayers = players.filter(p => p.wins === maxWins);
+
+		if (tiedPlayers.length <= 1) {
+			return tiedPlayers[0];
+		}
+
+		// Option 1: Head-to-head comparison
+		let winner = findHeadToHeadWinner(bracket, tiedPlayers);
+
+		// Option 2: Fallback to player with max points if no head-to-head winner
+		if (!winner) {
+			winner = findPlayerWithMaxPoints(bracket, tiedPlayers);
+		}
+
+		// Fallback: Return the first tied player if no other winner found
+		if (!winner) {
+			winner = tiedPlayers[0];
+		}
+
+		return winner;
+
+	} catch (error) {
+		console.error("Error determining the winner:", error);
+		throw new Error(error.message);
+	}
+}
 
 module.exports = {
 	generateBracket,
@@ -961,4 +1077,5 @@ module.exports = {
 	batchUpdatePlayers,
 	getFullBracket,
 	unsetPlayerAsWinner,
+	tieBreakerWinner,
 };

@@ -258,12 +258,14 @@ class BracketController extends BaseController {
 
 	async updateGameWinnerRobin(req, res) {
 		const { bracketId } = req.params;
-		const { playerId, gameId } = req.body;
+		const { gameId, winnerId, winnerScore, loserScore } = req.body;
 
 		try {
 			let bracket = await bracketService.updateGameWinnerRobin(
 				gameId,
-				playerId
+				winnerId,
+				winnerScore,
+				loserScore,
 			);
 
 			if (!bracket) {
@@ -428,6 +430,25 @@ class BracketController extends BaseController {
 		} catch (error) {
 			console.error("BracketController error:", error);
 			return res.status(400).send(`BracketController error: ${error.message}`);
+		}
+	}
+
+	async fetchTieBreakerWinner(req, res) {
+		const { bracketId } = req.params;
+		try {
+			let player = await bracketService.tieBreakerWinner(bracketId);
+
+			if (!player) {
+				return res.status(404).json({ message: "Player not found" });
+			}
+
+			res.json({
+				message: "player selected successfully.",
+				player,
+			});
+		} catch (error) {
+			console.error("Error set winner:", error);
+			res.status(500).json({ message: "Error setting winner" });
 		}
 	}
 }

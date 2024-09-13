@@ -40,7 +40,7 @@ const gameSchema = new mongoose.Schema(
 				name: String,
 				winner: Boolean,
 				bye: Boolean,
-				score: Number,
+				score: { type: Number, default: 0 },
 			},
 		],
 		winner: {
@@ -49,17 +49,17 @@ const gameSchema = new mongoose.Schema(
 			required: false,
 		},
 		winnerMarkedById: {
-    	type: mongoose.Schema.Types.ObjectId,
-    	ref: 'Player',
-  	},
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Player',
+		},
 		winnerMarkedByName: {
-    	type: String,
-    	deafult: "",
-  	},
-  	lastUpdatedAt: {
-    	type: Date,
-    	default: Date.now,
-  	},
+			type: String,
+			deafult: "",
+		},
+		lastUpdatedAt: {
+			type: Date,
+			default: Date.now,
+		},
 		status: {
 			type: String,
 			enum: ["active", "completed", "cancelled", "pending", "paused", "bye"],

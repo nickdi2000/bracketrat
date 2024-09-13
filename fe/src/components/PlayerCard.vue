@@ -238,8 +238,12 @@ export default {
   },
   methods: {
     addPlayer() {
-      if (!this.isFirstRound) {
-      this.$toast.error("Players can only be added in the first round.");
+      const isRoundCompleted = this.game.status === "completed";
+      if (!this.isFirstRound || isRoundCompleted) {
+        const errorMessage = !this.isFirstRound
+        ? "Players can only be added in the first round."
+        : "Players cannot be added once the round is completed.";
+        this.$toast.error(errorMessage);
       return;
       }
       this.$emit("update", false);

@@ -53,6 +53,11 @@ const bracketSchema = new mongoose.Schema(
 			ref: "Tournament",
 			required: false,
 		},
+		tie_breaker_rules: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Rule",
+			required: false,
+		},
 	},
 	{
 		timestamps: true,

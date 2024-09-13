@@ -173,7 +173,7 @@ const patch = async (req, res) => {
 			bracket = await Bracket.create({
 				tournament: tournamentId,
 				type: body.type,
-				organization: body.organization.id,
+				organization: body.organization,
 			});
 		}
 
@@ -182,6 +182,7 @@ const patch = async (req, res) => {
 			tournament[key] = body[key];
 		});
 
+		tournament.currentBracket = bracket._id;
 		await tournament.save();
 
 		//bracket = bracket.toObject();

@@ -189,14 +189,17 @@ export const authStore = defineStore({
       });
     },
 
-    async markWinner({ playerId, gameId, bracketId }) {
+    async markWinner({ gameId, winnerId, winnerScore, loserScore, bracketId }) {
       return new Promise(async (resolve, reject) => {
         try {
           const rec = await api.post(
             `/brackets/robin/${bracketId}/set-winner`,
             {
-              playerId,
               gameId,
+              winnerId,
+              winnerScore,
+              loserScore,
+              bracketId,
             }
           );
           this.setSelectedBracket(rec.data.bracket);
@@ -443,6 +446,17 @@ export const authStore = defineStore({
       } catch (err) {
         console.log(err);
         throw err;
+      }
+    },
+    async getBracketWinner() {
+      try {
+        const bracketId = this.selected_bracket._id;
+        const rec = await api.get(
+          `brackets/${bracketId}/tie-breaker`
+        )
+        return rec.data.player;
+      } catch (err) {
+
       }
     },
     async patchTournament(partialData) {

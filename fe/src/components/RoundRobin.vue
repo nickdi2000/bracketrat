@@ -21,7 +21,8 @@
     <div v-if="showStats" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div class="text-white rounded-lg shadow-lg max-w-4xl  w-full relative">
         <div class="p-8">
-          <StatsTable :participants="getParticipants()" @close="toggleStats" />
+          <StatsTable 
+          @close="toggleStats" />
         </div>
       </div>
     </div>
@@ -91,17 +92,6 @@ export default {
   methods: {
     toggleStats() {
       this.showStats = !this.showStats;
-    },
-    getParticipants() {
-      let participants = [];
-      if (this.bracket?.robinRounds) {
-        this.bracket.robinRounds.forEach((round) => {
-          round.games.forEach((game) => {
-            participants = participants.concat(game.participants || []);
-          });
-        });
-      }
-      return participants;
     },
     async generateRobin() {
       const rec = await this.$store.generateRobinBracket();

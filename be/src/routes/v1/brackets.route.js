@@ -77,4 +77,8 @@ router.post("/:bracketId/undo-outcomes", (req, res, next) => {
 	bracketController.undoOutcomes(req, res, next);
 });
 
+router.get("/:bracketId/tie-breaker", (req, res, next) => {
+	bracketController.fetchTieBreakerWinner(req, res, next);
+});
+
 module.exports = router;

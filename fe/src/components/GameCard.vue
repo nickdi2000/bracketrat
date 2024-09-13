@@ -74,9 +74,6 @@
           >
             Undo
           </button>
-          <span v-if="winnerIsSet && game.participants[i]?.winner" class="px-8 py-2 font-medium">
-            Score: {{ playerScores[i] }}
-          </span>
           <button
             v-else-if="!winnerIsSet"
             class="btn btn-success fadein"
@@ -131,12 +128,14 @@ export default {
   methods: {
     async markAsWinner(player) {
       this.loading = true;
-      console.log("marking winner", player);
-      console.log("Game", this.game);
+      const winnerIndex = this.game.participants[0]?.player?._id === player._id ? 0 : 1;
+      const loserIndex = winnerIndex === 0 ? 1 : 0;
       try {
-        await this.$store.markWinner({
-          playerId: player._id,
+        await this.$store.markWinner({          
           gameId: this.game._id,
+          winnerId: player._id,
+          winnerScore: this.playerScores[winnerIndex] ?? 0,
+          loserScore: this.playerScores[loserIndex] ?? 0,
           bracketId: this.game.bracketId,
         });
         this.toggleFlip();
