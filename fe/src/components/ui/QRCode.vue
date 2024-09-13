@@ -1,7 +1,18 @@
 <template>
   <div class="flex flex-col items-center p-3 print-padding">
-    <div class="subheader mb-0">Player-Link</div>
-    <Link :darkMode="darkMode" :code="bracket?.code" @update="handleUpdate" />
+    <div v-if="viewOnly" class="text-xs text-gray-300 mb-4">
+      Share the bracket-view with a friend.
+    </div>
+    <div class="subheader mb-0">
+      {{ viewOnly ? "Bracket View" : "Player-Link" }}
+    </div>
+    <div v-if="link">{{ getLink }}</div>
+    <Link
+      v-else
+      :darkMode="darkMode"
+      :code="bracket?.code"
+      @update="handleUpdate"
+    />
     <div
       v-for="instance in [0, 1]"
       :key="instance + '-qr-div' + darkMode"
@@ -15,7 +26,7 @@
         :key="instance + '-qr' + darkMode"
         :width="size"
         :height="size"
-        :value="link"
+        :value="getLink"
         :qrOptions="{ typeNumber: 0, mode: 'Byte', errorCorrectionLevel: 'H' }"
         :imageOptions="{ hideBackgroundDots: true, imageSize: 0.4, margin: 0 }"
         :dotsOptions="{
@@ -114,6 +125,10 @@ export default {
       type: Object,
       default: () => {},
     },
+    link: {
+      type: String,
+      default: "",
+    },
     printIcon: {
       type: Boolean,
       default: true,
@@ -126,6 +141,10 @@ export default {
       type: Number,
       default: 400,
     },
+    viewOnly: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     color() {
@@ -134,8 +153,13 @@ export default {
     bracket() {
       return this.bracket ?? this.$store.getBracket;
     },
-    link() {
-      return "BracketForce.com/" + this.bracket?.code;
+    getLink() {
+      if (this.link) {
+        return this.link;
+      }
+      return this.bracket?.code
+        ? this.bracket?.code
+        : this.$store.getBracket?.code;
     },
   },
   methods: {

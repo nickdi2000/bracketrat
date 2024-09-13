@@ -92,6 +92,7 @@ app.config.globalProperties.$formatDate = (date) => {
 };
 
 app.use(piniaPlugin);
+
 app.config.globalProperties.$appName = "Bracket Force";
 app.config.globalProperties.$baseUrl = "BracketForce.com";
 app.config.globalProperties.$api = api;

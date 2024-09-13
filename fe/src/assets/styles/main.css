@@ -6,6 +6,30 @@ body {
   font-family: "Fira Sans", sans-serif;
 }
 
+.shine-effect {
+  position: relative;
+  overflow: hidden;
+  @apply bg-gradient-to-b from-slate-900 to-slate-800;
+}
+
+.shine-effect::before {
+  content: "";
+  position: absolute;
+  top: -30%;
+  left: -30%;
+  width: 160%;
+  height: 60%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(105, 134, 192, 0.446),
+    rgba(255, 255, 255, 0)
+  );
+  transform: rotate(45deg);
+  filter: blur(150px); /* Add a wide blur to the shine */
+  opacity: 0.5;
+  pointer-events: none; /* Ensure the shine doesn't block content */
+}
+
 /* veritcal centering */
 .mid {
   display: flex;

@@ -233,10 +233,10 @@ const findByCode = async (req, res) => {
 				.json({ message: "BracketId not found for this tournament." });
 		}
 
-		const bracket = await Bracket.findById(bracketId);
+		//const bracket = await Bracket.findById(bracketId);
+		const bracket = await bracketService.getFullBracket(bracketId);
 		//find players via organization of bracket
 		const players = await Player.find({ organization: bracket.organization });
-
 		const playersNames = players.map((player) => player.name);
 
 		if (!bracket) {

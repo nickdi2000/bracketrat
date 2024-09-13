@@ -40,8 +40,14 @@
           </div>
           <div class="md:flex md:justify-between mt-4">
             <div class="text-gray-300 ml-4">
+              <div class="tiny">Player Link</div>
               <span class="text-2xl font-bold text-slate uppercase">{{
                 link
+              }}</span>
+
+              <div class="tiny mt-5">Spectator (View-only) Link</div>
+              <span class="text-2xl font-bold text-slate uppercase">{{
+                viewOnlyLink
               }}</span>
             </div>
             <div class="mt-6 ml-4 md:mt-0">
@@ -54,7 +60,7 @@
             </div>
           </div>
 
-          <div class="my-4 text-gray-200 px-4">
+          <div class="my-4 text-gray-200 px-4" v-if="showLinkHelp">
             Share this link with your players/teams so they can join the bracket
             and update the outcome of their own games. You may change the code
             to something more memorable if you like. (Note that changing the
@@ -341,6 +347,7 @@ export default {
         name: "Bracket",
         path: "brackets",
       },
+      showLinkHelp: false,
       selectionCount: 0,
       selections: [],
       showTip: false,
@@ -444,6 +451,9 @@ export default {
     },
     link() {
       return import.meta.env.VITE_BASE_FE_URL + "" + this.form.code;
+    },
+    viewOnlyLink() {
+      return import.meta.env.VITE_BASE_FE_URL + "view/" + this.form.code;
     },
     shouldDisable() {
       const standardTypes = [

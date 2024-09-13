@@ -352,7 +352,7 @@ export default {
   top: 0;
   padding-top: 8rem;
   padding-right: 3rem;
-  background: rgb(31, 43, 65);
+  // background: rgb(31, 43, 65);
   border-radius: 20px;
   min-width: 100vw;
   padding: 20px;

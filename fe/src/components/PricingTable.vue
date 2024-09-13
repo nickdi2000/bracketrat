@@ -140,7 +140,7 @@
                   class="mr-2 text-5xl font-semibold text-white lg:text-6xl"
                   v-else
                 >
-                  $199
+                  $49
                 </p>
 
                 <p class="text-lg text-gray-500">/ {{ interval }}</p>
@@ -214,20 +214,19 @@ export default {
       isDiscounted: false,
       interval: "year",
       items: [
-        "Ad-Driven",
         "Fully functioning Brackets",
-        "Limited features",
-        "All Good",
+        "All Bracket Types",
+        "Player & Team Management",
+        "Link Sharing and Player Signup",
       ],
       proItems: [
-        "Unlimited Players & Teams",
-        "No Ads",
+        "All Basic Features",
         "Custom Branding & Domain",
-        "Unlimited Tournaments",
-        "All Advanced Features",
-        "Full Screen and Cast",
-        "Player email comm",
-        "Premium Support",
+        "Team/Player Scheduling",
+        "Email Notifications & Webhooks",
+        "Enterprise Support",
+        "Bulk Import & Export",
+        "Backups & Extra Storage",
       ],
     };
   },
