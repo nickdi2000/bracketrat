@@ -22,7 +22,10 @@
       <div v-if="tournament" class="mx-auto w-full p-5 top-banner">
         <div class="header">{{ tournament?.name }}</div>
       </div>
-      <BracketComponent :rounds="bracket?.rounds" />
+      <BracketComponent
+        :class="fullscreen ? 'ml-16' : 'ml-0'"
+        :rounds="bracket?.rounds"
+      />
 
       <div
         class="trans-footer flex flex-row justify-end fadein"
