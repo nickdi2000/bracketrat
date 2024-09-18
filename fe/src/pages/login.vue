@@ -334,7 +334,8 @@ export default {
         }
 
         const rec = await this.$api.register(this.form);
-        this.$store.setUser(rec);
+        const packet = await this.$store.setUser(rec);
+        // console.log("got packet", packet);
         this.$router.push("/admin/dashboard?welcome=true");
       } catch (error) {
         this._handleResponse(error);
@@ -349,7 +350,6 @@ export default {
         this.$router.push("/admin/dashboard");
       } catch (error) {
         console.log("ERROR", error?.response?.status);
-
         const err = this._handleResponse(error);
         if (err) {
           this.error = err;

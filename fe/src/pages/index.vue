@@ -432,12 +432,13 @@ p {
   padding: 20px;
   width: 200px;
   border: 0.5px solid #262626;
-  box-shadow: 10px 5px 5px rgb(48, 50, 51);
-  border-radius: 10px;
+  box-shadow: 10px 5px 5px rgba(48, 50, 51, 0.628);
+  border-radius: 8px;
   margin-bottom: 12px;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s, background-color 1.4s;
-  background-color: rgb(44, 60, 91);
+  /*background-color: rgb(44, 60, 91);*/
+  @apply bg-gradient-to-r from-blue-900  to-blue-800;
 }
 
 .vtb-player:hover {

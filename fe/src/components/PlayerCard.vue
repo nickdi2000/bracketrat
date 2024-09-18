@@ -35,7 +35,7 @@
               </button>
             </div>
 
-            <div v-else-if="player.winner == null ">
+            <div v-else-if="player.winner == null">
               <button
                 class="btn btn-success btn-block"
                 @click="markPlayerAsWinner()"
@@ -123,7 +123,7 @@
         </div>
 
         <div v-if="!player.name" class="text-center">
-          <p class="p-3" v-if="player.roundIndex">
+          <p class="p-3" v-if="!isFirstRound">
             Nothing to see here. Waiting on previous round...
           </p>
           <span v-else>
@@ -199,7 +199,7 @@ export default {
       return this.$store.getBracket;
     },
     isFirstRound() {
-      return  this.game.roundIndex === 0;
+      return this.game.roundIndex === 0;
     },
     isLastRound() {
       return this.player.roundIndex === this.rounds.length - 1;
@@ -241,10 +241,10 @@ export default {
       const isRoundCompleted = this.game.status === "completed";
       if (!this.isFirstRound || isRoundCompleted) {
         const errorMessage = !this.isFirstRound
-        ? "Players can only be added in the first round."
-        : "Players cannot be added once the round is completed.";
+          ? "Players can only be added in the first round."
+          : "Players cannot be added once the round is completed.";
         this.$toast.error(errorMessage);
-      return;
+        return;
       }
       this.$emit("update", false);
       const participantIndex = this.player?.participantIndex;
@@ -317,10 +317,8 @@ export default {
         `/brackets/${params.bracketId}/undo-outcomes`,
         params
       );
-      if( rec.status === 200 ) {
-        const req = await this.$api.get(
-          `/brackets/${params.bracketId}`,
-        )
+      if (rec.status === 200) {
+        const req = await this.$api.get(`/brackets/${params.bracketId}`);
         this.$store.setSelectedBracket(req.data);
       }
       this.closeModal();

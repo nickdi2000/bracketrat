@@ -10,18 +10,18 @@
         <div class="text-2xl text-white font-bold py-3">
           Welcome to {{ $appName }}!
         </div>
-        <div class="text-left mx-2">
+        <div class="text-sm text-left mx-2">
           To get started you can either build a fixed size bracket (4, 8, 16,
-          etc..), or add {{ $teamPlayer }}'s and watch the bracket grow
-          dynamically. You may also chose to share the player-link (or QR code)
-          with users so they can add themselves. Good luck!
+          etc..), or for odd and unknown sizes, add Player/Teams's and watch the
+          bracket grow dynamically. You may also chose to share the player-link
+          (or QR code) with users so they can add themselves! Good luck!
         </div>
         <div class="mt-4">
           <button
             class="btn btn-primary my-2"
             @click="this.$router.push({ name: 'Bracket' })"
           >
-            Get Started!
+            Okay!
           </button>
         </div>
       </div>

@@ -129,7 +129,7 @@
           <div class="flex flex-col space-y-4" v-else-if="displaySizeOptions">
             <button
               class="wide-button fadeInUp"
-              v-for="(size, index) in [4, 8, 12, 32, 64, 128]"
+              v-for="(size, index) in [4, 8, 32, 64, 128]"
               :key="index"
               @click="generatedFixed(size)"
             >
@@ -182,6 +182,20 @@ export default {
     isBroken() {
       return false;
     },
+    playerCount() {
+      return this.$store.players?.length || 0;
+    },
+    playersInBracketCount() {
+      //loop through this.bracket.rounds and iside that iterate through 'games', incrementing the count where player1 or player2 has a 'name' value
+      let count = 0;
+      this.bracket?.rounds?.forEach((round) => {
+        round.games.forEach((game) => {
+          if (game.player1?.name) count++;
+          if (game.player2?.name) count++;
+        });
+      });
+      return count;
+    },
     hasRounds() {
       return this.bracket?.rounds?.length;
     },
@@ -195,14 +209,18 @@ export default {
             icon: "UserGroupIcon",
             text: "Generate Bracket",
             action: "generate",
-            desc: `Generate a new dynamic-sized bracket with all ${this.$teamPlayer}s.`,
+            desc: `Generate a new dynamic-sized bracket with all ${this.playerCount} ${this.$teamPlayer}s.`,
+            hide: !this.playerCount,
           },
           {
-            text: "Rebuild",
+            text: "Rebuild:",
             action: "reset",
             icon: "UsersIcon",
-            desc: `Reset current bracket with the same set of ${this.$teamPlayer}s`,
-            hide: !this.hasRounds,
+            desc: `Reset current bracket with the same ${this.playersInBracketCount} ${this.$teamPlayer}s`,
+            hide:
+              !this.hasRounds ||
+              !this.playersInBracketCount ||
+              this.playersInBracketCount < 3,
           },
           {
             text: "Build Fixed Size",

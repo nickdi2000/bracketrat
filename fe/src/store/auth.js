@@ -421,7 +421,8 @@ export const authStore = defineStore({
       localStorage.setItem("token", this.tokens.access.token);
 
       //if selected_bracket is not set, fetch and then set it to the users defaultBracket
-      await this.fetchBracket(this.user.defaultBracket);
+      const bracket = await this.fetchBracket(this.user.defaultBracket);
+      return { user: this.user, bracket };
     },
     setPlayers(players) {
       this.players = JSON.parse(JSON.stringify(players));
@@ -451,13 +452,9 @@ export const authStore = defineStore({
     async getBracketWinner() {
       try {
         const bracketId = this.selected_bracket._id;
-        const rec = await api.get(
-          `brackets/${bracketId}/tie-breaker`
-        )
+        const rec = await api.get(`brackets/${bracketId}/tie-breaker`);
         return rec.data.player;
-      } catch (err) {
-
-      }
+      } catch (err) {}
     },
     async patchTournament(partialData) {
       if (!partialData._id) {
