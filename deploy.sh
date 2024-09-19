@@ -19,7 +19,7 @@ ssh -i $SSH_KEY $SSH_USER@$SSH_HOST << 'EOF'
 
     # Run the build command
     echo "Building the project..."
-    npm cd /opt/bracketrat/fe
+    cd /opt/bracketrat/fe
     npm run build
 
     # Restart the application using PM2
