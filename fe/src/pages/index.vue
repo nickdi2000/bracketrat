@@ -447,12 +447,12 @@ p {
   padding: 20px;
   width: 200px;
   border: 0.5px solid #262626;
-  box-shadow: 10px 5px 5px rgba(48, 50, 51, 0.628);
+  box-shadow: 10px 5px 5px rgba(33, 34, 35, 0.805);
   border-radius: 8px;
   margin-bottom: 12px;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s, background-color 1.4s;
-  /*background-color: rgb(44, 60, 91);*/
+  //background-color: rgb(44, 60, 91);
   @apply bg-gradient-to-r from-blue-900  to-blue-800;
 }
 
@@ -468,11 +468,13 @@ p {
 
 .vtb-item-players .winner {
   // filter: hue-rotate(342deg);
-  background-color: rgb(57, 102, 79) !important;
+  // background-color: rgb(57, 102, 79) !important;
+  @apply bg-gradient-to-r from-green-900  to-green-700;
 }
 
 .vtb-item-players .defeated {
-  background-color: rgb(71, 67, 64) !important;
+  //background-color: rgb(71, 67, 64) !important;
+  @apply bg-gradient-to-r from-slate-900  to-orange-900 text-gray-400 opacity-80;
   text-decoration: line-through;
 }
 
