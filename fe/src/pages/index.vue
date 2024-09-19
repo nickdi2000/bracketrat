@@ -89,6 +89,7 @@
           <div class="subtitle">
             Share your unique room link/QR code or add them manually.
           </div>
+
           <button
             class="p-2 bg-slate-900 mt-4 hover:bg-slate-700 fadein"
             @click="$router.push('/admin/players')"
@@ -96,6 +97,11 @@
             <PlusCircleIcon class="h-6 inline mr-1 mb-1" />
             Add {{ $teamPlayer }}'s
           </button>
+
+          <QuestionMarkCircleIcon
+            class="h-6 text-gray-500 mt-5"
+            @click="addPlayerHelp()"
+          />
         </div>
 
         <div
@@ -167,7 +173,11 @@
 <script>
 import Bracket from "vue-tournament-bracket";
 
-import { PlusCircleIcon, UsersIcon } from "@heroicons/vue/24/solid";
+import {
+  PlusCircleIcon,
+  QuestionMarkCircleIcon,
+  UsersIcon,
+} from "@heroicons/vue/24/solid";
 import { bracketMixin } from "@/mixins/bracketMixin";
 import PlayerCard from "@/components/PlayerCard.vue";
 import BracketBottomMenu from "@/components/BracketBottomMenu.vue";
@@ -231,6 +241,11 @@ export default {
   methods: {
     async update() {
       this.compKey++;
+    },
+    addPlayerHelp() {
+      this.$bottomAlert(
+        'In order to Generate a dynamic (any size) bracket, you need at least 3 players. You can also opt to build a "fixed" size bracket (4,8,16,etc), in which case you can add the players after.'
+      );
     },
     showFixedOptions() {
       //run showNavAndSizes in the BracketBottomMenu via ref

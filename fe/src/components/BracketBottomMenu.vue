@@ -107,6 +107,7 @@
               v-for="(button, index) in filteredButtons"
               :key="index"
               class="wide-button trans"
+              :class="button.disabled ? 'disabled' : 'enabled'"
               @click="execute(button.action)"
             >
               <div class="flex flex-row">
@@ -118,8 +119,15 @@
                 <div>{{ button.text }}</div>
               </div>
               <div
+                v-if="button.disabled"
+                class="text-sm font-bold text-red-100"
+              >
+                {{ button.disabledMessage }}
+              </div>
+
+              <div
                 class="ml-10 text-left text-gray-400 text-xs fadein"
-                v-if="showHelp"
+                v-if="showHelp && !button.disabled"
               >
                 {{ button.desc }}
               </div>
@@ -128,7 +136,7 @@
 
           <div class="flex flex-col space-y-4" v-else-if="displaySizeOptions">
             <button
-              class="wide-button fadeInUp"
+              class="wide-button fadeInUp bg-slate-900 hover:bg-blue-900"
               v-for="(size, index) in [4, 8, 32, 64, 128]"
               :key="index"
               @click="generatedFixed(size)"
@@ -210,7 +218,8 @@ export default {
             text: "Generate Bracket",
             action: "generate",
             desc: `Generate a new dynamic-sized bracket with all ${this.playerCount} ${this.$teamPlayer}s.`,
-            hide: !this.playerCount,
+            disabled: !this.playerCount,
+            disabledMessage: "No players to generate bracket with.",
           },
           {
             text: "Rebuild:",
@@ -440,6 +449,14 @@ export default {
 }
 
 .wide-button {
-  @apply w-full bg-slate-700 text-gray-300 py-4 px-8 rounded-md text-2xl font-bold hover:bg-slate-600;
+  @apply w-full text-gray-300 py-4 px-8 rounded-md text-2xl font-bold;
+}
+
+.enabled {
+  @apply bg-gradient-to-r from-blue-900 via-slate-800 to-slate-900 hover:bg-gradient-to-br;
+}
+
+.disabled {
+  @apply bg-gray-500 cursor-not-allowed opacity-70;
 }
 </style>
