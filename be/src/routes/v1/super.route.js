@@ -16,6 +16,10 @@ router.get("/method/:method/:id", (req, res) => {
 	superController[method](req, res);
 });
 
+router.post("/send-followup", (req, res) => {
+	superController.sendFollowUp(req, res);
+});
+
 router.delete("/method/:method/:id", (req, res) => {
 	const method = req.params.method;
 	superController[method](req, res);

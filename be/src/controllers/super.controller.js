@@ -1,6 +1,7 @@
 // controllers/SuperController.js
 //const BaseController = require("./baseController");
 const { User, Message } = require("../models");
+const mailerService = require("../services/mailer.service");
 
 const list = async (req, res) => {
 	res.send("SuperController");
@@ -63,9 +64,17 @@ const deleteuser = async (req, res) => {
 	res.json({ user });
 };
 
+const sendFollowUp = async (req, res) => {
+	const body = req.body;
+	console.log("Sending user", body);
+	const data = await mailerService.sendFollowUp({ user: body });
+	res.json({ data });
+};
+
 module.exports = {
 	list,
 	listusers,
 	getuser,
 	deleteuser,
+	sendFollowUp,
 };

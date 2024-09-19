@@ -91,6 +91,10 @@ const userSchema = mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Bracket",
 		},
+		emailsSent: {
+			type: Number,
+			default: 0,
+		},
 	},
 	{
 		timestamps: true,

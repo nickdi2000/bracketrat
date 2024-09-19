@@ -24,6 +24,7 @@
           <th>Created</th>
           <th>SSO?</th>
           <th>Location</th>
+          <th>Send</th>
         </tr>
         <tr v-for="rec in records" class="m-2 w-full">
           <td>
@@ -37,6 +38,16 @@
               {{ rec.location?.country }}, {{ rec.location?.city }},
               {{ rec.location?.state }}
             </span>
+          </td>
+          <td>
+            <Button
+              :disabled="rec.emailsSent"
+              @click="send(rec)"
+              :class="
+                rec.emailsSent ? 'btn btn-secondary' : 'btn btn-primary p-2'
+              "
+              >Send</Button
+            >
           </td>
         </tr>
       </table>
@@ -72,6 +83,11 @@ export default {
         await localStorage.setItem("isAdmin", true);
         this.fetch();
       }
+    },
+    async send(rec) {
+      const res = await this.$api.post("super/send-followup", rec);
+      rec.emailsSent = true;
+      console.log("Send", res);
     },
     async fetch() {
       if (!this.authorized) {

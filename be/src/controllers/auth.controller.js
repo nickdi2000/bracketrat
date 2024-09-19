@@ -7,7 +7,7 @@ const {
 	emailService,
 } = require("../services");
 const mail = require("../utils/mail");
-const { sendNewUser, sendLogin} = require("../utils/slack");
+const { sendNewUser, sendLogin } = require("../utils/slack");
 
 const register = catchAsync(async (req, res) => {
 	let userData = req.body;
@@ -15,6 +15,7 @@ const register = catchAsync(async (req, res) => {
 		let user = await userService.createUser(userData);
 		const tokens = await tokenService.generateAuthTokens(user);
 		sendNewUser(user);
+		mail.sendWelcomeEmail(user);
 		res.status(httpStatus.CREATED).send({ user, tokens });
 	} catch (err) {
 		console.log(err);
@@ -42,6 +43,7 @@ const ssoLoginRegister = catchAsync(async (req, res) => {
 	const user = await authService.ssoLoginRegister(ssoInfo);
 	const tokens = await tokenService.generateAuthTokens(user);
 	sendNewUser(user);
+	mail.sendWelcomeEmail(user);
 	res.send({ user, tokens });
 });
 

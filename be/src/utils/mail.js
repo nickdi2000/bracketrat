@@ -47,7 +47,29 @@ const executeSend = async (data) => {
 	}
 };
 
-const sendContactMail = async ({email, message, type = "none", location}) => {
+const executePlainSend = async (data) => {
+	if (!process.env.POSTMARK_KEY) {
+		throw new Error("Postmark Key not set");
+	}
+	try {
+		const rec = await axios.post("https://api.postmarkapp.com/email", data, {
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+				"X-Postmark-Server-Token": process.env.POSTMARK_KEY,
+			},
+		});
+		//console.log("PostMark Response", rec.response);
+		return true;
+	} catch (err) {
+		console.log("Node executeSend Error", err);
+		//throw error
+
+		return false;
+	}
+};
+
+const sendContactMail = async ({ email, message, type = "none", location }) => {
 	const data = templateObject;
 	message += `<br/><br/><br/>Location: ${JSON.stringify(location)}`;
 
@@ -56,7 +78,6 @@ const sendContactMail = async ({email, message, type = "none", location}) => {
 	data.TemplateModel.from_email = email;
 	data.ReplyTo = email;
 	data.TemplateId = contactTemplateID;
-
 
 	const messageObject = {
 		subject: "Contact Form",
@@ -70,12 +91,12 @@ const sendContactMail = async ({email, message, type = "none", location}) => {
 	return rec;
 };
 
-const sendWelcomeEmail = async (params) => {
+const sendWelcomeEmail = async (user) => {
 	const data = templateObject;
-	data.To = params.email;
+	data.To = user.email;
 	data.TemplateModel.sender_name = sender_name;
 	data.TemplateModel.product_name = product_name;
-	data.TemplateModel.name = params.name ?? "[N/A]";
+	data.TemplateModel.name = user.name ?? "[N/A]";
 	data.TemplateModel.action_url = "https://bracketforce.com/login";
 	data.TemplateId = 35012190;
 	const rec = await executeSend(data);
@@ -97,4 +118,5 @@ module.exports = {
 	sendContactMail,
 	sendWelcomeEmail,
 	sendResetPassword,
+	executePlainSend,
 };
