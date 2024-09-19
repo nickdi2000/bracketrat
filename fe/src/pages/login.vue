@@ -195,6 +195,7 @@
       <div class="fixed-footer">
         <p class="text-sm text-gray-500 dark:text-gray-400 text-center">
           &copy; {{ new Date().getFullYear() }} All rights reserved.
+          {{ $store.locale }}
           <br />
           <router-link to="/landing" class="underline hover:text-gray-200"
             >Home Page</router-link
@@ -257,8 +258,8 @@ export default {
   computed: {
     /* Disabling for Canada currently */
     disableRegistration() {
-      return false;
-      const includesCA = this.$store.locale?.includes("CA");
+      // return false;
+      const includesCA = this.$store.locale?.includes("ON");
       return includesCA && this.registering && !this.disableRegOverride;
     },
   },
