@@ -9,6 +9,7 @@ import Rounds from "@/pages/rounds.vue";
 import Options from "@/pages/options.vue";
 import Settings from "@/pages/settings.vue";
 import PlayerHelp from "@/pages/player-help.vue";
+import AdminHelp from "@/pages/admin-help.vue";
 import NotFound from "@/pages/not-found.vue";
 import Profile from "@/pages/profile.vue";
 import MyOrganization from "@/pages/my-organization.vue";
@@ -138,6 +139,7 @@ const routes = [
       { path: "player/:id?", name: "Player", component: Player },
       { path: "settings", name: "Settings", component: Settings },
       { path: "profile", name: "My Profile", component: Profile },
+      { path: "help", name: "AdminHelp", component: AdminHelp },
       {
         path: "contact/:flag?",
         name: "contact",

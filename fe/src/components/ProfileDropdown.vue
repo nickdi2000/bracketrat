@@ -63,6 +63,14 @@
             Contact Support
           </button>
         </li>
+        <li>
+          <button
+            @click="navTo('/admin/help')"
+            class="block px-4 py-2 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+          >
+            Help
+          </button>
+        </li>
         <!-- <li>
           <button
             @click="navTo('/admin/pricing')"
@@ -123,6 +131,11 @@ export default {
           route: "/admin/contact",
           icon: "EnvelopeIcon",
         },
+        // {
+        //   name: "Help",
+        //   route: "/admin/help",
+        //   icon: "QuestionMarkCircleIcon",
+        // },
         // { name: "Account & Pricing", route: "/admin/pricing" },
         { name: "Logout", action: "logout", icon: "ArrowUturnRightIcon" },
       ],

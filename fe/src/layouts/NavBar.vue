@@ -144,6 +144,15 @@
             />
           </div>
         </div>
+
+        <button
+          class="w-full bg-gray-900 text-left my-3 text-white block rounded-md px-3 py-4 text-lg font-medium hover:bg-blue-800"
+          aria-current="page"
+          @click="handleClick('AdminHelp')"
+        >
+          <QuestionMarkCircleIcon class="h-4 w-4 inline mr-2" />
+          Help
+        </button>
       </div>
     </nav>
     <div
