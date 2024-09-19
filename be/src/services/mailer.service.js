@@ -56,8 +56,6 @@ const sendFollowUp = async ({ user }) => {
 		TextBody: msg,
 	};
 
-	return data;
-
 	const send = await executePlainSend(data);
 
 	if (send) {

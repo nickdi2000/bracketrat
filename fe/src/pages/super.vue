@@ -29,7 +29,11 @@
         <tr v-for="rec in records" class="m-2 w-full">
           <td>
             <div>{{ rec.email }}</div>
-            <div class="mt-2 text-gray-300 text-xs" v-if="rec.name">
+            <div
+              class="mt-2 text-gray-300 text-xs"
+              v-if="rec.name"
+              v-on:dblclick="addName(rec)"
+            >
               {{ rec.name }}
             </div>
             <div v-else>
