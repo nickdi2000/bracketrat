@@ -16,10 +16,10 @@ fi
 
 # test if pm2 'bracket' process is running (pm2 list)
 echo "Testing if the 'bracket' process is running..."
-if pm2 list | grep -q "bracket"; then
-  echo -e "${GREEN}'bracket' process is running${NC}"
+if pm2 list | grep -q "index"; then
+  echo -e "${GREEN}'index' process is running${NC}"
 else
-  echo -e "${RED}'bracket' process is not running${NC}"
+  echo -e "${RED}'index' process is not running${NC}"
 fi
 
 
