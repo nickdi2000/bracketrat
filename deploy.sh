@@ -1,25 +1,40 @@
 #!/bin/bash
 
-# Store the current directory
-CURRENT_DIR=$(pwd)
-
-cd "$CURRENT_DIR" && git pull
-# Run npm run build in the fe folder
-echo "Building frontend..."
-cd "$CURRENT_DIR/fe"
-npm install && npm run build
-
-# Run npm run build in the be folder
-echo "Building backend..."
-cd "$CURRENT_DIR/be"
-npm install && pm2 restart bracket
-
-# do a curl command to https://bracketforce.com/api/v1/test
-echo "Testing deployment..."
-curl https://bracketforce.com/api/v1/test
-
-echo "Curl finished."
+# Define variables for the SSH connection and server details
+SSH_KEY="/Users/nick/.ssh/id_rsa_hostinger"
+SSH_USER="root"
+SSH_HOST="5.183.8.134"
+PROJECT_DIR="/opt/bracketrat"
 
 
+# Execute the commands on the remote server via SSH
+ssh -i $SSH_KEY $SSH_USER@$SSH_HOST << 'EOF'
+    # Navigate to the project directory
+    cd /opt/bracketrat || exit
 
-echo "Bracket Deployment completed successfully."
+    # Pull the latest changes from Git
+    echo "Pulling latest changes from Git..."
+    git reset --hard
+    git pull
+
+    # Run the build command
+    echo "Building the project..."
+    npm cd /opt/bracketrat/fe
+    npm run build
+
+    # Restart the application using PM2
+    echo "Restarting the bracketrat application..."
+    pm2 restart index
+
+     echo "Deployment complete!"
+
+    # Run the test script
+    echo "Running the test script..."
+
+    chmod +x test.sh
+    ./test.sh
+
+    echo "Test script complete!"
+
+   
+EOF

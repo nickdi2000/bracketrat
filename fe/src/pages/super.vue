@@ -29,7 +29,14 @@
         <tr v-for="rec in records" class="m-2 w-full">
           <td>
             <div>{{ rec.email }}</div>
-            <div class="mt-2 text-gray-300 text-xs">{{ rec.name }}</div>
+            <div class="mt-2 text-gray-300 text-xs" v-if="rec.name">
+              {{ rec.name }}
+            </div>
+            <div v-else>
+              <Button class="text-xs bg-slate-800 p-2" @click="addName(rec)"
+                >+</Button
+              >
+            </div>
           </td>
           <td>{{ $formatDate(rec.createdAt) }}</td>
           <td>{{ rec.sso_info?.name ?? "-" }}</td>
@@ -82,6 +89,12 @@ export default {
       if (this.password == "ratboy") {
         await localStorage.setItem("isAdmin", true);
         this.fetch();
+      }
+    },
+    async addName(rec) {
+      const name = prompt("Enter name");
+      if (name) {
+        rec.name = name;
       }
     },
     async send(rec) {

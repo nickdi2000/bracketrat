@@ -36,7 +36,16 @@ const appName = "BracketForce";
  */
 
 const sendFollowUp = async ({ user }) => {
-	let msg = `Hello there,\n\nI hope you're doing well. I noticed you signed up for ${appName} the other day and just wanted to see if you had any questions or needed help getting started. I also wanted to mention that we are actively building out new features everyday and your input would be greatly appreciated. We are going to build this based on your ideas! Anyway, take care!`;
+	let name = "there";
+	if (user.name) {
+		name = user.name;
+		//remove first space and everything after to extract first name
+		name = name.replace(/ .*/, "");
+		//capitalize first letter
+		name = name.charAt(0).toUpperCase() + name.slice(1);
+	}
+
+	let msg = `Hey ${name},\n\nI hope you're doing well. I noticed you signed up for ${appName} the other day and just wanted to see if you had any questions or needed help getting started. I also wanted to mention that we are actively building out new features everyday and your input would be greatly appreciated. We are going to build this based on your ideas! Anyway, take care!`;
 
 	msg += `\n\nBest,\n${fromName}`;
 
@@ -46,6 +55,8 @@ const sendFollowUp = async ({ user }) => {
 		Subject: `Follow up from ${appName}`,
 		TextBody: msg,
 	};
+
+	return data;
 
 	const send = await executePlainSend(data);
 
