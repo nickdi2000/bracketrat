@@ -13,5 +13,7 @@ router.route("/:bracketId").get(playerController.getByBracketId);
 router.route("/show/:id").get(playerController.showPlayer);
 router.route("/").get(playerController.list);
 router.route("/").delete(playerController.destroy);
+router.route("/add-player").post(playerController.addPlayerInBracket);
+
 
 module.exports = router;

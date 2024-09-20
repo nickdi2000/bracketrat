@@ -10,6 +10,10 @@ export const playerAuthStore = defineStore({
         : null,
 
     organization: null,
+    players:
+      localStorage.getItem("players")
+        ? JSON.parse(localStorage.getItem("players"))
+        : null,
     selected_bracket:
       localStorage.getItem("selected_bracket") != "undefined"
         ? JSON.parse(localStorage.getItem("selected_bracket"))
@@ -72,6 +76,20 @@ export const playerAuthStore = defineStore({
       });
     },
 
+    async createPlayer(playerId, name, bracketId) {
+      try {
+        const rec = await api.post("/players/add-player", {
+          playerId: playerId,
+          name: name,
+          bracketId: bracketId,
+        });
+        this.setSelectedBracket(rec.data);
+        return rec.data;
+      } catch (erorr) {
+        console.eror("Error creating player", erorr);
+      }
+    },
+
     setPlayer(playerData) {
       this.player = playerData;
       localStorage.setItem("player", JSON.stringify(this.player));
@@ -79,6 +97,7 @@ export const playerAuthStore = defineStore({
 
     setPlayers(players) {
       this.players = players;
+      localStorage.setItem("players", JSON.stringify(players));
     },
     setRounds(rounds) {
       this.rounds = rounds;
@@ -126,6 +145,9 @@ export const playerAuthStore = defineStore({
     },
     getplayer() {
       return JSON.parse(localStorage.getItem("player")) || this.player;
+    },
+    getplayers() {
+      return JSON.parse(localStorage.getItem("players")) || this.players;
     },
   },
 });

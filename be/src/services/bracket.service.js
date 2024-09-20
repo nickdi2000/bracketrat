@@ -1,7 +1,7 @@
 const { Bracket, Organization, Tournament } = require("../models");
 const mongoose = require("mongoose");
 const { Player } = require("../models/player.model");
-const { populate } = require("../models/token.model");
+const { populate, findById } = require("../models/token.model");
 const {
 	updatePlayerStats, findHeadToHeadWinner,
 	findPlayerWithMaxPoints, countPlayerGames,
@@ -16,10 +16,11 @@ const generateBracket = async ({
 	tournamentId,
 	useCurrentPlayers = false,
 	bracketSize = null,
+	isDynamic = false,
+	playerId = null,
 }) => {
 	try {
 		const tournament = await Tournament.findById(tournamentId);
-
 		if (!tournament) {
 			throw new Error("Tournament not found");
 		}
@@ -63,6 +64,10 @@ const generateBracket = async ({
 						game.participants.map((participant) => participant.player)
 					)
 					.filter((player) => player) || [];
+			if (isDynamic) {
+				const dynamicPlayer = await Player.findById(playerId);
+				players.push(dynamicPlayer);
+			}
 		} else {
 			// Optionally load players based on another criterion, e.g., from an organization
 			const tournament = await Tournament.findById(bracket.tournament);
@@ -76,7 +81,6 @@ const generateBracket = async ({
 		const nextPowerOfTwo = Math.pow(2, Math.ceil(Math.log2(totalPlayers || 1)));
 		const numberOfGames = nextPowerOfTwo / 2;
 		const totalRoundsNeeded = Math.log2(nextPowerOfTwo);
-
 		if (totalRoundsNeeded <= 0 || numberOfGames < 1) {
 			/*
 			*
@@ -531,7 +535,7 @@ const removePlayerFromGame = async ({ gameId, playerId }) => {
 					"participants.$.player": null,
 					"participants.$.name": "",
 					"participants.$.winner": null,
-					"participants.$.bye": false,
+					"participants.$.bye": true,
 				},
 			}
 		);
@@ -720,10 +724,9 @@ findPlayerInBracket = async ({ name, bracketId }) => {
 		path: "rounds.games",
 		populate: {
 			path: "participants.player",
-			select: "name",
+			select: "name tournaments",
 		},
 	});
-
 	if (!bracket) {
 		throw new Error("Bracket not found.");
 	}
@@ -733,7 +736,7 @@ findPlayerInBracket = async ({ name, bracketId }) => {
 		for (const game of round.games) {
 			for (const participant of game.participants) {
 				if (participant.player && participant.player.name === name) {
-					foundPlayer = participant.player;
+					foundPlayer = participant?.player;
 					break;
 				}
 			}
@@ -747,7 +750,7 @@ findPlayerInBracket = async ({ name, bracketId }) => {
 
 	return {
 		player: {
-			...foundPlayer.toObject(),
+			...foundPlayer?.toObject(),
 			bracketId: bracket._id,
 			organizationId: bracket.organization,
 		},

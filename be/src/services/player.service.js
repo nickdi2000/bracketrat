@@ -84,10 +84,11 @@ const destroyPlayer = async (playerId) => {
 	await Player.findByIdAndDelete(playerId);
 };
 
-const addPlayer = async (name, organization_id) => {
+const addPlayer = async (name, organization_id, tournamnet) => {
 	const player = await Player.create({
 		name,
 		organization: organization_id,
+		tournaments: [tournamnet],
 	});
 
 	return player;
@@ -122,7 +123,12 @@ const createPlayerToSlot = async ({
 		console.log("Organization found! ", organization);
 
 		// Create the new player with the correct organization ID
-		const player = new Player({ name, organization });
+		const player = new Player({
+			name,
+			organization,
+			tournaments: [tournament]
+		});
+
 		await player.save();
 
 		// Find the game using the provided gameId
@@ -154,6 +160,80 @@ const createPlayerToSlot = async ({
 	}
 };
 
+const addPlayerToEmptySlot = async ({
+	name,
+	playerId,
+	bracketId,
+}) => {
+
+	try {
+		let gameId;
+		let participantIndex;
+		const bracket = await Bracket.findById(bracketId)
+			.populate({
+				path: "rounds.games",
+				model: "Game",
+				populate: {
+					path: "participants",
+					model: "Player",
+					populate: {
+						path: "player",
+						model: "Player",
+					},
+				},
+			})
+			.exec();
+
+		if (!bracket) {
+			throw new Error("Bracket not found.");
+		}
+
+		if (bracket.build_type === "dynamic") {
+			await bracketService.generateBracket({
+				tournamentId: bracket.tournament,
+				useCurrentPlayers: true,
+				isDynamic: true,
+				playerId: playerId
+			});
+		} else {
+			const byeGame = bracket.rounds[0].games.find(game => {
+				return game.participants.some(participant => participant.bye === true);
+			});
+
+			if (byeGame) {
+				const participant = byeGame.participants.find(participant => participant.bye === true);
+				participantIndex = byeGame.participants.indexOf(participant);
+				gameId = byeGame.id;
+
+			} else {
+				throw new Error("No games with a bye found in Round 1.");
+			}
+
+			// Find the game using the provided gameId
+			const game = await Game.findById(gameId);
+			if (!game) {
+				throw new Error("Game not found.");
+			}
+
+			// Update the respective participant slot
+			game.participants[participantIndex] = {
+				...game.participants[participantIndex],
+				player: playerId,
+				name: name,
+				filled: true,
+			};
+
+			// // Save the updated game
+			await game.save();
+
+			return game;
+		}
+	} catch (error) {
+		console.error("Error creating player and inserting into slot:", error);
+		throw new Error(error);
+	}
+};
+
 const createPlayer = async ({ name, organization, tournamentId }) => {
 	const player = new Player({ name, organization });
 
@@ -182,4 +262,5 @@ module.exports = {
 	getPlayersByOrganization,
 	createAndAddToBracket,
 	joinTournament,
+	addPlayerToEmptySlot,
 };

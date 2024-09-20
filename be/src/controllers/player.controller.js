@@ -3,6 +3,7 @@ const { Bracket } = require("../models");
 const { Player } = require("../models/player.model");
 const { bracketService, playerService } = require("../services");
 const catchAsync = require("../utils/catchAsync");
+const { isValidParticipant, checkIfPlayerExists } = require("../utils/playerHelper");
 const socket = require("../utils/socket");
 
 /* create player and get org from req.user */
@@ -24,41 +25,53 @@ const insertPlayer = async (req, res) => {
 };
 
 const createPlayer = async (req, res) => {
-	const { name, bracketId, gameId, participantIndex } = req.body;
-	const { organization, defaultBracket } = req.user;
+	const { name, bracketId, gameId, participantIndex, autoAddToBracket } = req.body;
+	const { organization, tournament } = req.user;
 
 	try {
-		//check if player already exists
-		const existingPlayer = await Player.findOne({
-			name,
-			organization: organization._id,
-		});
+		// Check if player already exists
+		const existingPlayer = await checkIfPlayerExists(name, organization._id);
 		if (existingPlayer) {
-			return res
-				.status(400)
-				.json({ message: "Player already exists with this name" });
+			return res.status(400).json({ message: "Player already exists with this name" });
 		}
 
-		if (isNaN(participantIndex) || !gameId) {
-			console.log("----no participantIndex, create player for org");
-			const player = await playerService.addPlayer(name, organization._id);
-			const players = await playerService.getPlayersByOrganization(
-				organization._id
-			);
+		let insertedPlayer, players, bracket;
 
-			return res.status(201).json({ player, players });
+		// Create player for organization if no gameId or participantIndex is provided
+		if (!isValidParticipant(gameId, participantIndex)) {
+			({ insertedPlayer, players } = await createPlayerForOrganization(name, organization._id, tournament));
+		} else {
+			// Handle player creation based on gameId or participantIndex
+			({ insertedPlayer, bracket } = await handlePlayerCreationInBracket({
+				name, gameId, participantIndex, bracketId
+			}));
 		}
+
+		// Handle auto-add to bracket
+		if (autoAddToBracket && insertedPlayer) {
+			const playerInBracket = await addPlayerToBracket({
+				name,
+				playerId: insertedPlayer._id,
+				bracketId
+			});
+			return res.status(201).json(playerInBracket);
+		}
+
+		// Send response based on the result of the player creation
+		return res.status(201).json({ insertedPlayer, players, bracket });
+
 	} catch (error) {
 		console.error("Error creating player:", error);
-		res.status(500).json({ message: error.message });
+		return res.status(500).json({ message: "An error occurred while creating the player" });
 	}
+};
 
-	//if participantIndex, insert it into bracket directly
+const addPlayerInBracket = async (req, res) => {
+	const { name, playerId, bracketId, } = req.body;
 	try {
-		const player = await playerService.createPlayerToSlot({
-			gameId,
-			participantIndex,
+		const player = await playerService.addPlayerToEmptySlot({
 			name,
+			playerId,
 			bracketId,
 		});
 		const bracket = await bracketService.getFullBracket(bracketId);
@@ -67,6 +80,48 @@ const createPlayer = async (req, res) => {
 	} catch (error) {
 		console.error("Error creating player to slot:", error);
 		res.status(500).json({ message: error.message });
+	}
+};
+
+const createPlayerForOrganization = async (name, organizationId, tournament) => {
+	try {
+		const insertedPlayer = await playerService.addPlayer(name, organizationId, tournament);
+		const players = await playerService.getPlayersByOrganization(organizationId);
+		return { insertedPlayer, players };
+	} catch (error) {
+		console.error("Error creating player for organization:", error);
+		throw new Error("Error creating player for organization");
+	}
+};
+
+const handlePlayerCreationInBracket = async ({ name, gameId, participantIndex, bracketId }) => {
+	try {
+		const player = await playerService.createPlayerToSlot({
+			gameId,
+			participantIndex,
+			name,
+			bracketId
+		});
+		const bracket = await bracketService.getFullBracket(bracketId);
+		return { insertedPlayer: player, bracket };
+	} catch (error) {
+		console.error("Error creating player to slot:", error);
+		throw new Error("Error creating player to slot");
+	}
+};
+
+const addPlayerToBracket = async ({ name, playerId, bracketId }) => {
+	try {
+		const player = await playerService.addPlayerToEmptySlot({
+			name,
+			playerId,
+			bracketId
+		});
+		const bracket = await bracketService.getFullBracket(bracketId);
+		return { player, bracket };
+	} catch (error) {
+		console.error("Error adding player to bracket:", error);
+		throw new Error("Error adding player to bracket");
 	}
 };
 
@@ -158,7 +213,6 @@ const login = catchAsync(async (req, res) => {
 			name,
 			bracketId,
 		});
-
 		const io = socket.getIo();
 		io.emit("player-loggedin", { player: player });
 
@@ -219,4 +273,5 @@ module.exports = {
 	batchUpdate,
 	list,
 	createPlayer,
+	addPlayerInBracket,
 };

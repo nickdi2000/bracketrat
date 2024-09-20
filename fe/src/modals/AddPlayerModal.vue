@@ -68,7 +68,7 @@
               />
             </div>
 
-            <div>
+             <div v-if="!form.participantIndex && !form.gameId">
               <!-- add switch -->
               <div class="flex items-center mb-4">
                 <input
@@ -159,11 +159,13 @@ export default {
     },
     save() {
       this.loading = true;
+       const isAutoAdd = this.form.autoAdd
       this.$store
         .createPlayer({
           name: this.form.name,
           participantIndex: this.form.participantIndex,
           gameId: this.form.gameId,
+          autoAddToBracket: isAutoAdd,
         })
         .then(() => {
           this.loading = false;

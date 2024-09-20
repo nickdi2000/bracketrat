@@ -185,8 +185,11 @@
       <PublicProfile :bracket="bracket" :player="player" />
     </div>
 
-    <div class="fab-bar">
-      <button @click="join()">Join!</button>
+    <div v-if="!isPlayerInList" class="fab-bar">
+      <button 
+      :class="isJoined ? 'btn btn-disabled' : 'btn btn-primary'"
+      :disabled="isJoined"  @click="join()">Join!
+      </button>
     </div>
 
     <PlayerBottomNav />
@@ -220,6 +223,7 @@ export default {
       myGames: [],
       gameIndex: 0,
       showResultButtons: false,
+      isJoined: false,
     };
   },
   components: {
@@ -255,18 +259,29 @@ export default {
     currentGame() {
       return this.myGames[this.gameIndex];
     },
+    playerList() {
+      return playerAuthStore().getplayers;
+    },
+    isPlayerInList() {
+      return this.playerList.some(p => p === this.player.name);
+    }
   },
   methods: {
     async join() {
-      console.log("Joining");
-      this.$toast.info("Player joining disabled by admin.");
-
-      /* TODO: Implement logic for user to join bracket
-       * if tournament is dynamic, it should rebuild as they join
-       * if fixed, they should just go in the next empty slot
-       * if they are already in the bracket, this button shouldn't be here
-       * Remove this comment and consol/toast lines above when done
-       */
+      try {
+      const store = playerAuthStore();
+      const rec = await store.createPlayer(
+        this.player._id,
+        this.player.name,
+        this.bracket._id,
+      );
+      this.isJoined = true;
+      this.bracket = rec.bracket;
+      } catch (error) {
+        this.$toast.error(
+        "Cannot add a player. The bracket is fixed-size, and all available slots have been filled."
+        );
+      }
     },
     async fetchTournament(id = null) {
       const store = playerAuthStore();
@@ -421,7 +436,7 @@ export default {
     linear-gradient(90deg, #1c2632 1px, #14161a 1px);
   background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
   background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
-  height: 100vh;
+  height: 250vh;
 }
 
 .player-name {

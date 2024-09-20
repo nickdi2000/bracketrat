@@ -75,6 +75,7 @@
 
 <script>
 import PublicWelcome from "@/components/PublicWelcome.vue";
+import { playerAuthStore } from "@/store/playerAuth";
 
 export default {
   name: "PublicLayout",
@@ -91,6 +92,7 @@ export default {
   methods: {
     // get code from url
     async getData() {
+      const store = playerAuthStore();
       if (!this.code) return;
       this.loading = true;
       try {
@@ -98,6 +100,7 @@ export default {
         const rec = await this.$api.get(`/tournaments/code/${this.code}`);
         this.tournament = rec.data?.tournament;
         this.players = rec.data?.players;
+        store.setPlayers(rec.data?.players);
         this.loading = false;
       } catch (error) {
         this.error = error.message ?? "Error fetching Bracket data"; //error;

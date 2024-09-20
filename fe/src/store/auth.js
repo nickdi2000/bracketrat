@@ -252,7 +252,7 @@ export const authStore = defineStore({
       });
     },
 
-    async createPlayer({ name, participantIndex, gameId }) {
+    async createPlayer({ name, participantIndex, gameId, autoAddToBracket }) {
       if (isNaN(participantIndex)) {
         console.info("!participantIndex, creating new", participantIndex);
       }
@@ -270,6 +270,7 @@ export const authStore = defineStore({
             participantIndex,
             gameId,
             bracketId,
+            autoAddToBracket,
           });
           const bracket = rec.data.bracket;
           if (bracket) this.setSelectedBracket(bracket);

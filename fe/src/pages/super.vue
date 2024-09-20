@@ -26,7 +26,7 @@
           <th>Location</th>
           <th>Send</th>
         </tr>
-        <tr v-for="rec in records" class="m-2 w-full">
+        <tr v-for="rec in records" :key="rec.id" class="m-2 w-full">
           <td>
             <div>{{ rec.email }}</div>
             <div

@@ -134,7 +134,7 @@ export default {
       const store = playerAuthStore();
       try {
         const res = await this.$api.post("players/login", {
-          bracketId: this.tournament._id,
+          bracketId: this.tournament.currentBracket,
           name: this.name,
         });
         //toast
