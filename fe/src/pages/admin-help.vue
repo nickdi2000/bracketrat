@@ -66,7 +66,14 @@
           You may choose to allow players/teams to register themselves, and
           watch the bracket grow as more people join. Or you may choose to
           manually add players/teams to the bracket yourself. <i>Or</i> you can
-          do a combination of both.
+          do a combination of both. Still have questions?
+          <router-link
+            to="/admin/contact"
+            class="underline text-blue-300 font-bold hover:text-blue-500"
+          >
+            Contact us</router-link
+          >
+          anytime!
         </div>
       </div>
 

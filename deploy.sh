@@ -31,6 +31,7 @@ ssh -i $SSH_KEY $SSH_USER@$SSH_HOST << 'EOF'
     # Run the test script
     echo "Running the test script..."
 
+    cd /opt/bracketrat
     chmod +x test.sh
     ./test.sh
 
@@ -38,3 +39,4 @@ ssh -i $SSH_KEY $SSH_USER@$SSH_HOST << 'EOF'
 
    
 EOF
+

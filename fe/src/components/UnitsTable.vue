@@ -129,7 +129,7 @@
     </div>
     <div class="table-footer">
       <div
-        v-if="records.length > 4"
+        v-if="records.length > 0"
         class="subheader px-1 py-2 flex flex-row justify-between"
       >
         <div>Total: {{ records.length }}</div>
@@ -140,7 +140,7 @@
             >Quick Add</span
           >
           <button
-            class="btn btn-sm p-2 opacity-9 bg-gray-900 hover:bg-blue-800"
+            class="btn btn-accent opacity-9 bg-gray-900 hover:bg-blue-800"
             title="Quick Add"
             @click="toggleQuickShow"
           >
@@ -162,9 +162,11 @@
 
 <script>
 import draggable from "vuedraggable";
+import { apiHandler } from "@/mixins/apiHandler";
 
 export default {
   components: { draggable },
+  mixins: [apiHandler],
   props: {
     records: {
       type: Array,
@@ -204,9 +206,15 @@ export default {
     },
     async quickAddPlayer() {
       const name = this.quickAddForm.name;
-      const rec = await this.$store.createPlayer({ name });
-      this.rows = this.records;
-      this.quickAddForm = { name: "" };
+      try {
+        const rec = await this.$store.createPlayer({ name });
+        this.rows = this.records;
+        this.quickAddForm = { name: "" };
+      } catch (error) {
+        console.error("Error", error);
+        this._handleResponse(error);
+        //this.$toast.error("Error adding player");
+      }
     },
 
     async saveChanges() {
@@ -234,8 +242,7 @@ export default {
     },
     async destroy(record) {
       const ask = await this.$openDialog("Delete Player?");
-      if(!ask)
-        return
+      if (!ask) return;
       try {
         await this.$store.removePlayer(record._id);
         //this.$emit("updated");
@@ -270,8 +277,8 @@ export default {
         const playersObj = this.$store.players;
         const bracketId = this.$store.getBracket._id;
         const rec = await this.$api.post(
-          `brackets/${bracketId}/delete-all-players`, 
-          {playersObj}
+          `brackets/${bracketId}/delete-all-players`,
+          { playersObj }
         );
         this.$store.setPlayers(rec.data.players);
         this.$toast.success("All players removed from this bracket");

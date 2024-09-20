@@ -186,9 +186,13 @@
     </div>
 
     <div v-if="!isPlayerInList" class="fab-bar">
-      <button 
-      :class="isJoined ? 'btn btn-disabled' : 'btn btn-primary'"
-      :disabled="isJoined"  @click="join()">Join!
+      <button
+        v-if="!isInBracket"
+        :class="isJoined ? 'btn btn-disabled' : 'btn btn-primary'"
+        :disabled="isJoined"
+        @click="join()"
+      >
+        Join!
       </button>
     </div>
 
@@ -263,23 +267,34 @@ export default {
       return playerAuthStore().getplayers;
     },
     isPlayerInList() {
-      return this.playerList.some(p => p === this.player.name);
-    }
+      return this.playerList.some((p) => p === this.player.name);
+    },
+    isInBracket() {
+      if (!this.bracket || !Object.keys(this.bracket)?.length) return false;
+      return this.bracket.rounds.some((round) => {
+        return round.games.some((game) => {
+          return (
+            game.player1.name === this.player.name ||
+            game.player2.name === this.player.name
+          );
+        });
+      });
+    },
   },
   methods: {
     async join() {
       try {
-      const store = playerAuthStore();
-      const rec = await store.createPlayer(
-        this.player._id,
-        this.player.name,
-        this.bracket._id,
-      );
-      this.isJoined = true;
-      this.bracket = rec.bracket;
+        const store = playerAuthStore();
+        const rec = await store.createPlayer(
+          this.player._id,
+          this.player.name,
+          this.bracket._id
+        );
+        this.isJoined = true;
+        this.bracket = rec.bracket;
       } catch (error) {
         this.$toast.error(
-        "Cannot add a player. The bracket is fixed-size, and all available slots have been filled."
+          "Cannot add a player. The bracket is fixed-size, and all available slots have been filled."
         );
       }
     },
@@ -436,7 +451,10 @@ export default {
     linear-gradient(90deg, #1c2632 1px, #14161a 1px);
   background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
   background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
-  height: 250vh;
+  /* height: 250vh; */
+  margin-top: 3rem;
+  margin-left: 4px;
+  margin-right: 4px;
 }
 
 .player-name {

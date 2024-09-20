@@ -2,8 +2,12 @@
   <div
     class="fixed-nav bg-gray-800 shadow-lg flex justify-around items-center py-2"
   >
-    <div class="svg-div" @click="selectView('game')">
-      <svg
+    <div
+      class="svg-div"
+      @click="selectView('share')"
+      :class="view === 'share' ? 'selected' : ''"
+    >
+      <!-- <svg
         class="big-svg"
         :class="view === 'game' ? 'selected' : ''"
         viewBox="0 0 24 24"
@@ -24,13 +28,37 @@
             fill="#ffffff"
           ></path>
         </g>
-      </svg>
-      <span class="text-xs mt-1">My Game</span>
-    </div>
-    <div class="svg-div" @click="selectView('bracket')">
+      </svg> -->
       <svg
         class="big-svg"
-        :class="view === 'bracket' ? 'selected' : ''"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z"
+        />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z"
+        />
+      </svg>
+
+      <!-- <span class="text-xs mt-1">My Game</span> -->
+      <span class="text-xs mt-1">Share</span>
+    </div>
+    <div
+      class="svg-div"
+      @click="selectView('bracket')"
+      :class="view === 'bracket' ? 'selected' : ''"
+    >
+      <svg
+        class="big-svg"
         viewBox="0 0 76 76"
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -65,6 +93,9 @@ export default {
   name: "PlayerBottomNav",
   computed: {
     view() {
+      const path = this.$route?.fullPath;
+      //clean up below for sure
+      if (path == "/player/share") return "share";
       return this.$route?.params?.view || "game";
     },
   },
@@ -77,11 +108,12 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .selected {
   filter: invert(42%) sepia(93%) saturate(152%) hue-rotate(177deg)
     brightness(119%) contrast(119%);
   opacity: 1 !important;
+  @apply border border-gray-500 rounded-md;
 }
 
 .big-svg {
@@ -92,7 +124,7 @@ export default {
 }
 
 .svg-div {
-  @apply flex flex-col items-center text-white cursor-pointer hover:bg-gray-500 rounded-md py-1 px-4;
+  @apply flex flex-col items-center text-white cursor-pointer hover:bg-gray-300 rounded-md py-1 px-4;
 }
 
 .fixed-nav {

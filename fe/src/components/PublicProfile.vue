@@ -1,7 +1,9 @@
 <template>
-  <div class="mid text-white main-public">
-    <div class="flex flex-col">
-      <div class="w-56 card">
+  <div
+    class="text-center flex flex-col justify-center items-center text-white main-public"
+  >
+    <div class="flex flex-col text-left sm:mt-12 md:mt-4">
+      <div class="bg-slate-800 shadow-lg p-4 mx-2">
         <div class="subtitle">Your Profile</div>
         <div>
           Name: <span class="uppercase font-bold">{{ player?.name }}</span>
@@ -13,8 +15,11 @@
         <div v-else>Email: {{ player?.email ?? "--" }}</div>
       </div>
 
-      <div class="mt-3 card">
-        <div class="subtitle">Share Bracket with other players</div>
+      <div class="subtitle text-center mt-5">
+        Share Bracket with other players
+      </div>
+
+      <div class="mt-3 text-center card fadeinSlow">
         <div class="flex flex-col items-center">
           <div class="flex flex-col items-center"></div>
           <QRcode
