@@ -97,7 +97,6 @@
                   :class="
                     $route.name === item.route ? 'bg-blue-900' : 'bg-gray-900'
                   "
-                  class="text-white hover:bg-blue-800 rounded-md px-3 py-2 text-sm font-medium"
                   aria-current="page"
                 >
                   <component :is="item.icon" class="h-4 w-4 inline" />
@@ -119,11 +118,11 @@
         id="mobile-menu"
         v-if="showMobile"
       >
-        <div class="space-y-1 px-2 pb-3 pt-3 z-50">
+        <div class="space-y-1 px-2 pb-0 pt-3 z-50">
           <div class="header md:hidden sm:block pt-2">This Tournament</div>
           <button
             v-for="item in items"
-            class="w-full text-left text-white block rounded-md px-3 py-4 text-lg font-medium hover:bg-blue-800"
+            class="nav-buttons"
             aria-current="page"
             @click="handleClick(item.route)"
             :class="$route.path === item.route ? 'bg-blue-900' : 'bg-gray-900'"
@@ -146,7 +145,7 @@
         </div>
 
         <button
-          class="w-full bg-gray-900 text-left my-3 text-white block rounded-md px-3 py-4 text-lg font-medium hover:bg-blue-800"
+          class="nav-buttons text-center flex justify-center p-2"
           aria-current="page"
           @click="handleClick('AdminHelp')"
         >
@@ -246,15 +245,12 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .mainNav {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   transition: all 0.3s;
-}
-
-.extended {
 }
 </style>

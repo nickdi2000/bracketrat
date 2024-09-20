@@ -12,6 +12,10 @@ body {
   @apply bg-gradient-to-b from-slate-900 to-slate-800;
 }
 
+.nav-buttons {
+  @apply w-full text-left text-white block rounded-md px-2 py-2  font-medium hover:bg-blue-800 mb-2;
+}
+
 .shine-effect::before {
   content: "";
   position: absolute;

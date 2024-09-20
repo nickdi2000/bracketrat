@@ -2,6 +2,9 @@
   <span class="main-span- text-white">
     <Loader v-if="loading" />
     <Welcome />
+    <div v-if="winnerOfLastRound" class="bracket-winner-name">
+      Winner: {{ winnerOfLastRound?.name }}
+    </div>
     <div
       v-if="playersNotInBracket?.length && playerCount > 2"
       style="position: fixed; right: 40px; top: 85px; z-index: 99"
@@ -301,6 +304,18 @@ export default {
     players() {
       return this.$store.players;
     },
+    winnerOfLastRound() {
+      const lastRound = this.rounds[this.rounds.length - 1];
+      if (!lastRound) return;
+      const lastGame = lastRound.games[0];
+      if (!lastGame) return;
+      //check if lastGame.player1 or lastGame.player2 has winner: true
+      return lastGame.player1.winner
+        ? lastGame.player1
+        : lastGame.player2?.winner
+        ? lastGame.player2
+        : null;
+    },
     playerCount() {
       const storeCount =
         this.$store.selected_bracket?.organization?.playerCount;
@@ -348,6 +363,18 @@ export default {
   // height: 100vh;
   width: 120vw;
   overflow: auto;
+}
+
+.bracket-winner-name {
+  position: fixed;
+  top: 4rem;
+  left: 0;
+  right: 0;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  font-size: 1.2rem;
+  @apply uppercase font-bold text-center w-full bg-gradient-to-r from-green-700 to-green-600;
 }
 
 .bracket-container {
@@ -469,12 +496,12 @@ p {
 .vtb-item-players .winner {
   // filter: hue-rotate(342deg);
   // background-color: rgb(57, 102, 79) !important;
-  @apply bg-gradient-to-r from-green-900  to-green-700;
+  @apply bg-gradient-to-r from-green-700  to-green-900;
 }
 
 .vtb-item-players .defeated {
   //background-color: rgb(71, 67, 64) !important;
-  @apply bg-gradient-to-r from-slate-900  to-orange-900 text-gray-400 opacity-80;
+  @apply bg-gradient-to-r from-slate-900  to-slate-900 text-gray-300;
   text-decoration: line-through;
 }
 

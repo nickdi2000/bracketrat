@@ -1,5 +1,5 @@
 <template>
-  <div class="relative inline-block md:py-0" v-if="!mobile">
+  <div class="relative inline-block sm:py-0 md:py-0" v-if="!mobile">
     <div class="subheader md:hidden sm:block">Organization</div>
     <button
       id="dropdownDefaultButton"
@@ -95,7 +95,7 @@
     <div>
       <button
         v-for="item in menuItems"
-        class="w-full text-left mb-2 text-white block rounded-md px-3 py-4 text-lg font-medium hover:bg-blue-800"
+        class="nav-buttons"
         aria-current="page"
         @click="handleClick(item)"
         :class="$route.path === item.route ? 'bg-blue-900' : 'bg-gray-900'"

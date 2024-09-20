@@ -259,10 +259,13 @@ export default {
   methods: {
     async join() {
       console.log("Joining");
+      this.$toast.info("Player joining disabled by admin.");
+
       /* TODO: Implement logic for user to join bracket
        * if tournament is dynamic, it should rebuild as they join
        * if fixed, they should just go in the next empty slot
        * if they are already in the bracket, this button shouldn't be here
+       * Remove this comment and consol/toast lines above when done
        */
     },
     async fetchTournament(id = null) {

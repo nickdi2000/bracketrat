@@ -49,11 +49,12 @@
             <div class="tiny">
               Remember you may also invite players to join via your unique link
               or
-              <router-link
+              <button
                 class="underline text-blue-300 font-bold"
-                :to="'/admin/players/invite'"
-                >QR code.</router-link
+                @click="navTo('/admin/players/invite')"
               >
+                QR code.
+              </button>
             </div>
             <div class="mt-1 shadow-lg flex flex-col space-y-4">
               <input
@@ -140,7 +141,6 @@ export default {
   methods: {
     showModal(data) {
       this.isVisible = true;
-      console.log("showModal recieve", data);
 
       const bracket = this.$store.getBracket;
       this.form.autoAdd = bracket?.auto_bracket;
@@ -152,6 +152,10 @@ export default {
       this.isVisible = false;
       this.form.name = "";
       this._errorMessage = "";
+    },
+    navTo(route) {
+      this.isVisible = false;
+      this.$router.push(route);
     },
     save() {
       this.loading = true;
