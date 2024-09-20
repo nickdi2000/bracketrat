@@ -38,10 +38,12 @@ export default {
   },
   methods: {
     async addPlayerToBracket(player) {
-      //this.$emit("addPlayerToBracket", player);
-      console.log("player", player);
+      try{
       await this.$store.addPlayerToBracket(player);
       this.$emit("fullClose");
+      } catch (error) {
+        this.$toast.error("Player Already Exists in Bracket");
+      }
     },
   },
   computed: {
