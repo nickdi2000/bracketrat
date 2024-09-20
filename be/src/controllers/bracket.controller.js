@@ -39,6 +39,19 @@ class BracketController extends BaseController {
 		const { bracketId, playerId } = req.params;
 
 		try {
+			const checkBracketDEtails = await Bracket.findById(bracketId).populate({
+				path: "rounds.games",
+				populate: {
+					path: "participants.player",
+				},
+			});
+			const playerExist = checkBracketDEtails.rounds[0].games.some(
+				game => game.participants.some(participant => participant.player?.id === playerId
+				));
+
+			if (playerExist) {
+				return res.status(400).json({ message: "Player already exists with this name" });
+			}
 			const bracket = await bracketService.addPlayerToFirstEmptySpot(
 				bracketId,
 				playerId
