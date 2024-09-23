@@ -94,6 +94,7 @@
                   v-for="item in items"
                   :key="item.name"
                   @click="handleClick(item.route)"
+                  class="p-2 rounded-md text-sm font-medium text-white hover:text-blue-200 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
                   :class="
                     $route.name === item.route ? 'bg-blue-900' : 'bg-gray-900'
                   "

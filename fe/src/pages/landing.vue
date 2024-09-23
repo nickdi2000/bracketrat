@@ -174,6 +174,9 @@
       </div>
     </div>
 
+    <!-- Testimonials
+    <Testimonials />
+ -->
     <!-- PRICING -->
 
     <PricingTable />
@@ -206,6 +209,7 @@
 import landingWallpaper from "./landingWallpaper2.vue";
 import PricingTable from "../components/PricingTable.vue";
 import landingNav from "./landingNav.vue";
+import Testimonials from "./landingTestimonials.vue";
 import BracketSvg from "../components/graphics/BracketSvg.vue";
 import Logo2 from "../components/Logo2.vue";
 
@@ -213,6 +217,7 @@ export default {
   components: {
     landingWallpaper,
     PricingTable,
+    Testimonials,
     landingNav,
     BracketSvg,
     Logo2,

@@ -140,7 +140,7 @@
                   class="mr-2 text-5xl font-semibold text-white lg:text-6xl"
                   v-else
                 >
-                  $49
+                  ${{ price }}
                 </p>
 
                 <p class="text-lg text-gray-500">/ {{ interval }}</p>
@@ -196,7 +196,7 @@
 
       <div class="flex justify-center">
         <router-link
-          class="rounded bg-slate-800 p-3 py-3 text-sm font-medium text-white hover:bg-slate-800 hover:text-white focus:outline-none focus:ring active:text-opacity-75 sm:w-auto"
+          class="rounded bg-slate-800 p-3 py-3 text-sm font-medium text-white hover:bg-slate-600 hover:text-white focus:outline-none focus:ring active:text-opacity-75 sm:w-auto"
           to="/pages/contact/beta"
         >
           Join Beta <ArrowLongRightIcon class="h-4 w-4 inline" />
@@ -229,6 +229,11 @@ export default {
         "Backups & Extra Storage",
       ],
     };
+  },
+  computed: {
+    price() {
+      return this.$store.locale == "CA-ON" ? 299 : 99;
+    },
   },
 };
 </script>
