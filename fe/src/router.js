@@ -3,6 +3,7 @@ import Index from "@/pages/index.vue";
 import Login from "@/pages/login.vue";
 import ForgotPassword from "@/pages/forgot-password.vue";
 import ResetPassword from "@/pages/reset-password.vue";
+import VerifyEmail from "@/pages/verify-email.vue";
 import Players from "@/pages/players.vue";
 import Player from "@/pages/player.vue";
 import Rounds from "@/pages/rounds.vue";
@@ -69,6 +70,12 @@ const routes = [
         path: "player-help",
         name: "PlayerHelp",
         component: PlayerHelp,
+        meta: { isPublic: true },
+      },
+      {
+        path: "verify-email",
+        name: "VerifyEmail",
+        component: VerifyEmail,
         meta: { isPublic: true },
       },
     ],

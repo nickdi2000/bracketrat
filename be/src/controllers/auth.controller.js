@@ -15,13 +15,20 @@ const register = catchAsync(async (req, res) => {
 		let user = await userService.createUser(userData);
 		const tokens = await tokenService.generateAuthTokens(user);
 		sendNewUser(user);
-		mail.sendWelcomeEmail(user);
+		//mail.sendWelcomeEmail(user);
+		sendWelcomeNewUserEmail(user);
+
 		res.status(httpStatus.CREATED).send({ user, tokens });
 	} catch (err) {
 		console.log(err);
 		res.status(400).send({ message: err.message });
 	}
 });
+
+const sendWelcomeNewUserEmail = async (user) => {
+	const verifyEmailToken = await tokenService.generateVerifyEmailToken(user);
+	mail.sendWelcomeEmail(user, verifyEmailToken);
+};
 
 const login = catchAsync(async (req, res) => {
 	const { email, password } = req.body;
@@ -87,7 +94,9 @@ const sendVerificationEmail = catchAsync(async (req, res) => {
 
 const verifyEmail = catchAsync(async (req, res) => {
 	await authService.verifyEmail(req.query.token);
-	res.status(httpStatus.NO_CONTENT).send();
+	res.status(httpStatus.NO_CONTENT).send({
+		message: "Email verified successfully",
+	});
 });
 
 module.exports = {
