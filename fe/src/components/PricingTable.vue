@@ -232,7 +232,7 @@ export default {
   },
   computed: {
     price() {
-      return this.$store.locale == "CA-ON" ? 299 : 99;
+      return this.$store.locale == "CA-ON" ? 299 : 199;
     },
   },
 };
