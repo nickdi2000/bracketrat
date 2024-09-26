@@ -18,17 +18,25 @@
         </button>
       </div>
 
+    
+
       <table class="p-3 tr-table" v-if="records && records?.length">
         <tr>
           <th>Email</th>
           <th>Created</th>
-          <th>SSO?</th>
+          <th>isEmailVerified</th>
+          <th>SSO</th>
           <th>Location</th>
           <th>Send</th>
         </tr>
         <tr v-for="rec in records" :key="rec.id" class="m-2 w-full">
           <td>
-            <div>{{ rec.email }}</div>
+            <div>
+              <span @click="rec.showUserFullRecord = true">{{ rec.email }}</span>
+              <div v-if="rec.showUserFullRecord">
+                <pre>{{ rec }}</pre>  
+              </div>
+            </div>
             <div
               class="mt-2 text-gray-300 text-xs"
               v-if="rec.name"
@@ -43,6 +51,10 @@
             </div>
           </td>
           <td>{{ $formatDate(rec.createdAt) }}</td>
+          <td>
+            <CheckCircleIcon v-if="rec.isEmailVerified" class="h-4 text-green-400" />
+
+          </td>
           <td>{{ rec.sso_info?.name ?? "-" }}</td>
           <td>
             <span v-if="rec.location">

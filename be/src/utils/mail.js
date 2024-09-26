@@ -4,7 +4,7 @@ const product_name = "BracketForce";
 const contactTemplateID = 34214622;
 const admin = process.env.ADMIN_EMAIL ?? "nickdifelice@gmail.com";
 const sender_name = "The BracketForce Team";
-
+const replyToEmail = "contact-us@bracketforce.com";
 const { Message } = require("../models");
 
 const templateObject = {
@@ -97,6 +97,7 @@ const sendWelcomeEmail = async (user, verifyToken = null) => {
 	data.TemplateModel.sender_name = sender_name;
 	data.TemplateModel.product_name = product_name;
 	data.TemplateModel.name = user.name ?? "[N/A]";
+	data.ReplyTo = replyToEmail;
 	data.TemplateModel.action_url =
 		"https://bracketforce.com/pages/verify-email?token=" + verifyToken;
 	data.TemplateId = 37402953;

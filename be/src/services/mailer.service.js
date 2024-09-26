@@ -46,10 +46,10 @@ const sendFollowUp = async ({ user }) => {
 	}
 
 	//let subject =  `Follow up from ${appName}`;
-	let subject = `A free year of premium, no catch! `;
+	let subject = `A full year! `;
 	let msg = `Hey ${name},\n\n`;
 	//msg += `I hope you're doing well. I noticed you signed up for ${appName} the other day and just wanted to see if you had any questions or needed help getting started. I also wanted to mention that we are actively building out new features everyday and your input would be greatly appreciated. We are going to build this based on your ideas! Anyway, take care!`;
-	msg += `I hope you're doing well. I noticed you signed up for ${appName} and was wondering if you had any questions or needed help getting started. I'm happy to provide an entire year of our premium plan (normally $199/yr) for nothing more than a single sentence of feedback!  Thanks for time either way!`;
+	msg += `I hope you're doing well. I noticed you signed up for ${appName} and was wondering if you had any questions or needed help getting started. \n\nI'm happy to provide an entire year of our pro plan (normally $199/yr) for nothing more than a single sentence of feedback!  \n\nThanks for time either way!`;
 
 	msg += `\n\nBest,\n${fromName}`;
 
