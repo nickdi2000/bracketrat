@@ -41,18 +41,18 @@
           <div class="md:flex md:justify-between mt-4">
             <div class="text-gray-300 ml-4">
               <div class="tiny">Player Link</div>
-              <span class="text-2xl font-bold text-slate uppercase">{{
+              <span class="text-sm lg:text-2xl font-bold text-slate uppercase">{{
                 link
               }}</span>
 
               <div class="tiny mt-5">Spectator (View-only) Link</div>
-              <span class="text-2xl font-bold text-slate uppercase">{{
+              <span class="text-sm lg:text-2xl font-bold text-slate uppercase">{{
                 viewOnlyLink
               }}</span>
             </div>
             <div class="mt-6 ml-4 md:mt-0">
               <router-link
-                class="p-2 text-gray-200 bg-slate-700 hover:bg-slate-800"
+                class="p-2 text-gray-200 bg-blue-800 hover:bg-slate-800"
                 :to="'/admin/players/invite'"
               >
                 View QR Code <QrCodeIcon class="w-4 h-4 inline" />

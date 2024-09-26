@@ -96,6 +96,7 @@ export default {
     return {
       playerKey: 0,
       showShareLink: false,
+      linkType:  "player", //or spectator
     };
   },
   computed: {
