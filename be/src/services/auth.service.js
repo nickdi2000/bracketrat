@@ -31,13 +31,16 @@ const loginUserWithEmailAndPassword = async (email, password) => {
 
 const ssoLoginRegister = async (params) => {
 	const { email } = params;
+	let newUser = false;
+
 	let user = await userService.getUserByEmail(email);
 
 	if (!user) {
 		user = await userService.createUser(params);
+		newUser = true;
 	}
 
-	return user;
+	return { user, newUser };
 };
 
 /**

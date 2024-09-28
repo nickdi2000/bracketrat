@@ -179,7 +179,7 @@
             class="flex items-center justify-center space-x-4"
             v-if="!disableRegistration"
           >
-            <SocialLogin />
+            <SocialLogin @loading="loading = $event" />
           </div>
         </div>
       </div>

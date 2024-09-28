@@ -341,7 +341,8 @@ const getFullBracket = async (bracketId) => {
 	if (!bracket) {
 		throw new Error("Bracket not found.");
 	}
-	console.log(JSON.stringify(bracket, null, 2));
+
+	//console.log(JSON.stringify(bracket, null, 2));
 
 	if (bracket.type === "round-robin") {
 		const augmentedBracket = await augmentRobinRounds(bracketId);

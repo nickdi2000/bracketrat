@@ -47,10 +47,14 @@ const login = catchAsync(async (req, res) => {
 
 const ssoLoginRegister = catchAsync(async (req, res) => {
 	const ssoInfo = req.body;
-	const user = await authService.ssoLoginRegister(ssoInfo);
+	const { user, newUser } = await authService.ssoLoginRegister(ssoInfo);
 	const tokens = await tokenService.generateAuthTokens(user);
-	sendNewUser(user);
-	mail.sendWelcomeEmail(user);
+
+	if(newUser) {
+		sendNewUser(user);
+		mail.sendWelcomeEmail(user);
+	}
+
 	res.send({ user, tokens });
 });
 

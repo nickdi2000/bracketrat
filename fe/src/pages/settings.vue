@@ -32,23 +32,10 @@ export default {
     },
   },
   methods: {
-    // async save(e) {
-    //   console.log("saving data", "brackets");
-    //   let data = JSON.parse(JSON.stringify(e));
-    //   delete data.players;
-    //   delete data.rounds;
-    //   try {
-    //     const rec = await this.$api.post("brackets", data);
-    //     this.$store.fetchBracket(e._id);
-    //     this.$toast.success("Bracket saved successfully");
-    //   } catch (e) {
-    //     console.log("error saving bracket", e);
-    //   }
-    // },
+
   },
   data() {
     return {
-      activeTab: "info",
       form: {
         options: {
           require_auth: false,

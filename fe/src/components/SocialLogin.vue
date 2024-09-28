@@ -22,7 +22,7 @@ export default {
     };
   },
   components: {},
-
+  emits: ["loading", "success"],
   mounted() {},
   props: {
     action: {
@@ -40,14 +40,13 @@ export default {
       window.gtag_report_conversion;
       await this.$store.setUser(userData);
       this.$toast.success("Logged in successfully");
-      this.$router.push("/admin/dashboard?initial=true");
-      this.loading = false;
+      this.$router.push("/admin/dashboard");
       //this.$router.push('/register/complete');
     },
     async googleCallback(event) {
       //console.log('E', event);
+      this.$emit("loading", true);
       const jwtCredentials = event.credential;
-      this.loading = true;
 
       let params = {
         id_token: jwtCredentials,
