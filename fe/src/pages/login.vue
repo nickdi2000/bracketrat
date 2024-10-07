@@ -256,11 +256,14 @@ export default {
     }, 300);
   },
   computed: {
-    /* Disabling for Canada currently */
+    /* Disabling for Ontario currently */
     disableRegistration() {
-      // return false;
-      const includesCA = this.$store.locale?.includes("ON");
-      return includesCA && this.registering && !this.disableRegOverride;
+      const disableOntario = import.meta.env.VITE_DISABLE_ONTARIO;
+      if (disableOntario == "true") {
+        const includesCA = this.$store.locale?.includes("ON");
+        return includesCA && this.registering && !this.disableRegOverride;
+      }
+      return false;
     },
   },
   methods: {
