@@ -197,8 +197,8 @@
           &copy; {{ new Date().getFullYear() }} All rights reserved.
           {{ $store.locale }}
           <br />
-          <router-link to="/landing" class="underline hover:text-gray-200"
-            >Home Page</router-link
+          <a :href="'https://'+$baseUrl" class="underline hover:text-gray-200"
+            >Home Page</a
           >
         </p>
       </div>

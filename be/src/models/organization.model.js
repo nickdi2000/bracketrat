@@ -16,6 +16,11 @@ const organizationSchema = new mongoose.Schema(
 			type: String,
 			trim: true,
 		},
+		status: {
+			type: String,
+			enum: ["free", "upgraded"],
+			default: "free",
+		},
 		contactNumber: String,
 		address: {
 			street: String,

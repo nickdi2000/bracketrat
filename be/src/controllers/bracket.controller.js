@@ -130,11 +130,18 @@ class BracketController extends BaseController {
 
 	async generate(req, res) {
 		const { bracketId } = req.params;
+		const { type } = req.body;
 
 		try {
-			await bracketService.generateBracket({
-				bracketId,
-			});
+			if(!type) {
+				await bracketService.generateBracket({
+					bracketId,
+				});
+			} else if (type == 'double') {
+				await bracketService.generateDoubleEliminationBracket({
+					bracketId,
+				});
+			}
 
 			let bracket = await bracketService.getFullBracket(bracketId);
 

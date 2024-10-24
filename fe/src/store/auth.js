@@ -65,9 +65,13 @@ export const authStore = defineStore({
           case "single-elimination":
             bracket = await this.generateSingleElimBracket();
             break;
+          case "double-elimination":
+            bracket = await this.generateDouble();
+            break;
           case "round-robin":
             bracket = await this.generateRobinBracket();
             break;
+            
           default:
             console.error(`Unknown bracket type: ${bracketType}`);
             return;
@@ -132,6 +136,23 @@ export const authStore = defineStore({
             }
           );
           console.log("rec fixed generated", rec.data?.bracket);
+          this.setSelectedBracket(rec.data.bracket);
+          resolve(rec);
+        } catch (err) {
+          reject(err);
+        }
+      });
+    },
+
+    async generateDouble() {
+      const tournamentId = this.selected_bracket?.tournament;
+      if (!tournamentId) {
+        console.error("No tournamentId provided to authStore");
+        return;
+      }
+      return new Promise(async (resolve, reject) => {
+        try {
+          const rec = await api.post(`tournaments/${tournamentId}/generate-double`);
           this.setSelectedBracket(rec.data.bracket);
           resolve(rec);
         } catch (err) {

@@ -93,8 +93,8 @@ app.config.globalProperties.$formatDate = (date) => {
 
 app.use(piniaPlugin);
 
-app.config.globalProperties.$appName = "Bracket Force";
-app.config.globalProperties.$baseUrl = "BracketForce.com";
+app.config.globalProperties.$appName = import.meta.env.VITE_APP_NAME || "Bracket Force";
+app.config.globalProperties.$baseUrl = import.meta.env.VITE_APP_DOMAIN || "BracketForce.com";
 app.config.globalProperties.$api = api;
 app.config.globalProperties.$store = authStore();
 app.config.globalProperties.$openDialog = openDialog;

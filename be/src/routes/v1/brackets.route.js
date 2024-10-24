@@ -31,6 +31,11 @@ router.post("/:bracketId/generate", (req, res, next) => {
 	bracketController.generate(req, res, next);
 });
 
+router.post("/:bracketId/generate-double", (req, res, next) => {
+	req.body.type = 'double';
+	bracketController.generate(req, res, next);
+});
+
 router.post("/:bracketId/generate-robin", (req, res, next) => {
 	bracketController.generateRobin(req, res, next);
 });
@@ -38,6 +43,8 @@ router.post("/:bracketId/generate-robin", (req, res, next) => {
 router.post("/:bracketId/generate-fixed", (req, res, next) => {
 	bracketController.generateFixed(req, res, next);
 });
+
+
 
 //re-generate uses the same players in the bracket without incorporating new stragglers
 router.post("/:bracketId/regenerate", (req, res, next) => {

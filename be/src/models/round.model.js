@@ -8,6 +8,7 @@ const roundSchema = new mongoose.Schema(
 		roundNumber: { type: Number, required: false },
 		week: { type: Number, required: false },
 		scheduledDate: { type: Date, required: false },
+		bracketLayer: { type: Number, required: true, default: 0 }, //determines which layer it is in if double (or more) elimination
 	},
 	{
 		timestamps: true,

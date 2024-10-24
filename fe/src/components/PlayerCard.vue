@@ -1,4 +1,5 @@
 <template>
+
   <div
     v-if="Object.keys(player)?.length"
     class="fadein fixed inset-0 bg-gray-800 bg-opacity-70 backdrop-blur-md overflow-y-auto h-full w-full z-50"
@@ -123,6 +124,7 @@
         </div>
 
         <div v-if="!player.name" class="text-center">
+          <pre v-if="dev">{{game}}</pre>
           <p class="p-3" v-if="!isFirstRound">
             Nothing to see here. Waiting on previous round...
           </p>

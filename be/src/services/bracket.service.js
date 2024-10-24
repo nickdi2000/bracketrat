@@ -3,13 +3,14 @@ const mongoose = require("mongoose");
 const { Player } = require("../models/player.model");
 const { populate, findById } = require("../models/token.model");
 const {
-	updatePlayerStats, findHeadToHeadWinner,
-	findPlayerWithMaxPoints, countPlayerGames,
-	hasTieInWinCounts
-} = require("../utils/statTable")
+	updatePlayerStats,
+	findHeadToHeadWinner,
+	findPlayerWithMaxPoints,
+	countPlayerGames,
+	hasTieInWinCounts,
+} = require("../utils/statTable");
 const { Game } = require("../models");
 const Rule = require("../models/rule.model");
-
 
 /* Generate Bracket with all players, or if bracketSize is provided, generate a fixed-size bracket with no players.  if useCurrentPlayers is true, we take the players already in the bracket and rebuild it (to fix blanks/errorenous byes etc) */
 const generateBracket = async ({
@@ -170,6 +171,217 @@ const generateBracket = async ({
 		throw new Error(error.message);
 	}
 };
+const generateDouble = async ({
+	tournamentId,
+	useCurrentPlayers = false,
+	bracketSize = null,
+	isDynamic = false,
+	playerId = null,
+}) => {
+	try {
+		const tournament = await Tournament.findById(tournamentId);
+		if (!tournament) {
+			throw new Error("Tournament not found");
+		}
+
+		// Create the double elimination bracket
+		let bracket = await Bracket.findOne({
+			tournament: tournamentId,
+			type: "double-elimination",
+		});
+
+		if (!bracket) {
+			bracket = await Bracket.create({
+				tournament: tournamentId,
+				type: "double-elimination",
+				organization: tournament.organization,
+			});
+		}
+
+		let players = [];
+		if (bracketSize) {
+			players = new Array(bracketSize).fill(null);
+			bracket.build_type = "fixed";
+		} else if (useCurrentPlayers) {
+			bracket = await Bracket.findById(bracket._id).populate({
+				path: "rounds.games",
+				populate: {
+					path: "participants.player",
+				},
+			});
+			players =
+				bracket.rounds[0]?.games
+					.flatMap((game) =>
+						game.participants.map((participant) => participant.player)
+					)
+					.filter((player) => player) || [];
+			if (isDynamic) {
+				const dynamicPlayer = await Player.findById(playerId);
+				players.push(dynamicPlayer);
+			}
+		} else {
+			const organization = await Organization.findById(tournament.organization);
+			players = await Player.find({ organization: organization._id });
+		}
+
+		const totalPlayers = players.length;
+		const nextPowerOfTwo = Math.pow(2, Math.ceil(Math.log2(totalPlayers || 1)));
+		const numberOfGames = nextPowerOfTwo / 2;
+		const totalRoundsNeeded = Math.log2(nextPowerOfTwo);
+		if (totalRoundsNeeded <= 0 || numberOfGames < 1) {
+			throw new Error("Invalid player count to generate a bracket.");
+		}
+
+		bracket.rounds = [];
+		let allGames = [];
+
+		// Generate winners' bracket first (with byes where needed)
+		const firstRoundGames = [];
+		for (let i = 0; i < numberOfGames; i++) {
+			const player1 = players[2 * i] ? players[2 * i]._id : null;
+			const player2 = players[2 * i + 1] ? players[2 * i + 1]._id : null;
+
+			const game = new Game({
+				bracketId: bracket._id,
+				participants: [
+					{
+						player: player1,
+						bye: !player1,
+					},
+					{
+						player: player2,
+						bye: !player2,
+					},
+				],
+				status: "pending",
+				roundNumber: 1,
+				nextGameId: null,
+			});
+			await game.save();
+			firstRoundGames.push(game);
+
+			// Automatically advance the player with a bye
+			if (!player2 && player1) {
+				game.participants[0].winner = true;
+				game.status = "completed";
+				await game.save();
+
+				// Find the next game in the next round to place the player in
+				const nextRoundGame = await findNextAvailableGame(bracket, 1);
+				if (nextRoundGame) {
+					nextRoundGame.participants[0].player = player1;
+					await nextRoundGame.save();
+				}
+			}
+		}
+		bracket.rounds.push({
+			games: firstRoundGames.map((game) => game._id),
+			roundNumber: 1,
+			bracketLayer: 0, // Main bracket
+		});
+		allGames.push(...firstRoundGames);
+
+		// Generate subsequent winners' bracket rounds (main bracket)
+		for (let roundNumber = 2; roundNumber <= totalRoundsNeeded; roundNumber++) {
+			const gamesThisRound = [];
+			for (let i = 0; i < numberOfGames / Math.pow(2, roundNumber - 1); i++) {
+				const game = new Game({
+					bracketId: bracket._id,
+					participants: [{}, {}],
+					status: "pending",
+					roundNumber,
+					nextGameId: null,
+				});
+				await game.save();
+				gamesThisRound.push(game);
+			}
+			bracket.rounds.push({
+				games: gamesThisRound.map((game) => game._id),
+				roundNumber,
+				bracketLayer: 0, // Main bracket
+			});
+			allGames.push(...gamesThisRound);
+		}
+
+		// Generate losers' bracket rounds (lower part of the double elimination)
+		const losersRounds = [];
+		for (let roundNumber = 1; roundNumber < totalRoundsNeeded; roundNumber++) {
+			const gamesThisRound = [];
+			for (let i = 0; i < numberOfGames / Math.pow(2, roundNumber); i++) {
+				const game = new Game({
+					bracketId: bracket._id,
+					participants: [{}, {}], // To be filled with players who lose in winners' bracket
+					status: "pending",
+					roundNumber: roundNumber + totalRoundsNeeded,
+					nextGameId: null,
+				});
+				await game.save();
+				gamesThisRound.push(game);
+			}
+			losersRounds.push({
+				games: gamesThisRound.map((game) => game._id),
+				roundNumber: roundNumber + totalRoundsNeeded,
+				bracketLayer: 1, // Losers' bracket
+			});
+			allGames.push(...gamesThisRound);
+		}
+
+		bracket.rounds.push(...losersRounds);
+
+		// Link winners' and losers' brackets (when a player loses in the winners' bracket, they drop down to the losers' bracket)
+		for (let roundIndex = 0; roundIndex < totalRoundsNeeded - 1; roundIndex++) {
+			const currentRoundGames = allGames.filter(
+				(game) => game.roundNumber === roundIndex + 1
+			);
+			const nextLosersRoundGames = allGames.filter(
+				(game) => game.roundNumber === roundIndex + totalRoundsNeeded + 1
+			);
+
+			currentRoundGames.forEach(async (game, index) => {
+				const losersGame = nextLosersRoundGames[Math.floor(index / 2)];
+				if (losersGame) {
+					game.loserNextGameId = losersGame._id; // Assign the losing path to the next game in the losers' bracket
+					await game.save();
+				}
+			});
+		}
+
+		await bracket.save();
+		return populateRoundsWithPlayers(bracket); // Populate and return the full bracket
+	} catch (error) {
+		console.error(
+			"Error generating double elimination bracket:",
+			error.message
+		);
+		throw new Error(error.message);
+	}
+};
+
+/**
+ * Find the next available game in a given round for a player to be placed into.
+ */
+const findNextAvailableGame = async (bracket, roundNumber) => {
+	try {
+		const nextRoundGames = await Game.find({
+			bracketId: bracket._id,
+			roundNumber: roundNumber + 1, // Find the next round
+		});
+
+		// Return the first game that has an empty slot
+		for (let game of nextRoundGames) {
+			if (!game.participants[0].player) {
+				return game; // Found a game with an empty spot
+			}
+			if (!game.participants[1].player) {
+				return game; // Found a game with an empty spot
+			}
+		}
+		return null; // No empty game found
+	} catch (error) {
+		console.error("Error finding next available game:", error.message);
+		throw error;
+	}
+};
 
 /*
 update winner 
@@ -245,7 +457,12 @@ const updateGameWinner = async (gameId, winnerId) => {
 Update winner for round robin 
 */
 
-const updateGameWinnerRobin = async (gameId, winnerId, winnerScore, loserScore) => {
+const updateGameWinnerRobin = async (
+	gameId,
+	winnerId,
+	winnerScore,
+	loserScore
+) => {
 	try {
 		const game = await Game.findById(gameId).populate("participants.player");
 		if (!game) {
@@ -404,19 +621,19 @@ const formatDataForBracket = (bracket) => {
 				_id: game._id,
 				player1: game.participants[0]
 					? {
-						...game.participants[0],
-						_id: game.participants[0]._id,
-						participantIndex: 0,
-						gameId: game._id,
-					}
+							...game.participants[0],
+							_id: game.participants[0]._id,
+							participantIndex: 0,
+							gameId: game._id,
+					  }
 					: { ...defaultPlayer },
 				player2: game.participants[1]
 					? {
-						...game.participants[1],
-						_id: game.participants[1]._id,
-						participantIndex: 1,
-						gameId: game._id,
-					}
+							...game.participants[1],
+							_id: game.participants[1]._id,
+							participantIndex: 1,
+							gameId: game._id,
+					  }
 					: { ...defaultPlayer },
 				bracketId: game.bracketId,
 				__v: game.__v,
@@ -940,13 +1157,13 @@ async function augmentRobinRounds(bracketId) {
 	let isTie;
 	const participantStats = {};
 
-	bracket.rounds.forEach(round => {
-		round.games.forEach(game => {
+	bracket.rounds.forEach((round) => {
+		round.games.forEach((game) => {
 			// If any game is not completed, set the flag to false
 			if (game.status !== "completed") {
 				allGamesCompleted = false;
 			}
-			game.participants.forEach(participant => {
+			game.participants.forEach((participant) => {
 				updatePlayerStats(participant, participantStats, game.status);
 			});
 		});
@@ -954,7 +1171,7 @@ async function augmentRobinRounds(bracketId) {
 
 	const { playerGamesPlayed, playerRemainingGames } = countPlayerGames(bracket);
 
-	Object.keys(participantStats).forEach(playerId => {
+	Object.keys(participantStats).forEach((playerId) => {
 		const stats = participantStats[playerId];
 		stats.remaining = playerRemainingGames[playerId];
 		stats.played = playerGamesPlayed[playerId];
@@ -999,9 +1216,9 @@ const unsetPlayerAsWinner = async ({ bracketId, playerId, roundIndex }) => {
 		{
 			$set: {
 				"participants.$[].winner": null,
-				"status": "pending"
-			}
-		},
+				status: "pending",
+			},
+		}
 	);
 };
 
@@ -1010,24 +1227,26 @@ const tieBreakerWinner = async (bracketId) => {
 		// Fetch and populate the bracket
 		let bracket = await Bracket.findById(bracketId)
 			.populate({
-				path: 'rounds.games',
+				path: "rounds.games",
 				populate: {
-					path: 'participants',
-					populate: { path: 'player' }
-				}
+					path: "participants",
+					populate: { path: "player" },
+				},
 			})
 			.exec();
 
 		if (!bracket) {
-			return res.status(404).json({ status: 'error', message: 'Bracket not found' });
+			return res
+				.status(404)
+				.json({ status: "error", message: "Bracket not found" });
 		}
 
 		const playerStats = {};
 
 		// Update player stats for each game
-		bracket.rounds.forEach(round => {
-			round.games.forEach(game => {
-				game.participants.forEach(participant => {
+		bracket.rounds.forEach((round) => {
+			round.games.forEach((game) => {
+				game.participants.forEach((participant) => {
 					updatePlayerStats(participant, playerStats, game.status);
 				});
 			});
@@ -1035,8 +1254,8 @@ const tieBreakerWinner = async (bracketId) => {
 
 		// Identify tied players based on max wins
 		const players = Object.values(playerStats);
-		const maxWins = Math.max(...players.map(p => p.wins));
-		const tiedPlayers = players.filter(p => p.wins === maxWins);
+		const maxWins = Math.max(...players.map((p) => p.wins));
+		const tiedPlayers = players.filter((p) => p.wins === maxWins);
 
 		if (tiedPlayers.length <= 1) {
 			return tiedPlayers[0];
@@ -1056,16 +1275,16 @@ const tieBreakerWinner = async (bracketId) => {
 		}
 
 		return winner;
-
 	} catch (error) {
 		console.error("Error determining the winner:", error);
 		throw new Error(error.message);
 	}
-}
+};
 
 module.exports = {
 	generateBracket,
 	generateRobinBracket,
+	generateDouble,
 	augmentRobinRounds,
 	clearRounds,
 	showRobin,

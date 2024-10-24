@@ -52,14 +52,23 @@ const list = async (req, res) => {
 
 const generate = async (req, res) => {
 	const { tournamentId } = req.params;
+	let { type } = req.body;
+	type = type || "single";
+
 	try {
-		await bracketService.generateBracket({
-			tournamentId,
-		});
+		if (!type) {
+			await bracketService.generateBracket({
+				tournamentId,
+			});
+		} else if (type == "double") {
+			await bracketService.generateDouble({
+				tournamentId,
+			});
+		}
 
 		const bracketId = await Bracket.findOne({
 			tournament: mongoose.Types.ObjectId(tournamentId),
-			type: "single-elimination",
+			type: type + "-elimination",
 		});
 
 		let bracket = await bracketService.getFullBracket(bracketId._id);

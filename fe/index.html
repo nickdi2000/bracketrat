@@ -37,7 +37,9 @@
       rel="stylesheet"
     />
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=%VITE_GOOGLE_API_KEY%&libraries=places"></script>
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=%VITE_GOOGLE_API_KEY%&libraries=places"></script> -->
+
+
 
     <script>
       (function (h, o, t, j, a, r) {
@@ -54,8 +56,9 @@
         a.appendChild(r);
       })(window, document, "https://static.hotjar.com/c/hotjar-", ".js?sv=");
     </script>
+
   </head>
-  <body>
+  <body onload="init()">
     <style>
       body {
         background: rgb(25, 26, 43);
@@ -102,6 +105,25 @@ In your html page, add the snippet and call gtag_report_conversion when someone 
         });
         return false;
       }
+
+
+      //load https://maps.googleapis.com/maps/api/js?key=%VITE_GOOGLE_API_KEY%&libraries=places via javascript
+      function init() {
+
+        
+        if ("%VITE_ENV%" == 'local') {
+          console.log("Env Loaded: ", "%VITE_ENV%, not initializing prod");
+          return;
+        }
+
+        console.log("Initializing Prod");
+        const script = document.createElement("script");
+        script.src = `https://maps.googleapis.com/maps/api/js?key=%VITE_GOOGLE_API_KEY%&libraries=places`;
+        document.head.appendChild(script);
+      }
+
+     
+
     </script>
   </body>
 </html>

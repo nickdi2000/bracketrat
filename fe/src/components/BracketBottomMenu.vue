@@ -208,6 +208,7 @@ export default {
       return this.bracket?.rounds?.length;
     },
     filteredButtons() {
+      if(!this.buttons) return [];
       return this.buttons.filter((button) => !button.hide);
     },
     buttons() {
@@ -237,6 +238,12 @@ export default {
             icon: "BracketIcon",
             desc: "Build an empty bracket with 4,8,16,etc... slots.",
             hide: this.hasRounds,
+          },
+          {
+            text: "Convert to Double",
+            action: "convertToDouble",
+            icon: "BracketIcon",
+            desc: "Convert to double elimination by adding a lower-bracket (losers bracket).",
           },
 
           {
@@ -281,6 +288,7 @@ export default {
         ],
       };
       const type = this.bracket?.type || "single-elimination";
+      obj['double-elimination'] = obj['single-elimination'];
       return obj[type];
     },
   },
@@ -288,6 +296,10 @@ export default {
     closeMenu() {
       this.show = false;
       this.displaySizeOptions = false;
+    },
+    async convertToDouble() {
+      console.log("convertToDouble");
+      await this.$store.generateDouble();
     },
     async generate() {
       if (!this.$store.players?.length) {
